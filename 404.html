@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница не найдена</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            transition: color 0.3s;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #666;
+            transition: color 0.3s;
+        }
+        a {
+            color: #007aff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Light theme styles */
+        .light-theme body {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .light-theme p {
+            color: #666;
+        }
+        .light-theme a {
+            color: #007aff;
+        }
+
+        /* Dark theme styles */
+        .dark-theme body {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        .dark-theme p {
+            color: #aaaaaa;
+        }
+        .dark-theme a {
+            color: #1e90ff;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="container">
+        <h1>404</h1>
+        <p>Ой! Страница не найдена.</p>
+        <p>Похоже, вы перешли по неправильной ссылке или страница была удалена.</p>
+        <p><a href="index.html">Вернуться на главную</a></p>
+    </div>
+    <script>
+        // Проверка темы и применение соответствующего класса
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentTheme = localStorage.getItem('theme') || 'light-theme';
+            document.body.classList.add(currentTheme);
+        });
+    </script>
+</body>
+</html>

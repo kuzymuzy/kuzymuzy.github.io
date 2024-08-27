@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор случайных букв</title>
+    <link rel="stylesheet" href="random.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<header class="nav-bar">
+    <nav>
+        <ul>
+            <li><a href="index.html"><img src="favicon.ico" alt="Логотип" class="logo"></a></li>
+            <li class="theme-container">
+                <span class="theme-icon" id="theme-icon">🌑</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <div class="container">
+        <h1>Генератор ответов на тест</h1>
+        <div class="input-group">
+            <label for="letter-count">Количество ответов:</label>
+            <input type="number" id="letter-count" placeholder="Количество ответов" min="1" max="1000">
+        </div>
+        <div class="input-group">
+            <label for="range-start">Минимальная буква:</label>
+            <input type="text" placeholder="Минимальная буква" id="range-start">
+        </div>
+        <div class="input-group">
+            <label for="range-end">Максимальная Буква:</label>
+            <input type="text" placeholder="Максимальная буква" id="range-end">
+        </div>
+        <button id="generate-btn">Сгенерировать</button>
+        <h2>Ответы:</h2>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const letterCount = parseInt(document.getElementById('letter-count').value, 10);
+            const rangeStart = document.getElementById('range-start').value;
+            const rangeEnd = document.getElementById('range-end').value;
+
+            if (rangeStart.length !== 1 || rangeEnd.length !== 1) {
+                alert('Диапазон должен содержать только один символ!');
+                return;
+            }
+
+            const startCode = rangeStart.charCodeAt(0);
+            const endCode = rangeEnd.charCodeAt(0);
+
+            const russianRanges = [
+                [0x0410, 0x042F],  
+                [0x0430, 0x044F]   
+            ];
+
+            if (!russianRanges.some(([min, max]) => startCode >= min && startCode <= max) || 
+                !russianRanges.some(([min, max]) => endCode >= min && endCode <= max)) {
+                alert('Диапазон должен включать русские буквы!');
+                return;
+            }
+
+            if (startCode > endCode) {
+                alert('Начало диапазона должно быть меньше или равно концу!');
+                return;
+            }
+
+            let result = '';
+            for (let i = 0; i < letterCount; i++) {
+                const randomCode = Math.floor(Math.random() * (endCode - startCode + 1)) + startCode;
+                if (russianRanges.some(([min, max]) => randomCode >= min && randomCode <= max)) {
+                    result += String.fromCharCode(randomCode) + ') ';
+                } else {
+                    result += '?) ';
+                }
+            }
+
+            document.getElementById('result').textContent = result.trim();
+        });
+    </script>
+
+    <footer class="footer-bar">
+        <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
+        <a href="adminlogin.html">Пароль от адмники: 1234admin1234</a>
+    </footer>
+
+<script src="random.js"></script>
+
+</body>
+</html>

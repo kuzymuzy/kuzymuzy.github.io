@@ -208,6 +208,10 @@ a {
         z-index: 1001;
     }
 
+    .logo {
+        display: none;
+    }
+
     .nav-toggle-icon {
         width: 25px;
         height: 2px;

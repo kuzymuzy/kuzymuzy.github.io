@@ -194,7 +194,7 @@ a {
     color:#459fff   
 }
 
-@media (max-width: 600px) {
+@media (max-width: 6000px) {
     .nav-toggle {
         display: block;
         background: none;
@@ -208,7 +208,7 @@ a {
         z-index: 1001;
     }
 
-    .logo {
+    .logo{
         display: none;
     }
 

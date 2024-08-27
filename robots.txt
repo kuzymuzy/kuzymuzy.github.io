@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://kuzymuzy.github.io/sitemap.xml

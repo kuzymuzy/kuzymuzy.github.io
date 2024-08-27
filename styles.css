@@ -297,5 +297,11 @@ a {
     .section {
         padding: 60px 20px 50px; /* Сокращаем отступы для удобства на телефонах */
     }
+
+        .dark-theme .nav-toggle-icon,
+    .dark-theme .nav-toggle-icon::before,
+    .dark-theme .nav-toggle-icon::after {
+        background-color: #ffffff;
+    }
 }
 

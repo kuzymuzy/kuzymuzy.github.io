@@ -92,6 +92,10 @@ section {
 }
 
 footer.footer-bar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
     text-align: center;
     padding: 20px;
     font-size: 0.8em;
@@ -266,12 +270,12 @@ body.dark-theme {
     --text-color: #e0e0e0;
     --nav-bg: #333;
     --form-bg: #1e1e1e;
-    --input-border: #555;
-    --input-focus-border: #888;
-    --btn-bg: #17a2b8;
+    --input-border: #40ff00;
+    --input-focus-border: #ff0000;
+    --btn-bg: #007bff;
     --btn-text: #fff;
-    --btn-hover-bg: #138496;
-    --result-color: #17a2b8;
+    --btn-hover-bg: #0056b3;
+    --result-color: #007bff;
     --footer-bg: #1e1e1e;
     --footer-text: #aaa;
 }

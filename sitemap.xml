@@ -7,12 +7,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kuzymuzy.github.io/adminlogi</loc>
-    <lastmod>2024-08-27</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://kuzymuzy.github.io/index</loc>
     <lastmod>2024-08-27</lastmod>
     <changefreq>daily</changefreq>
@@ -35,17 +29,5 @@
     <lastmod>2024-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://kuzymuzy.github.io/admin</loc>
-    <lastmod>2024-08-27</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kuzymuzy.github.io/69</loc>
-    <lastmod>2024-08-27</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
   </url>
 </urlset>

@@ -31,6 +31,7 @@
         <div id="city-display" class="city-display"></div>
     </div>
     <footer class="footer-bar">
+        <img class="bankimg" src="favicon.ico" width="40"><br><br>
         <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
         <a href="adminlogin.html">Пароль от адмники: 1234admin1234</a>
     </footer>
@@ -40,7 +41,7 @@
             let cities = [];
 
             function loadCities() {
-                fetch('cities.txt')
+                fetch('/assets/cities.txt')
                     .then(response => response.text())
                     .then(text => {
                         cities = text.split('\n').map(city => city.trim()).filter(city => city.length > 0);
@@ -65,6 +66,6 @@
         });
     </script>
 
-    <script src="random.js"></script>
+    <script src="/scripts/random.js"></script>
 </body>
 </html>

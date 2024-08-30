@@ -207,6 +207,14 @@ a {
     margin-bottom: 5px;
 }
 
+.bankimg {
+    border-radius: 100px;
+    width: 30px;
+    position: relative;
+    bottom: -7px;
+    right: 10px;
+}
+
 .input-group input {
     text-align:center;
     padding: 10px;

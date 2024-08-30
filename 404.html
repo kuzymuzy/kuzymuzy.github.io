@@ -38,7 +38,6 @@
             text-decoration: underline;
         }
 
-        /* Light theme styles */
         .light-theme body {
             background-color: #f4f4f4;
             color: #333;
@@ -50,7 +49,6 @@
             color: #007aff;
         }
 
-        /* Dark theme styles */
         .dark-theme body {
             background-color: #1e1e1e;
             color: #ffffff;
@@ -70,8 +68,8 @@
         <p>Похоже, вы перешли по неправильной ссылке или страница была удалена.</p>
         <p><a href="index.html">Вернуться на главную</a></p>
     </div>
+    
     <script>
-        // Проверка темы и применение соответствующего класса
         document.addEventListener('DOMContentLoaded', () => {
             const currentTheme = localStorage.getItem('theme') || 'light-theme';
             document.body.classList.add(currentTheme);

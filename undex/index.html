@@ -11,14 +11,14 @@
 <body>
 
     <div class="top-left-logo">
-        <a title="Юндекс — быстрый поиск в интернете" href="/">
-            <img src="logo.png" alt="Логотип" class="logo-img">
+        <a title="Юндекс — быстрый поиск в интернете" href="/undex/">
+            <img src="logo.png" class="logo-img">
         </a>
     </div>
 
     <div class="top-right-button">
-        <a title="Техническая поддержка Юндекс" href="/">
-            <button class="support-button">Tex. поддержка</button>
+        <a title="Техническая поддержка Юндекс" href="/undex/">
+            <a href="https://kuzymuzy.github.io/supportundex"><button class="support-button">Tex. поддержка</button>
         </a>
     </div>
 
@@ -37,7 +37,7 @@
 
     <script>
         function searchGoogle(event) {
-            event.preventDefault(); // Предотвращаем стандартное поведение формы
+            event.preventDefault();
             const query = document.getElementById("search-query").value;
             if (query.trim() === "") {
                 return false;

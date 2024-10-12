@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Юндекс — быстрый поиск в интернете</title>
-    <link rel="stylesheet" href="/undex/styles.css">
-    <link rel="icon" href="/undex/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/x-icon">
     <link href="https://yastatic.net/s3/frontend-fonts/YaDisplay/YandexSansDisplay-Bold.woff2" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="/undex/undex-apple-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-toutch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
     <div class="top-left-logo">
-        <a title="Юндекс — быстрый поиск в интернете" href="/undex/">
-            <img src="/undex/logo.png" class="logo-img">
+        <a title="Юндекс — быстрый поиск в интернете" href="https://kuzymuzy.github.io/undex/">
+            <img src="logo.png" class="logo-img">
         </a>
     </div>
 
     <div class="top-right-button">
-        <a title="Техническая поддержка Юндекс" href="/undex/">
-            <a href="https://kuzymuzy.github.io/supportundex"><button class="support-button">Tex. поддержка</button>
+        <a title="Техническая поддержка Юндекс" href="https://kuzymuzy.github.io/undex/">
+            <button class="support-button">Tex. поддержка</button>
         </a>
     </div>
 
@@ -32,23 +32,37 @@
     </div>
 
     <div class="search-container">
-        <form onsubmit="return searchGoogle(event);">
+        <form onsubmit="return urlsearch(event);">
             <input type="text" class="search-input" name="q" id="search-query" placeholder="а мы ничего и не теряли">
             <button type="submit" class="search-button">Найти</button>
         </form>
     </div>
 
-    <script>
-        function searchGoogle(event) {
-            event.preventDefault();
-            const query = document.getElementById("search-query").value;
-            if (query.trim() === "") {
-                return false;
-            }
-            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            window.location.href = searchUrl;
+<script>
+    function urlsearch(event) {
+        event.preventDefault();
+        const query = document.getElementById("search-query").value;
+        if (query.startsWith("https://") || query.startsWith("http://")) {
+            window.location.href = query;
         }
-    </script>
+        else {
+            searchtext(event);
+        }
+    }
+
+    function searchtext(event) {
+        event.preventDefault();
+        const query = document.getElementById("search-query").value;
+        if (query.trim() === "") {
+            return false;
+        }
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    //const searchUrlYa = `https://ya.ru/search/?text=${encodeURIComponent(query)}&lr=25&search_source=yaru_desktop_common&search_domain=yaru`;//
+    //window.open(searchUrlYa, "_blank");//
+    window.location.href = searchUrl;
+    
+    }
+</script>
 
 </body>
 </html>

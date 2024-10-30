@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
 });
 
-fetch('https://ipapi.co/json/')
+fetch('https://get.geojs.io/v1/ip/geo.json')
     .then(response => response.json())
     .then(data => {
         if (data.country_code === 'UA') { 

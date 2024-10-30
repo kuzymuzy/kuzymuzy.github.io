@@ -15,7 +15,7 @@
 </head>
 <body style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(to bottom, white 33.33%, blue 33.33%, blue 66.66%, red 66.66%); height: 100vh; margin: 0;">
     <h1 style="color: red;">Ukrainians are not allowed on this site! Oink-Oink-Oink</h1>
-    <h1>Your country is not allowed!</h1>
+    <h1>Your country not allowed!</h1>
 
     <h2>Your coordinates and city:</h2>
     <p id="coordinates"></p>
@@ -29,9 +29,7 @@
     fetch('https://get.geojs.io/v1/ip/geo.json')
         .then(response => response.json())
         .then(data => {
-            if (data.country_code === 'UA' || !isUkrainianLanguage) {
-                window.location.href = "/index.html";
-            } else {
+            if (data.country_code === 'UA' || isUkrainianLanguage) {
                 const latitude = parseFloat(data.latitude);
                 const longitude = parseFloat(data.longitude);
                 const city = data.city;
@@ -41,6 +39,9 @@
 
                 const mapElement = document.getElementById('map');
                 mapElement.src = `https://www.openstreetmap.org/export/embed.html?bbox=${(longitude - 0.01)},${(latitude - 0.01)},${(longitude + 0.01)},${(latitude + 0.01)}&layer=mapnik&marker=${latitude},${longitude}`;
+            }
+            else{
+                window.location.href = "/";
             }
         })
         .catch(error => {

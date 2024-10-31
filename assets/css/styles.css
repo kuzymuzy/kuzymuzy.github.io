@@ -237,7 +237,7 @@ p {
 }
 
 input:checked + .slider {
-    background: linear-gradient(to bottom left, #1488CC, #2B32B2);
+    background: linear-gradient(to right, #4776E6, #8E54E9);
 }
 
 input:checked + .slider:before {
@@ -297,46 +297,6 @@ a {
         display: none;
     }
 
-    .nav-toggle-icon {
-        width: 25px;
-        height: 2px;
-        background-color: #333;
-        display: block;
-        position: relative;
-        transition: background-color 0.3s;
-    }
-
-    .nav-toggle-icon::before,
-    .nav-toggle-icon::after {
-        content: '';
-        width: 25px;
-        height: 2px;
-        background-color: #333;
-        display: block;
-        position: absolute;
-        transition: transform 0.3s;
-    }
-
-    .nav-toggle-icon::before {
-        transform: translateY(-8px);
-    }
-
-    .nav-toggle-icon::after {
-        transform: translateY(8px);
-    }
-
-    .nav-toggle.open .nav-toggle-icon {
-        background-color: transparent;
-    }
-
-    .nav-toggle.open .nav-toggle-icon::before {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-
-    .nav-toggle.open .nav-toggle-icon::after {
-        transform: rotate(-45deg) translate(5px, -5px);
-    }
-
     .nav-menu {
         display: none;
         flex-direction: column;
@@ -387,10 +347,47 @@ a {
         padding: 60px 20px 50px;
     }
 
-    .dark-theme .nav-toggle-icon,
-    .dark-theme .nav-toggle-icon::before,
-    .dark-theme .nav-toggle-icon::after {
-        background-color: #ffffff;
+    .nav-toggle-icon {
+        width: 25px;
+        height: 2px;
+        background: linear-gradient(to right, #4776E6, #8E54E9);
+        display: block;
+        position: relative;
+        border-radius: 2px;
+        transition: background-color 0.3s, transform 0.3s;
     }
-}
-
+    
+    .nav-toggle.open .nav-toggle-icon {
+        background: transparent;
+    }
+    
+    .nav-toggle-icon::before,
+    .nav-toggle-icon::after {
+        content: '';
+        width: 25px;
+        height: 2px;
+        background: linear-gradient(to right, #4776E6, #8E54E9);
+        position: absolute;
+        left: 0;
+        border-radius: 2px;
+        transition: transform 0.3s;
+    }
+    
+    .nav-toggle-icon::before {
+        top: -8px;
+    }
+    
+    .nav-toggle-icon::after {
+        top: 8px;
+    }
+    
+    .nav-toggle.open .nav-toggle-icon::before {
+        transform: rotate(45deg) translate(0, 0);
+        top: 0;
+    }
+    
+    .nav-toggle.open .nav-toggle-icon::after {
+        transform: rotate(-45deg) translate(0, 0);
+        top: 0;
+    }
+}    

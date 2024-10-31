@@ -63,8 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
             themeIcon.textContent = '🌑';
         }
     } else {
-        document.body.classList.add('light-theme');
-        themeIcon.textContent = '🌑';
+        document.body.classList.add('dark-theme');
+        themeIcon.textContent = '🌕';
+        themeToggle.checked = true;
     }
 
     themeToggle.addEventListener('change', function() {

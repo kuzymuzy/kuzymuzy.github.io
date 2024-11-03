@@ -183,7 +183,7 @@ p {
 }
 
 input:checked + .slider {
-    background: linear-gradient(to bottom left, #1488CC, #2B32B2);
+    background: linear-gradient(to right, #4776E6, #8E54E9);
 }
 
 input:checked + .slider:before {

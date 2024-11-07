@@ -38,20 +38,24 @@
         <h1>Генератор ответов на тест</h1>
         <div class="input-group">
             <label for="letter-count">Количество ответов:</label>
-            <input type="number" id="letter-count" placeholder="Количество ответов" min="1" max="1000">
+            <input type="number" value="10" id="letter-count" placeholder="Количество ответов" min="1" max="1000">
         </div>
         <div class="input-group">
             <label for="range-start">Минимальная буква:</label>
-            <input type="text" placeholder="Минимальная буква" id="range-start">
+            <input type="text" value="А" placeholder="Минимальная буква" id="range-start">
         </div>
         <div class="input-group">
             <label for="range-end">Максимальная Буква:</label>
-            <input type="text" placeholder="Максимальная буква" id="range-end">
+            <input type="text" value="Г" placeholder="Максимальная буква" id="range-end">
         </div>
         <button id="generate-btn">Сгенерировать</button>
-        <h2>Ответы:</h2>
+        <h2 id="answers">Ответы:</h2>
         <div id="result"></div>
     </div>
+
+    <script>
+        document.getElementById('answers').style.display = "none";
+    </script>
 
     <script>
         document.getElementById('generate-btn').addEventListener('click', function() {
@@ -93,14 +97,15 @@
                 }
             }
 
-            document.getElementById('result').textContent = result.trim();
+            document.getElementById('result').textContent = result.trim()
+            document.getElementById('answers').style.display = "block";
         });
     </script>
 
     <footer class="footer-bar">
         <img class="bankimg" src="favicon.ico" width="40"><br><br>
         <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
-        <a href="adminlogin.html">Пароль от адмники: 1234admin1234</a>
+        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
     </footer>
 
 <script src="/assets/scripts/random.js"></script>

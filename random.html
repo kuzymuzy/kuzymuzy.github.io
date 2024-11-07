@@ -40,21 +40,21 @@
         <form id="random-form" class="form-container">
             <div class="input-group">
                 <label for="min">Минимальное значение:</label>
-                <input type="number" id="min" required>
+                <input type="number" value="1" id="min" required>
             </div>
             <div class="input-group">
                 <label for="max">Максимальное значение:</label>
-                <input type="number" id="max" required>
+                <input type="number" value="100" id="max" required>
             </div>
             <button type="submit" class="btn">Сгенерировать</button>
         </form>
         <p id="result" class="result-text"></p>
     </main>
 
-    <footer class="footer-bar">
+    <footer style="position:fixed;" class="footer-bar">
         <img class="bankimg" src="favicon.ico" width="40"><br><br>
         <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
-        <a href="adminlogin.html">Пароль от адмники: 1234admin1234</a>
+        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
     </footer>
 
 <script src="/assets/scripts/random.js"></script>

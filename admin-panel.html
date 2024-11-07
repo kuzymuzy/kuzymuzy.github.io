@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin panel</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        .btn-primary {
+            background-color: #1a73e8;
+            border-color: #1a73e8;
+        }
+        .btn-primary:hover {
+            background-color: #0f5bbd;
+            border-color: #0f5bbd;
+        }
+    </style>
+</head>
+<body>
+    <header class="nav-bar">
+        <nav>
+            <ul>
+                <li><a href="/index.html"><img src="favicon.ico" class="logo"></a></li>
+                <li><a href="https://google.com">Удалить все нахер</a></li>
+                <li><a href="https://сбой.рф">Удалить все нахер</a></li>
+                <li><a href="https://www.google.com/search?q=%D0%B8%D0%B4%D0%B8+%D0%BD%D0%B0+%D1%85%D1%83%D0%B9&sca_esv=5a6954a2c5c97320&sca_upv=1&sxsrf=ADLYWILBHki9LD6oKObRjxsOXHZEx4L2vg%3A1724673228546&source=hp&ei=zGzMZqzoHsC0wPAPnKC-oQ0&iflsig=AL9hbdgAAAAAZsx63FDpS_qcvBuAiZk7MO0p65RF9RTV&ved=0ahUKEwis_o25zJKIAxVAGhAIHRyQL9QQ4dUDCBY&uact=5&oq=%D0%B8%D0%B4%D0%B8+%D0%BD%D0%B0+%D1%85%D1%83%D0%B9&gs_lp=Egdnd3Mtd2l6IhLQuNC00Lgg0L3QsCDRhdGD0LlItBNQAFi9EXABeACQAQCYAUCgAccEqgECMTG4AQPIAQD4AQGYAgmgAssDqAIKwgIEECMYJ8ICChAjGIAEGCcYigXCAhEQLhiABBixAxjRAxiDARjHAcICCxAAGIAEGLEDGIMBwgIIEAAYgAQYsQPCAgcQIxgnGOoCwgIFEAAYgATCAgUQLhiABMICCxAuGIAEGLEDGIMBwgIOEAAYgAQYsQMYgwEYigXCAggQLhiABBixA8ICDhAuGIAEGLEDGIMBGIoFwgILEC4YgAQYsQMY1ALCAgsQLhiABBixAxiKBcICCBAuGIAEGNQCmAMFkgcBOaAH6l8&sclient=gws-wiz">Удалить все нахер</a></li>
+                <button onclick="logout()" class="btn btn-primary w-30">Выйти</button>
+                <li class="theme-container">
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <script>
+        function logout() {
+            localStorage.clear()
+            window.location.href = 'admin.html'
+        }
+
+        const remember = localStorage.getItem("remember");
+        const authtoken = localStorage.getItem("authtoken");
+    
+        if (authtoken === "$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.") {
+            if (remember === "0") {
+                localStorage.removeItem("authtoken");
+                localStorage.removeItem("remember");
+            } else {
+                console.log("Session saved!");
+                localStorage.removeItem("remember");
+            }
+        } else {
+            window.location.href = 'admin.html';
+        }
+    </script>
+    
+
+    <script src="/assets/scripts/scripts.js"></script>
+    <script src="/assets/scripts/ukraine.js"></script>
+</body>
+</html>

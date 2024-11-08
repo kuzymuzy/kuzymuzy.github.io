@@ -31,6 +31,7 @@
                 <li><a title="Мое творчество" href="#creativity" class="nav-link">Мое творчество</a></li>
                 <li><a title="Доп.Функции" href="#features" class="nav-link">Доп.Функции</a></li>
                 <li><a title="Контакты" href="#contact" class="nav-link">Контакты</a></li>
+                <li style="display: none;" id="devnav"><a title="Developer" href="#dev" class="nav-link">Developer</a></li>
                 <li><a title="Как?! Как я могу быть нищем?!" href="#buymeacoffe" class="nav-link">Купить мне кофе</a></li>
                 <li class="theme-container">
                     <span title="Это то какая у тебя темя будет)" class="theme-icon" id="theme-icon">🌑</span>
@@ -86,6 +87,13 @@
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
             </iframe>
         </div>
+    </section>
+
+    <section style="display: none;" id="dev" class="section">
+        <p>Developer section</p>
+        <a href="/ua">Страница для украинцев</a><br><br>
+        <button class="devbutton" onclick="authtoken()">Админка</button><br><br>
+        <button class="devbutton" onclick="localclear()">Очистить localStorage</button>
     </section>
 
     <footer class="footer-bar">

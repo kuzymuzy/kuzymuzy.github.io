@@ -102,3 +102,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+const dev = Number(localStorage.getItem("dev"))
+if (dev === 1) {
+    document.getElementById("dev").style.display = "block";
+    document.getElementById("devnav").style.display = "block";
+}
+else {
+    console.log("You are not a developer")
+}
+
+function authtoken() {
+    localStorage.setItem('authtoken', '$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.');
+    window.location.href = '/admin-panel.html'
+}
+
+function localclear() {
+    localStorage.clear()
+    console.log("localStorage clean was success")
+    location.reload();
+}

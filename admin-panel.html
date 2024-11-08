@@ -19,6 +19,12 @@
             background-color: #0f5bbd;
             border-color: #0f5bbd;
         }
+        .pass{
+            cursor: pointer;
+        }
+        .pass:hover{
+            color:#1a73e8;
+        }
     </style>
 </head>
 <body>
@@ -26,17 +32,33 @@
         <nav>
             <ul>
                 <li><a href="/index.html"><img src="favicon.ico" class="logo"></a></li>
-                <li><a href="https://google.com">Удалить все нахер</a></li>
-                <li><a href="https://сбой.рф">Удалить все нахер</a></li>
-                <li><a href="https://www.google.com/search?q=%D0%B8%D0%B4%D0%B8+%D0%BD%D0%B0+%D1%85%D1%83%D0%B9&sca_esv=5a6954a2c5c97320&sca_upv=1&sxsrf=ADLYWILBHki9LD6oKObRjxsOXHZEx4L2vg%3A1724673228546&source=hp&ei=zGzMZqzoHsC0wPAPnKC-oQ0&iflsig=AL9hbdgAAAAAZsx63FDpS_qcvBuAiZk7MO0p65RF9RTV&ved=0ahUKEwis_o25zJKIAxVAGhAIHRyQL9QQ4dUDCBY&uact=5&oq=%D0%B8%D0%B4%D0%B8+%D0%BD%D0%B0+%D1%85%D1%83%D0%B9&gs_lp=Egdnd3Mtd2l6IhLQuNC00Lgg0L3QsCDRhdGD0LlItBNQAFi9EXABeACQAQCYAUCgAccEqgECMTG4AQPIAQD4AQGYAgmgAssDqAIKwgIEECMYJ8ICChAjGIAEGCcYigXCAhEQLhiABBixAxjRAxiDARjHAcICCxAAGIAEGLEDGIMBwgIIEAAYgAQYsQPCAgcQIxgnGOoCwgIFEAAYgATCAgUQLhiABMICCxAuGIAEGLEDGIMBwgIOEAAYgAQYsQMYgwEYigXCAggQLhiABBixA8ICDhAuGIAEGLEDGIMBGIoFwgILEC4YgAQYsQMY1ALCAgsQLhiABBixAxiKBcICCBAuGIAEGNQCmAMFkgcBOaAH6l8&sclient=gws-wiz">Удалить все нахер</a></li>
+                <li><a class="pass" onclick="passchange()">Изменить пароль</a></li>
+                <li><a class="pass" onclick="erroraler()">Удалить все нахер</a></li>
+                <li><a href="/assets/mem.html">Очень смешной мем</a></li>
                 <button onclick="logout()" class="btn btn-primary w-30">Выйти</button>
                 <li class="theme-container">
                 </li>
             </ul>
         </nav>
     </header>
+
+    <section>
+        <p>Молодец, ты типо взломал админку, могу предложить тебе выбрать одну из функций</p>
+    </section>
     
     <script>
+        function erroraler() {
+            alert("Произошла ошибка (соси)!")
+        }
+
+        function passchange() {
+            const oldpass = prompt("Старый пароль")
+            if (oldpass === "1234admin1234") {
+                prompt("Новый пароль: ")
+                alert("Пароль изменен! Честно честно")
+            }
+        }
+
         function logout() {
             localStorage.clear()
             window.location.href = 'admin.html'

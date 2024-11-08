@@ -35,6 +35,7 @@
                 <li><a class="pass" onclick="passchange()">Изменить пароль</a></li>
                 <li><a class="pass" onclick="erroraler()">Удалить все нахер</a></li>
                 <li><a href="/assets/mem.html">Очень смешной мем</a></li>
+                <li><a class="pass" onclick="setdev()">Получить категорию "dev"</a></li>
                 <button onclick="logout()" class="btn btn-primary w-30">Выйти</button>
                 <li class="theme-container">
                 </li>
@@ -47,6 +48,12 @@
     </section>
     
     <script>
+        function setdev(){
+            localStorage.setItem("dev", 1)
+            const dev = localStorage.getItem("dev")
+            alert("Параметр {dev} установлен на " + dev)
+        }
+
         function erroraler() {
             alert("Произошла ошибка (соси)!")
         }

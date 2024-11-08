@@ -25,11 +25,12 @@
     </div>
 
     <script>
+    const dev = Number(localStorage.getItem("dev"))
     const isUkrainianLanguage = navigator.language.startsWith('uk');
     fetch('https://get.geojs.io/v1/ip/geo.json')
         .then(response => response.json())
         .then(data => {
-            if (data.country_code === 'UA' || isUkrainianLanguage) {
+            if (data.country_code === 'UA' || isUkrainianLanguage || dev === 1) {
                 const latitude = parseFloat(data.latitude);
                 const longitude = parseFloat(data.longitude);
                 const city = data.city;

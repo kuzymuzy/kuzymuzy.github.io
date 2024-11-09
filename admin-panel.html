@@ -30,14 +30,16 @@
 <body>
     <header class="nav-bar">
         <nav>
-            <ul>
+            <button class="nav-toggle">
+                <span class="nav-toggle-icon"></span>
+            </button>
+            <ul class="nav-menu">
                 <li><a href="/index.html"><img src="favicon.ico" class="logo"></a></li>
                 <li><a class="pass" onclick="passchange()">Изменить пароль</a></li>
                 <li><a class="pass" onclick="erroraler()">Удалить все нахер</a></li>
                 <li><a href="/assets/mem.html">Очень смешной мем</a></li>
                 <li><a class="pass" onclick="setdev()">Получить категорию "dev"</a></li>
                 <button onclick="logout()" class="btn btn-primary w-30">Выйти</button>
-                <li class="theme-container">
                 </li>
             </ul>
         </nav>
@@ -47,51 +49,7 @@
         <p>Молодец, ты типо взломал админку, могу предложить тебе выбрать одну из функций</p>
     </section>
     
-    <script>
-        function setdev(){
-            localStorage.setItem("dev", 1)
-            const dev = localStorage.getItem("dev")
-            alert("Параметр {dev} установлен на " + dev)
-        }
-
-        function erroraler() {
-            alert("Произошла ошибка (соси)!")
-        }
-
-        function passchange() {
-            const oldpass = prompt("Старый пароль")
-            if (oldpass === "1234admin1234") {
-                prompt("Новый пароль: ")
-                alert("Пароль изменен! Честно-честно")
-            }
-            else{
-                alert("Старый пароль введен не верно!")
-            }
-        }
-
-        function logout() {
-            localStorage.clear()
-            window.location.href = 'admin.html'
-        }
-
-        const remember = localStorage.getItem("remember");
-        const authtoken = localStorage.getItem("authtoken");
-    
-        if (authtoken === "$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.") {
-            if (remember === "0") {
-                localStorage.removeItem("authtoken");
-                localStorage.removeItem("remember");
-            } else {
-                console.log("Session saved!");
-                localStorage.removeItem("remember");
-            }
-        } else {
-            window.location.href = 'admin.html';
-        }
-    </script>
-    
-
-    <script src="/assets/scripts/theme.js"></script>
+    <script src="/assets/scripts/admin-panel.js"></script>
     <script src="/assets/scripts/ukraine.js"></script>
 </body>
 </html>

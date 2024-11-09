@@ -25,6 +25,17 @@
         .pass:hover{
             color:#1a73e8;
         }
+        .mobilehello{
+            display: none;
+        }
+        @media (max-width: 600px){
+            .pchello{
+                display: none;
+            }
+            .mobilehello{
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -46,7 +57,8 @@
     </header>
 
     <section>
-        <p>Молодец, ты типо взломал админку, могу предложить тебе выбрать одну из функций</p>
+        <p class="pchello">Молодец, ты типо взломал админку, могу предложить тебе выбрать одну из функций</p>
+        <p class="mobilehello">Молодец, ты типо взломал админку, могу предложить тебе выбрать одну из функций в меню выше</p>
     </section>
     
     <script src="/assets/scripts/admin-panel.js"></script>

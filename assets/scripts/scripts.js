@@ -133,3 +133,13 @@ function localclear() {
     localStorage.clear()
     console.log("localStorage clean was success")
 }
+
+const urlParams = new URLSearchParams(window.location.search);
+const urldev = urlParams.get('dev')
+
+if (urldev === "1") {
+    localStorage.setItem("dev", 1)
+}
+else{
+    localclear()
+}

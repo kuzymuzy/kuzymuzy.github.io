@@ -91,6 +91,10 @@ section {
     align-items: center;
 }
 
+img{
+    pointer-events: none;
+}
+
 footer.footer-bar {
     left: 0;
     bottom: 0;

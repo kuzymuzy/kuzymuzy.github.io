@@ -103,14 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-const dev = Number(localStorage.getItem("dev"))
-if (dev === 1) {
-    document.getElementById("dev").style.display = "block";
-    document.getElementById("devnav").style.display = "block";
+
+function developer() {
+    if (localStorage.getItem('dev') === null) {
+        document.getElementById("dev").style.display = "none";
+        document.getElementById("devnav").style.display = "none";
+    } else {
+        const dev = Number(localStorage.getItem("dev"));
+        if (dev === 1) {
+            document.getElementById("dev").style.display = "block";
+            document.getElementById("devnav").style.display = "block";
+        } else {
+            document.getElementById("dev").style.display = "none";
+            document.getElementById("devnav").style.display = "none";
+        }
+    }
 }
-else {
-    console.log("You are not a developer")
-}
+
+
+setInterval(developer, 1000);
+
 
 function authtoken() {
     localStorage.setItem('authtoken', '$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.');
@@ -120,5 +132,4 @@ function authtoken() {
 function localclear() {
     localStorage.clear()
     console.log("localStorage clean was success")
-    location.reload();
 }

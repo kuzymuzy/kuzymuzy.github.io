@@ -7,6 +7,7 @@ const jump = new Audio('/dino/assets/jump.wav');
 const gameoversound = new Audio('/dino/assets/gameover.wav');
 let pointsrightnow = 0;
 let collisionCheck;
+let pointsup;
 
 window.onload = function() {
     play.style.display = "block";
@@ -69,11 +70,10 @@ function delay(ms) {
 
 function pointsevent(){
     pointsup = setInterval(() => {
-        if (gameover.style.display === "block"){
-            pointdown()
-        }
-        else{
-            pointup()
+        if (gameover.style.display === "block") {
+            clearInterval(pointsup); 
+        } else {
+            pointup(); 
         }
     }, 100);
 }

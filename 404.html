@@ -68,6 +68,7 @@
         <p>Ой! Страница не найдена.</p>
         <p>Похоже, вы перешли по неправильной ссылке или страница была удалена.</p>
         <p><a href="index.html">Вернуться на главную</a></p>
+        <p><a href="/dino">Сыграть в динозаврика</a></p>
     </div>
     
     <script>
@@ -75,6 +76,12 @@
             const currentTheme = localStorage.getItem('theme') || 'dark-theme';
             document.body.classList.add(currentTheme);
         });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const urldev = urlParams.get('dino')
+        if (urldev === "1") {
+            window.location.href = '/dino'
+        }
     </script>
     <script src="/assets/scripts/ukraine.js"></script>
 </body>

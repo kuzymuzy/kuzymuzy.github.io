@@ -45,13 +45,13 @@ setInterval(() =>{
 function showpassword() {
     const password = document.getElementById('password');
     const buttonshow = document.getElementById("showpass");
-    if (buttonshow.textContent === "👁️"){
+    if (buttonshow.textContent === "🙉"){
         password.type = "text"
         buttonshow.textContent = "🙈"
     }
     else {
         password.type = "password"
-        buttonshow.textContent = "👁️"
+        buttonshow.textContent = "🙉"
     }
     
 }

@@ -30,17 +30,18 @@ fetch('/assets/db.json')
     })
 });
 
-setInterval(() =>{
-    fetch('/assets/db.json')
-    .then(response => response.json())
-    .then(data => {
+
+fetch('/assets/db.json')
+.then(response => response.json())
+.then(data => {
+    setInterval(() =>{
         const auth_token = data.auth_token;
         const token = localStorage.getItem("authtoken");
         if (token === auth_token) {
             window.location.replace('/admin-panel.html');
         }
     })
-}, 1)
+    }, 1)
 
 function showpassword() {
     const password = document.getElementById('password');

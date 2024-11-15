@@ -40,7 +40,7 @@ setInterval(() =>{
             window.location.replace('/admin-panel.html');
         }
     })
-}, 1000)
+}, 1)
 
 function showpassword() {
     const password = document.getElementById('password');

@@ -23,6 +23,31 @@
             background-color: #0f5bbd;
             border-color: #0f5bbd;
         }
+        
+        .input-group {
+            position: relative;
+        }
+
+        #password {
+            border-radius: 5px;
+            padding-right: 40px;
+        }
+
+        #showpass {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .input-group input:focus + #showpass {
+            visibility: visible; 
+        }
     </style>
 </head>
 <body>
@@ -38,7 +63,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                            <button id="showpass" onclick="showpassword()" type="button">👁️</button>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <input type="checkbox" id="rememberme" name="rememberme" checked/>

@@ -38,33 +38,56 @@ function erroraler() {
 }
 
 function passchange() {
-    const oldpass = prompt("Старый пароль")
-    if (oldpass === "1234admin1234") {
-        prompt("Новый пароль: ")
-        alert("Пароль изменен! Честно-честно")
+    fetch('/assets/db.json')
+    .then(response => response.json())
+    .then(data => {
+        const password = data.password;
+        let oldpass = prompt("Старый пароль")
+        if (oldpass === password) {
+            prompt("Новый пароль: ")
+            alert("Пароль изменен! Честно-честно")
+        }
+        else {
+            alert("Старый пароль введен не верно!")
+        }
     }
-    else{
-        alert("Старый пароль введен не верно!")
-    }
-}
+)}
 
 function logout() {
     localStorage.removeItem("authtoken");
     localStorage.removeItem("remember");
-    window.location.href = 'admin.html'
+    window.location.replace('/admin.html')
 }
 
 const remember = localStorage.getItem("remember");
 const authtoken = localStorage.getItem("authtoken");
 
-if (authtoken === "$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.") {
-    if (remember === "0") {
-        localStorage.removeItem("authtoken");
-        localStorage.removeItem("remember");
+fetch('/assets/db.json')
+.then(response => response.json())
+.then(data => {
+    const auth_token = data.auth_token;
+    if (authtoken === auth_token) {
+        if (remember === "0") {
+            localStorage.removeItem("authtoken");
+            localStorage.removeItem("remember");
+        } else {
+            localStorage.removeItem("remember");
+        }
     } else {
-        console.log("Session saved!");
-        localStorage.removeItem("remember");
+        window.location.replace('/admin.html');
     }
-} else {
-    window.location.href = 'admin.html';
-}
+})
+
+setInterval(() =>{
+    fetch('/assets/db.json')
+    .then(response => response.json())
+    .then(data => {
+        const auth_token = data.auth_token;
+        const token = localStorage.getItem("authtoken");
+        if (token !== auth_token) {
+            window.location.replace('/admin.html');
+
+        }
+    })
+}, 1000)
+

@@ -1,4 +1,5 @@
 {
     "user":"admin",
-    "password":"1234admin1234"
+    "password":"1234admin1234",
+    "auth_token": "2a615a2e-ccd9-48ab-90e6-0f631fe4e91a"
 }

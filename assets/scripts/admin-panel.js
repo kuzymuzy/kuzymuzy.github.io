@@ -81,13 +81,10 @@ fetch('/assets/db.json')
 fetch('/assets/db.json')
 .then(response => response.json())
 .then(data => {
-    setInterval(() => {
-        const auth_token = data.auth_token;
-        const token = localStorage.getItem("authtoken");
-        if (token !== auth_token) {
-            window.location.replace('/admin.html');
-
-        }
-    })
-}, 1000)
+    const auth_token = data.auth_token;
+    const token = localStorage.getItem("authtoken");
+    if (token !== auth_token) {
+        window.location.replace('/admin.html');
+    }
+})
 

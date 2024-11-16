@@ -41,7 +41,7 @@ fetch('/assets/db.json')
             window.location.replace('/admin-panel.html');
         }
     })
-    }, 1)
+    }, 100)
 
 function showpassword() {
     const password = document.getElementById('password');

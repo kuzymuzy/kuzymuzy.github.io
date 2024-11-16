@@ -89,5 +89,5 @@ fetch('/assets/db.json')
 
         }
     })
-}, 1)
+}, 100)
 

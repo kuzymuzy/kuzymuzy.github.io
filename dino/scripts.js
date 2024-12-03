@@ -52,12 +52,31 @@ async function gamestart() {
 
 function sound_off() {
     if (localStorage.getItem("sound") === "1"){
-        localStorage.setItem("sound", 0)
-        window.location.reload()
+        if (points.textContent === "0"){
+            localStorage.setItem("sound", 0)
+            window.location.reload()
+        }
+        else{
+            const accept = confirm("If you change the sound volume, the page will reload and progress will be deleted!")
+            if (accept === true) {
+                localStorage.setItem("sound", 0)
+                window.location.reload()
+            }
+        }
     }
     else{
+        if (points.textContent === "0"){
+            localStorage.setItem("sound", 1)
+            window.location.reload()
+        }
+        else{
+            const accept = confirm("If you change the sound volume, the page will reload and progress will be deleted!")
+            if (accept === true) {
+                localStorage.setItem("sound", 1)
+                window.location.reload()
+            }
+        }
         localStorage.setItem("sound", 1)
-        window.location.reload()
     } 
 }
 

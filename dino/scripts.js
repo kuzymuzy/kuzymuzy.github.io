@@ -3,6 +3,8 @@ const play = document.getElementById("play");
 const cactus = document.getElementById("cactus");
 const gameover = document.getElementById("gameover");
 const points = document.getElementById("points");
+const sound = localStorage.getItem("sound");
+const soundbutton = document.getElementById("sound");
 const jump = new Audio('/dino/assets/jump.wav');
 const gameoversound = new Audio('/dino/assets/gameover.wav');
 let pointsrightnow = 0;
@@ -11,6 +13,13 @@ let pointsup;
 
 window.onload = function() {
     play.style.display = "block";
+}
+
+if (sound === "0") {
+    soundbutton.textContent = "🔇"
+}
+else {
+    soundbutton.textContent = "🔈"
 }
 
 async function gamestart() {
@@ -41,9 +50,32 @@ async function gamestart() {
     }, 1);
 }
 
+function sound_off() {
+    if (localStorage.getItem("sound") === "1"){
+        localStorage.setItem("sound", 0)
+        window.location.reload()
+    }
+    else{
+        localStorage.setItem("sound", 1)
+        window.location.reload()
+    } 
+}
+
 function dinojumpsoud() {
-    if (dino.style.display === "block"){
+    if (dino.style.display === "block" && sound === "1"){
         jump.play()
+    }
+    else {
+        return 0;
+    }
+}
+
+function gameoversoundf() {
+    if(sound === "1"){
+        gameoversound.play()
+    }
+    else {
+        return 0;
     }
 }
 
@@ -51,7 +83,7 @@ function gameOver() {
     gameover.style.display = "block";
     cactus.style.display = "none";
     dino.style.display = "none";
-    gameoversound.play()
+    gameoversoundf()
     clearInterval(collisionCheck);
 }
 

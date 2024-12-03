@@ -19,6 +19,17 @@ body {
     height: 100vh;
 }
 
+.sound{
+    z-index: 10000;
+    right: 90%;
+    top: 40px;
+    position: absolute;
+    font-size: 30px;
+    border-radius: 100px;
+    background-color: white;
+    border-color: transparent;
+}
+
 .dino {
     font-size: 8vmin;
     position: absolute;

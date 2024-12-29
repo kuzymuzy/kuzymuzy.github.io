@@ -61,6 +61,15 @@
             font-size: 1rem;
             font-weight: 500;
         }
+        #link-container-appstore a{
+            text-decoration: none;
+            color: white;
+            background-color: #007aff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
         #link-container a {
             text-decoration: none;
             color: white;
@@ -71,6 +80,9 @@
             transition: background-color 0.3s;
         }
         #link-container a:hover {
+            background-color: #0056d6;
+        }
+        #link-container-appstore a:hover{
             background-color: #0056d6;
         }
         .icon {
@@ -93,6 +105,7 @@
         <select id="os-select">
             <option value="">-- Select OS --</option>
             <option value="macos">macOS</option>
+            <option value="macos_appstore">macOS (AppStore links)</option>
             <option value="windows">Windows</option>
             <option value="linux">Linux</option>
         </select>
@@ -115,6 +128,9 @@
         <div id="link-container" style="display: none;">
             <a id="download-link" href="#" target="_blank">Download</a>
         </div>
+        <div id="link-container-appstore" style="display: none;">
+            <a id="download-link-appstore" href="#">Download</a>
+        </div>
     </div>
 
     <script>
@@ -129,7 +145,9 @@
         const subversionContainer = document.getElementById('subversion-container');
         const subversionSelect = document.getElementById('subversion-select');
         const linkContainer = document.getElementById('link-container');
+        const linkContainerAppStore = document.getElementById('link-container-appstore');
         const downloadLink = document.getElementById('download-link');
+        const downloadLinkAppStore = document.getElementById('download-link-appstore');
     
         let osData = {};
 
@@ -138,7 +156,6 @@
             .then(data => {
                 osData = data;
             })
-            .catch(error => console.error('Error loading data:', error));
     
         osSelect.addEventListener('change', () => {
             resetContainers();
@@ -149,8 +166,25 @@
                 versionSelect.addEventListener('change', () => {
                     const selectedVersion = versionSelect.value;
                     if (selectedVersion) {
+                        architectureContainer.style.display = 'none';
+                        subversionContainer.style.display = 'none';
                         downloadLink.href = osData.macos.links[selectedVersion];
+                        linkContainerAppStore.style.display = 'none';
                         linkContainer.style.display = 'block';
+                    }
+                });
+            }
+            if (selectedOS === "macos_appstore") {
+                populateDropdown(versionSelect, osData.macos_appstore.versions);
+                versionContainer.style.display = 'block';
+                versionSelect.addEventListener('change', () => {
+                    const selectedVersion = versionSelect.value;
+                    if (selectedVersion) {
+                        architectureContainer.style.display = 'none';
+                        subversionContainer.style.display = 'none';
+                        downloadLinkAppStore.href = osData.macos_appstore.links[selectedVersion];
+                        linkContainer.style.display = 'none';
+                        linkContainerAppStore.style.display = 'block';
                     }
                 });
             }
@@ -165,7 +199,9 @@
                         architectureSelect.addEventListener('change', () => {
                             const selectedArch = architectureSelect.value;
                             if (selectedArch) {
+                                subversionContainer.style.display = 'none';
                                 downloadLink.href = osData.linux.links[selectedVersion][selectedArch];
+                                linkContainerAppStore.style.display = 'none';
                                 linkContainer.style.display = 'block';
                             }
                         });
@@ -180,15 +216,20 @@
                         if (selectedVersion) {
                             populateDropdown(architectureSelect, osData.windows.architectures[selectedVersion] || []);
                             architectureContainer.style.display = 'block';
+                            linkContainer.style.display = 'none';
                             architectureSelect.addEventListener('change', () => {
+                                linkContainer.style.display = 'none';
                                 const selectedArch = architectureSelect.value;
                                 if (selectedArch) {
+                                    linkContainer.style.display = 'none';
                                     populateDropdown(subversionSelect, osData.windows.subversions[selectedVersion][selectedArch] || []);
                                     subversionContainer.style.display = 'block';
                                     subversionSelect.addEventListener('change', () => {
+                                        linkContainer.style.display = 'none';
                                         const selectedSubversionIndex = subversionSelect.value;
                                         if (selectedSubversionIndex !== "") {
                                             downloadLink.href = osData.windows.links[selectedVersion][selectedArch][selectedSubversionIndex];
+                                            linkContainerAppStore.style.display = 'none';
                                             linkContainer.style.display = 'block';
                                         } else {
                                             linkContainer.style.display = 'none';

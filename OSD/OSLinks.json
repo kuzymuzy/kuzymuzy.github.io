@@ -1,0 +1,92 @@
+{
+    "macos": {
+        "versions": [
+            "Mavericks",
+            "Yosemite",
+            "El Capitan",
+            "Sierra",
+            "HighSierra",
+            "Mojave",
+            "Catalina",
+            "BigSur",
+            "Monterey",
+            "Ventura",
+            "Sonoma",
+            "Sequoia"
+        ],
+        "links": {
+            "Mavericks": "https://disk.yandex.ru/d/ZzeQfFgT3ZKTzs",
+            "Yosemite": "https://disk.yandex.ru/d/dzJWJsNm3ZKTn8",
+            "El Capitan": "https://disk.yandex.ru/d/A2o8J3f_3ZFscn",
+            "Sierra": "https://disk.yandex.ru/d/XdgxkZ5F3ZKqVD",
+            "HighSierra": "https://dn721006.ca.archive.org/0/items/macOS.High.Sierra.10.13.6/macOS.High.Sierra.10.13.6.dmg",
+            "Mojave": "https://vziq-my.sharepoint.com/personal/7_vziq_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F7%5Fvziq%5Fonmicrosoft%5Fcom%2FDocuments%2FSystem%2FmacOS%20Mojave%2010%2E14%2E6%20%2818G103%29%2Edmg&parent=%2Fpersonal%2F7%5Fvziq%5Fonmicrosoft%5Fcom%2FDocuments%2FSystem&ga=1",
+            "Catalina": "https://disk.yandex.ru/d/6I37Io41UTft6Q",
+            "BigSur": "https://swcdn.apple.com/content/downloads/14/38/042-45246-A_NLFOFLCJFZ/jk992zbv98sdzz3rgc7mrccjl3l22ruk1c/InstallAssistant.pkg",
+            "Monterey": "https://vziq-my.sharepoint.com/personal/7_vziq_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F7%5Fvziq%5Fonmicrosoft%5Fcom%2FDocuments%2FSystem%2FmacOS%20Monterey%2012%2E7%2E5%20%2821H1222%29%2Edmg&parent=%2Fpersonal%2F7%5Fvziq%5Fonmicrosoft%5Fcom%2FDocuments%2FSystem&ga=1",
+            "Ventura": "https://swcdn.apple.com/content/downloads/29/47/072-09024-A_8G5EY3SPX2/l6ecgngkrhhbc6q4mae5cwe42pxp49co7w/InstallAssistant.pkg",
+            "Sonoma": "https://swcdn.apple.com/content/downloads/12/44/072-09041-A_ZYPP05KKXT/jpuuhsha7r52g4p867qvcdfaugaloimbgh/InstallAssistant.pkg",
+            "Sequoia": "https://swcdn.apple.com/content/downloads/52/42/072-44286-A_45NJHEFEDY/nxk2stn9edtjgfr3dqsh046dx4ti2h7w2s/InstallAssistant.pkg"
+        }
+    },
+    "windows": {
+        "versions": ["10", "11"],
+        "architectures": {
+            "10": ["x64", "arm64(Virtual machine only)"],
+            "11": ["x64", "arm64"]
+        },
+        "subversions": {
+            "10": {
+                "x64": ["21H2", "22H2"],
+                "arm64(Virtual machine only)": ["21H2"]
+            },
+            "11": {
+                "x64": ["22H2", "24H2"],
+                "arm64": ["24H2"]
+            }
+        },
+        "links": {
+            "10": {
+                "x64": {
+                    "21H2": "https://disk.yandex.ru/d/OYQ-65u3vKz_7w",
+                    "22H2": "https://cloud.mail.ru/public/uCL8/9WUoB6ZCj"
+                },
+                "arm64(Virtual machine only)": {
+                    "21H2": "https://disk.yandex.ru/d/D_j-PSSyfMaF9A"
+                }
+            },
+            "11": {
+                "x64": {
+                    "22H2": "https://cloud.mail.ru/public/t5Xp/o6aT4ikQN",
+                    "24H2": "https://www.mediafire.com/file/3ul102vxtvck46l/26100.2033.241004-2336.ge_release_svc_refresh_CLIENTCONSUMER_RET_x64FRE_ru-ru.iso/file"
+                },
+                "arm64": {
+                    "24H2": "https://www.mediafire.com/file/umqjifbzn7v0msw/26100.2033.241004-2336.ge_release_svc_refresh_CLIENTCONSUMER_RET_A64FRE_ru-ru.iso/file"
+                }
+            }
+        }
+    },
+    "linux": {
+        "versions": ["Mint", "Ubuntu", "Fedora", "Kali"],
+        "architectures": {
+            "Mint": ["x64"],
+            "Ubuntu": ["x64"],
+            "Fedora": ["x64"],
+            "Kali": ["x64"]
+        },
+        "links": {
+            "Mint": {
+                "x64": "https://mirror.yandex.ru/linuxmint/stable/22/linuxmint-22-cinnamon-64bit.iso"
+            },
+            "Ubuntu": {
+                "x64": "https://mirror.timeweb.ru/ubuntu-releases/24.04.1/ubuntu-24.04.1-desktop-amd64.iso"
+            },
+            "Fedora": {
+                "x64": "https://mirror.yandex.ru/fedora/linux/releases/41/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-41-1.4.iso"
+            },
+            "Kali": {
+                "x64": "https://kali.download/base-images/kali-2024.3/kali-linux-2024.3-installer-amd64.iso"
+            }
+        }
+    }
+}

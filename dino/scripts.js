@@ -56,7 +56,7 @@ function sound_off() {
             localStorage.setItem("sound", 0)
             window.location.reload()
         }
-        else{
+        else {
             const accept = confirm("If you change the sound volume, the page will reload and progress will be deleted!")
             if (accept === true) {
                 localStorage.setItem("sound", 0)

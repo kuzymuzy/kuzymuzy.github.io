@@ -61,16 +61,16 @@ body {
 @keyframes cactus {
     0% {
         left: 90%;
-        transform: translateX(100%); /* Начальная позиция справа */
+        transform: translateX(100%);
         opacity: 1;
     }
     90% {
-        opacity: 1; /* Полная видимость на 90% пути */
+        opacity: 1; 
     }
     100% {
         left: 10%;
-        transform: translateX(-10%); /* Конечная позиция слева */
-        opacity: 0; /* Полностью исчезает */
+        transform: translateX(-10%);
+        opacity: 0;
     }
 }
 

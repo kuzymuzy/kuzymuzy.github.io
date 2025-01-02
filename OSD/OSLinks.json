@@ -1,11 +1,11 @@
 {
     "macos_appstore": {
         "versions": [
-            "Lion",
-            "Mountain Lion",
-            "Yosemite",
-            "El Capitan",
-            "Sierra",
+            "Lion (dmg for apple-cdn)",
+            "Mountain Lion (dmg for apple-cdn)",
+            "Yosemite (dmg for apple-cdn)",
+            "El Capitan (dmg for apple-cdn)",
+            "Sierra (dmg for apple-cdn)",
             "HighSierra",
             "Mojave",
             "Catalina",

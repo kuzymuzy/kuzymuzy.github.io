@@ -186,6 +186,19 @@
             linkContainer.style.display = 'none';
         }
     </script>    
-    <script src="/assets/scripts/share.js"></script>
+    <script>
+        let userAgent = window.navigator.userAgent;
+
+        if (userAgent.includes("AppleWebKit")) {
+            const style = document.createElement('style');
+            style.textContent = `
+                select {
+                    appearance: auto;
+                    -webkit-appearance: none;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    </script>
 </body>
 </html>

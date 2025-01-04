@@ -49,12 +49,6 @@ select, button {
     transition: all 0.3s ease;
 }
 
-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none
-}
-
 select:focus, button:focus {
     outline: none;
     border: 1px solid rgba(255, 255, 255, 0.8);

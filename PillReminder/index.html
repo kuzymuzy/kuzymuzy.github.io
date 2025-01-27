@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image" href="favicon.ico" />
+  <title>Pill Reminder</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#007BFF">
+  <meta name="description" content="Приложение которое поможет не забыть о таблетках">
+  <meta name="keywords" content="Напоминание о таблетках, Напоминание">
+  <meta property="og:title" content="Pill Reminder">
+  <meta property="og:description" content="Приложение которое поможет не забыть о таблетках">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Pill Reminder">
+  <meta property="og:image" content="icon-512x512.png">
+  <meta property="og:locale" content="ru_RU">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+      margin: 10px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    input {
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 16px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .medication-fields {
+      margin-top: 20px;
+    }
+    .medication-input {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Напонинае о приеме лекарств</h1>
+  <p>Введите данные о лекарстве, чтобы получать уведомления.</p><img style="width: 100px;" src="favicon.ico"></img>
+
+  <div class="medication-fields">
+    <div class="medication-input">
+      <label>Лекарство 1:</label>
+      <br>
+      <input class="name" type="text" placeholder="Название лекарства">
+      <br>
+      <input class="interval" type="number" placeholder="Интервал (в секундах)">
+      <br>
+      <input class="times" type="number" placeholder="Количество раз в день">
+    </div>
+  </div>
+
+  <button id="add-btn">+</button>
+  <button id="start-btn">Включить уведомления</button>
+  <button id="stop-btn" disabled>Остановить уведомления</button>
+
+  <script>
+    const startButton = document.getElementById('start-btn');
+    const stopButton = document.getElementById('stop-btn');
+    const addButton = document.getElementById('add-btn');
+    const medicationFields = document.querySelector('.medication-fields');
+    let notificationTimeouts = [];
+    let maxFields = 10;
+
+    addButton.addEventListener('click', () => {
+      const inputFieldsCount = medicationFields.querySelectorAll('.medication-input').length;
+      if (inputFieldsCount < maxFields) {
+        const newMedicationInput = document.createElement('div');
+        newMedicationInput.classList.add('medication-input');
+        const newFieldNumber = inputFieldsCount + 1; // Следующий номер лекарства
+        newMedicationInput.innerHTML = `
+          <label>Лекарство ${newFieldNumber}:</label>
+          <br>
+          <input class="name" type="text" placeholder="Название лекарства">
+          <br>
+          <input class="interval" type="number" placeholder="Интервал (в секундах)">
+          <br>
+          <input class="times" type="number" placeholder="Количество раз в день">
+        `;
+        medicationFields.appendChild(newMedicationInput);
+      } else {
+        alert('Максимум 10 лекарств! Или купите PREMIUM подписку!');
+      }
+    });
+
+    startButton.addEventListener('click', () => {
+      const medications = [];
+      const inputs = document.querySelectorAll('.medication-input');
+
+      inputs.forEach(input => {
+        const name = input.querySelector('.name').value;
+        const interval = parseInt(input.querySelector('.interval').value, 10);
+        const times = parseInt(input.querySelector('.times').value, 10);
+
+        if (!name || isNaN(interval) || interval <= 0 || isNaN(times) || times <= 0) {
+          alert("Пожалуйста, введите корректные данные для всех лекарств!");
+          return;
+        }
+
+        medications.push({ name, interval, times });
+      });
+
+      if (!("Notification" in window)) {
+        alert("Ваш браузер не поддерживает уведомления.");
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        medications.forEach(med => startNotifications(med.name, med.interval, med.times));
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            medications.forEach(med => startNotifications(med.name, med.interval, med.times));
+          } else {
+            alert("Вы отклонили разрешение на отправку уведомлений.");
+          }
+        });
+      }
+    });
+
+    stopButton.addEventListener('click', () => {
+      clearNotifications();
+      toggleButtons(false);
+    });
+
+    function startNotifications(name, interval, times) {
+      const intervalMs = interval * 1000;
+      const dayInMs = 24 * 60 * 60 * 1000;
+      const timeBetweenNotifications = dayInMs / times;
+
+      for (let i = 0; i < times; i++) {
+        const delay = i * timeBetweenNotifications + intervalMs;
+        const timeoutId = setTimeout(() => {
+          new Notification("Пора принять лекарство: " + name);
+        }, delay);
+        notificationTimeouts.push(timeoutId);
+      }
+
+      toggleButtons(true);
+    }
+
+    function clearNotifications() {
+      notificationTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+      notificationTimeouts = [];
+    }
+
+    function toggleButtons(isNotificationsActive) {
+      startButton.disabled = isNotificationsActive;
+      stopButton.disabled = !isNotificationsActive;
+    }
+  </script>
+</body>
+</html>

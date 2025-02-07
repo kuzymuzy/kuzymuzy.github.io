@@ -71,6 +71,8 @@
   <button id="stop-btn" disabled>Остановить уведомления</button>
 
   <script>
+    alert("иди на хуй, оно не работае, та и не для тебя делали")
+    window.location.replace("/")
     const startButton = document.getElementById('start-btn');
     const stopButton = document.getElementById('stop-btn');
     const addButton = document.getElementById('add-btn');
@@ -83,7 +85,7 @@
       if (inputFieldsCount < maxFields) {
         const newMedicationInput = document.createElement('div');
         newMedicationInput.classList.add('medication-input');
-        const newFieldNumber = inputFieldsCount + 1; // Следующий номер лекарства
+        const newFieldNumber = inputFieldsCount + 1;
         newMedicationInput.innerHTML = `
           <label>Лекарство ${newFieldNumber}:</label>
           <br>

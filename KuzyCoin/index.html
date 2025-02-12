@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кликер в Telegram</title>
+    <title>Kuzy Coin</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -78,9 +78,11 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let score = parseInt(localStorage.getItem('score')) || 0;
-        let energy = parseInt(localStorage.getItem('energy')) || 100;
         const maxEnergy = 500;
+        let score = parseInt(localStorage.getItem('score')) || 0;
+        let energy = parseInt(localStorage.getItem('energy')) || 500;
+        let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
+        const energyRecoveryRate = 3; // Время восстановления энергии в секундах
 
         function getClickPower() {
             return score >= 10000 ? 7 : score >= 5000 ? 6 : 5;
@@ -91,6 +93,7 @@
             document.getElementById("energy").textContent = `Энергия: ${energy}/${maxEnergy}`;
             localStorage.setItem('score', score);
             localStorage.setItem('energy', energy);
+            localStorage.setItem('lastUpdateTime', Date.now());
         }
 
         document.getElementById("clickBtn").addEventListener("click", () => {
@@ -103,14 +106,25 @@
             }
         });
 
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy++;
+        function updateEnergy() {
+            const currentTime = Date.now();
+            const timePassed = (currentTime - lastUpdateTime) / 1000; // Время прошло в секундах
+
+            if (timePassed >= energyRecoveryRate) {
+                const energyRecovered = Math.floor(timePassed / energyRecoveryRate);
+                energy = Math.min(energy + energyRecovered, maxEnergy); // Энергия не может быть больше максимума
+                lastUpdateTime = currentTime;
                 updateUI();
             }
-        }, 3000);
+        }
 
-        updateUI(); // Initial UI update to display saved values
+        // Вызываем обновление энергии сразу при открытии страницы
+        updateEnergy();
+
+        // Устанавливаем интервал для обновления энергии (периодически)
+        setInterval(updateEnergy, 1000); // Каждую секунду проверяем обновление энергии
+
+        updateUI(); // Изначально обновляем интерфейс, чтобы отобразить сохраненные значения
     </script>
 </body>
 </html>

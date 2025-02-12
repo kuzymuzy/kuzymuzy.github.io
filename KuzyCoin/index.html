@@ -73,23 +73,25 @@
     
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Обязательно расширяем Web App
+        tg.expand(); // Обязательно расширяем Web App для Telegram
 
+        // Получаем доступ к хранилищу Mini App
         let storage = tg.useWebAppCloudStorage();
         let score = 0;
         let energy = 100;
         const maxEnergy = 100;
 
-        // Функция для получения текущего значения очков и энергии
+        // Функция для загрузки данных (прогресс игры)
         async function loadProgress() {
             try {
                 let storedScore = await storage.getStorageItem("score");
                 let storedEnergy = await storage.getStorageItem("energy");
 
-                if (storedScore && !storedScore.err) {
+                // Обработка значений
+                if (storedScore && storedScore.data) {
                     score = parseInt(storedScore.data) || 0;
                 }
-                if (storedEnergy && !storedEnergy.err) {
+                if (storedEnergy && storedEnergy.data) {
                     energy = parseInt(storedEnergy.data) || 100;
                 }
                 updateUI();
@@ -98,22 +100,23 @@
             }
         }
 
-        // Функция для сохранения прогресса
+        // Функция для сохранения данных
         async function saveProgress() {
             try {
                 await storage.setStorageItem("score", score.toString());
                 await storage.setStorageItem("energy", energy.toString());
+                console.log("Данные сохранены"); // Выводим в консоль для отладки
             } catch (error) {
                 console.error("Ошибка сохранения данных:", error);
             }
         }
 
-        // Функция для определения силы клика
+        // Функция для получения силы клика
         function getClickPower() {
             return score >= 10000 ? 7 : score >= 5000 ? 6 : 5;
         }
 
-        // Функция для обновления UI
+        // Обновление UI
         function updateUI() {
             document.getElementById("score").textContent = "Очки: " + score;
             document.getElementById("energy").textContent = `Энергия: ${energy}/${maxEnergy}`;
@@ -125,7 +128,7 @@
                 energy--;
                 score += getClickPower();
                 updateUI();
-                await saveProgress(); // Сохраняем после каждого клика
+                await saveProgress(); // Сохраняем прогресс
             } else {
                 alert("Энергия закончилась!");
             }
@@ -140,7 +143,7 @@
             }
         }, 3000);
 
-        // Загружаем прогресс при старте приложения
+        // Загружаем прогресс при старте
         loadProgress();
     </script>
 </body>

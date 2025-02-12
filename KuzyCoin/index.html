@@ -151,7 +151,7 @@
 </head>
 <body>
     <h1 id="score">Kuzy Coins: 0</h1>
-    <p id="energy">Энергия: 100/100</p>
+    <p id="energy">Энергия: 500/500</p>
 
     <div id="home" class="tab-content active">
         <button id="clickBtn">
@@ -167,7 +167,7 @@
 
     <div class="tab-bar">
         <button onclick="showTab('home')">
-            <div class="tab-icon">🏠</div>
+            <div class="tab-icon" id="home">🏠</div>
             Главная
         </button>
         <button onclick="showTab('shop')">
@@ -285,6 +285,17 @@
                 energy--;
                 score += clickPower;
                 updateUI();
+            }
+        });
+
+        let clickCount = 0;
+        const element = document.getElementById('score'); // Замените на ваш элемент
+
+        element.addEventListener('click', () => {
+            clickCount++;
+            if (clickCount === 4) {
+                cheat()
+                clickCount = 0; // сбросить счётчик для следующих кликов
             }
         });
     </script>

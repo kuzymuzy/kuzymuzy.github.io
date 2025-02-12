@@ -177,100 +177,113 @@
     </div>
 
     <script>
-let tg = window.Telegram.WebApp;
-tg.expand();
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-let score = parseInt(localStorage.getItem('score')) || 0;
-let energy = parseInt(localStorage.getItem('energy')) || 500;
-let clickPower = parseInt(localStorage.getItem('clickPower')) || 5;
-let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
-let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 500;
-const energyRecoveryRate = 2;
+        // Получаем user_id и username с Telegram Web App
+        let user_id = tg.initDataUnsafe.user.id;
+        let username = tg.initDataUnsafe.user.username;
 
-const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
-let upgradedLevels = JSON.parse(localStorage.getItem('upgradedLevels')) || [];
+        let score = 0;
+        let energy = 500;
+        let clickPower = 5;
+        let maxEnergy = 500;
+        let lastUpdateTime = Date.now();
+        let upgradedLevels = [];
+        let timestamp = Date.now();
 
-upgradeLevels.forEach(level => {
-    if (score >= level && !upgradedLevels.includes(level)) {
-        maxEnergy += 100;
-        clickPower++;
-        upgradedLevels.push(level);
-        updateUI()
-    }
-})
+        // Функция для получения данных пользователя с сервера
+        function getUserData() {
+            fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        // Если пользователь не найден, добавляем его
+                        addUser();
+                    } else {
+                        // Восстанавливаем данные из базы
+                        score = data.score;
+                        energy = data.energy;
+                        clickPower = data.click_power;
+                        maxEnergy = data.max_energy;
+                        upgradedLevels = JSON.parse(data.upgraded_levels);
+                        lastUpdateTime = new Date(data.last_update_time).getTime();
+                        timestamp = data.timestamp;
+                        updateUI();
+                    }
+                });
+        }
 
-localStorage.setItem('maxEnergy', maxEnergy);
-localStorage.setItem('clickPower', clickPower);
-localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
+        // Функция для добавления нового пользователя
+        function addUser() {
+            fetch('https://api.kuzymuzy.ru/add_user.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `user_id=${user_id}&username=${username}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'user_created') {
+                    // Теперь можно обновить данные
+                    updateUI();
+                }
+            });
+        }
 
-function updateUI() {
-    document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
-    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
-    localStorage.setItem('score', score);
-    localStorage.setItem('energy', energy);
-    localStorage.setItem('clickPower', clickPower);
-    localStorage.setItem('maxEnergy', maxEnergy);
-    localStorage.setItem('lastUpdateTime', Date.now());
-}
+        // Функция для обновления данных на сервере
+        function updateData() {
+            fetch('https://api.kuzymuzy.ru/update_user_data.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Данные успешно обновлены');
+                }
+            });
+        }
 
-function showTab(tabName) {
-    document.querySelectorAll(".tab-content").forEach(tab => {
-        tab.classList.remove("active");
-    });
-    document.getElementById(tabName).classList.add("active");
-    document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
-}
+        // Обновляем интерфейс
+        function updateUI() {
+            document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
+            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+            updateData();
+        }
 
-function restoreEnergy() {
-    let currentTime = Date.now();
-    let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-    let energyRecovered = Math.floor(elapsedSeconds / energyRecoveryRate);
-    
-    if (energyRecovered > 0) {
-        energy = Math.min(energy + energyRecovered, maxEnergy);
-        lastUpdateTime += energyRecovered * energyRecoveryRate * 1000;
-        updateUI();
-    }
-}
+        // Восстановление энергии (пасивное обновление)
+        function restoreEnergy() {
+            let currentTime = Date.now();
+            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
+            let energyRecovered = Math.floor(elapsedSeconds / 2); // Примерное восстановление
 
-function sendDataToServer() {
-    let userName = prompt("Введите ваше имя для сохранения прогресса:");
+            if (energyRecovered > 0) {
+                energy = Math.min(energy + energyRecovered, maxEnergy);
+                lastUpdateTime += energyRecovered * 2000; // обновляем timestamp
+                updateUI();
+            }
+        }
 
-    fetch('save_game.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            'name': userName,
-            'score': score,
-            'energy': energy,
-            'clickPower': clickPower,
-            'maxEnergy': maxEnergy,
-            'lastUpdateTime': lastUpdateTime,
-            'upgradedLevels': JSON.stringify(upgradedLevels)
-        })
-    }).then(response => response.text())
-      .then(data => {
-        console.log('Response from server:', data);
-      });
-}
+        // Прослушиватель нажатий
+        document.getElementById("clickBtn").addEventListener("click", () => {
+            if (energy > 0) {
+                energy--;
+                score += clickPower;
+                updateUI();
+            }
+        });
 
-// Отправляем данные на сервер при старте игры
-sendDataToServer();
+        // Загрузка данных пользователя
+        getUserData();
+        setInterval(restoreEnergy, 1000);  // Обновление энергии каждую секунду
 
-setInterval(restoreEnergy, 1000);
-restoreEnergy();
-updateUI();
-
-document.getElementById("clickBtn").addEventListener("click", () => {
-    if (energy > 0) {
-        energy--;
-        score += clickPower;
-        updateUI();
-    }
-});
     </script>
     
 </body>
 </html>
+

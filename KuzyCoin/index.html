@@ -267,7 +267,7 @@
         }
     
         document.getElementById("buyEnergy").addEventListener("click", () => {
-            if (score >= 500 && Energy < maxEnergy) {
+            if (score >= 500 && energy < maxEnergy) {
                 score -= 500;
                 energy = Math.min(energy + 50, maxEnergy);
                 updateUI();

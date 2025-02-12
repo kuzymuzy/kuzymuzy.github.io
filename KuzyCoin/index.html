@@ -106,6 +106,26 @@
             }
         });
 
+        let touchCount = 0;
+
+function handleMultiTap(event) {
+    touchCount = event.touches.length;
+
+    if (energy > 0 && touchCount > 0) {
+        // Каждый палец увеличивает счет на getClickPower()
+        energy -= touchCount;
+        if (energy < 0) energy = 0; // Энергия не может быть меньше 0
+
+        score += getClickPower() * touchCount;
+        updateUI();
+    } else if (energy <= 0 && touchCount > 0) {
+        alert("Энергия закончилась!");
+    }
+}
+
+document.getElementById("clickBtn").addEventListener("touchstart", handleMultiTap);
+document.getElementById("clickBtn").addEventListener("touchend", handleMultiTap);
+
         function updateEnergy() {
             const currentTime = Date.now();
             const timePassed = (currentTime - lastUpdateTime) / 1000; // Время прошло в секундах
@@ -117,6 +137,7 @@
                 updateUI();
             }
         }
+        
 
         // Вызываем обновление энергии сразу при открытии страницы
         updateEnergy();

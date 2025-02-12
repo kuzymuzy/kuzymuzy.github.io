@@ -177,169 +177,99 @@
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        let score = parseInt(localStorage.getItem('score')) || 0;
-        let energy = parseInt(localStorage.getItem('energy')) || 500;
-        let clickPower = parseInt(localStorage.getItem('clickPower')) || 5;
-        let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
-        let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 500;
-        const energyRecoveryRate = 2;
-        
-        const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
-        let upgradedLevels = JSON.parse(localStorage.getItem('upgradedLevels')) || [];
-        
-        upgradeLevels.forEach(level => {
-            if (score >= level && !upgradedLevels.includes(level)) {
-                maxEnergy += 100;
-                clickPower++;
-                upgradedLevels.push(level);
-                updateUI();
-            }
-        });
-        
-        localStorage.setItem('maxEnergy', maxEnergy);
-        localStorage.setItem('clickPower', clickPower);
-        localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
+let tg = window.Telegram.WebApp;
+tg.expand();
+
+let score = parseInt(localStorage.getItem('score')) || 0;
+let energy = parseInt(localStorage.getItem('energy')) || 500;
+let clickPower = parseInt(localStorage.getItem('clickPower')) || 5;
+let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
+let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 500;
+const energyRecoveryRate = 2;
+
+const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
+let upgradedLevels = JSON.parse(localStorage.getItem('upgradedLevels')) || [];
+
+upgradeLevels.forEach(level => {
+    if (score >= level && !upgradedLevels.includes(level)) {
+        maxEnergy += 100;
+        clickPower++;
+        upgradedLevels.push(level);
+        updateUI()
+    }
+})
+
+localStorage.setItem('maxEnergy', maxEnergy);
+localStorage.setItem('clickPower', clickPower);
+localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
+
+function updateUI() {
+    document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
+    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+    localStorage.setItem('score', score);
+    localStorage.setItem('energy', energy);
+    localStorage.setItem('clickPower', clickPower);
+    localStorage.setItem('maxEnergy', maxEnergy);
+    localStorage.setItem('lastUpdateTime', Date.now());
+}
+
+function showTab(tabName) {
+    document.querySelectorAll(".tab-content").forEach(tab => {
+        tab.classList.remove("active");
+    });
+    document.getElementById(tabName).classList.add("active");
+    document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
+}
+
+function restoreEnergy() {
+    let currentTime = Date.now();
+    let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
+    let energyRecovered = Math.floor(elapsedSeconds / energyRecoveryRate);
     
-        // Проверка, есть ли имя пользователя в localStorage
-        function promptUsername() {
-            let username = localStorage.getItem('username');
-            if (!username) {
-                username = prompt("Введите ваше имя:");
-                localStorage.setItem('username', username);
-            }
-            return username;
-        }
-    
-        // Сохранение всех данных в базу данных
-        function syncDataToServer() {
-            const userData = {
-                username: promptUsername(),
-                score: score,
-                energy: energy,
-                clickPower: clickPower,
-                lastUpdateTime: lastUpdateTime,
-                maxEnergy: maxEnergy,
-                upgradedLevels: upgradedLevels,
-            };
-    
-            fetch('https://api.kuzymuzy.ru/saveData.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData),
-            }).then(response => response.json())
-              .then(data => {
-                  if (data.success) {
-                      console.log("Данные успешно загружены на сервер");
-                  } else {
-                      console.error("Ошибка при загрузке данных на сервер");
-                  }
-              });
-        }
-    
-        // Загрузка данных с сервера
-        function loadDataFromServer() {
-            const username = promptUsername();
-            fetch(`https://api.kuzymuzy.ru/loadData.php?username=${username}`, {
-                method: 'GET',
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    score = data.score;
-                    energy = data.energy;
-                    clickPower = data.clickPower;
-                    lastUpdateTime = data.lastUpdateTime;
-                    maxEnergy = data.maxEnergy;
-                    upgradedLevels = data.upgradedLevels;
-                    updateUI();
-                }
-            });
-        }
-    
-        // Если данные из localStorage не были синхронизированы с сервером, отправляем их
-        if (localStorage.getItem('syncedWithServer') !== 'true') {
-            syncDataToServer();
-            localStorage.setItem('syncedWithServer', 'true');
-        }
-    
-        // Обновление UI
-        function updateUI() {
-            document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
-            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
-            
-            // Сохранение данных в localStorage
-            localStorage.setItem('score', score);
-            localStorage.setItem('energy', energy);
-            localStorage.setItem('clickPower', clickPower);
-            localStorage.setItem('maxEnergy', maxEnergy);
-            localStorage.setItem('lastUpdateTime', Date.now());
-            localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
-        }
-    
-        // Восстановление энергии
-        function restoreEnergy() {
-            let currentTime = Date.now();
-            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-            let energyRecovered = Math.floor(elapsedSeconds / energyRecoveryRate);
-            
-            if (energyRecovered > 0) {
-                energy = Math.min(energy + energyRecovered, maxEnergy);
-                lastUpdateTime += energyRecovered * energyRecoveryRate * 1000;
-                updateUI();
-            }
-        }
-    
-        // Обработчик кнопок и другие события
-        // Пример для улучшения мощности клика
-        document.getElementById("boostClickPower").addEventListener("click", () => {
-            if (score >= 1000 && clickPower < 100) {
-                score -= 1000;
-                clickPower++;
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
-            }
-        });
-    
-        document.getElementById("LitEnergy").addEventListener("click", () => {
-            if (score >= 500) {
-                score -= 500;
-                maxEnergy += 100;
-                localStorage.setItem('maxEnergy', maxEnergy);
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins");
-            }
-        });
-    
-        document.getElementById("buyEnergy").addEventListener("click", () => {
-            if (score >= 500 && energy < maxEnergy) {
-                score -= 500;
-                energy = Math.min(energy + 50, maxEnergy);
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
-            }
-        });
-    
-        setInterval(restoreEnergy, 1000);
-        restoreEnergy();
+    if (energyRecovered > 0) {
+        energy = Math.min(energy + energyRecovered, maxEnergy);
+        lastUpdateTime += energyRecovered * energyRecoveryRate * 1000;
         updateUI();
-    
-        // Перехват кликов
-        document.getElementById("clickBtn").addEventListener("click", () => {
-            if (energy > 0) {
-                energy--;
-                score += clickPower;
-                updateUI();
-            }
-        });
-    
+    }
+}
+
+function sendDataToServer() {
+    let userName = prompt("Введите ваше имя для сохранения прогресса:");
+
+    fetch('save_game.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'name': userName,
+            'score': score,
+            'energy': energy,
+            'clickPower': clickPower,
+            'maxEnergy': maxEnergy,
+            'lastUpdateTime': lastUpdateTime,
+            'upgradedLevels': JSON.stringify(upgradedLevels)
+        })
+    }).then(response => response.text())
+      .then(data => {
+        console.log('Response from server:', data);
+      });
+}
+
+// Отправляем данные на сервер при старте игры
+sendDataToServer();
+
+setInterval(restoreEnergy, 1000);
+restoreEnergy();
+updateUI();
+
+document.getElementById("clickBtn").addEventListener("click", () => {
+    if (energy > 0) {
+        energy--;
+        score += clickPower;
+        updateUI();
+    }
+});
     </script>
     
 </body>

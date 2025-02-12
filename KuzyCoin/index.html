@@ -37,8 +37,8 @@
             border-radius: 10px;
         }
         #clickBtn {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             background: radial-gradient(circle, #ffcc00, #ff8800);
             border: none;
             border-radius: 50%;
@@ -68,23 +68,25 @@
     <h1 id="score">Очки: 0</h1>
     <p id="energy">Энергия: 100/100</p>
     <button id="clickBtn">
-        <img src="https://kuzymuzy.ru/favicon.ico" alt="Кнопка">
+        <img src="https://kuzymuzy.ru/favicon.ico" alt="Тапни меня полностью">
     </button>
     
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
+        let storage = tg.useWebAppCloudStorage();
         let score = 0;
         let energy = 100;
         const maxEnergy = 100;
 
         async function loadProgress() {
             try {
-                const storedScore = await tg.Storage.getItem("score");
-                const storedEnergy = await tg.Storage.getItem("energy");
-                if (storedScore !== null) score = parseInt(storedScore);
-                if (storedEnergy !== null) energy = parseInt(storedEnergy);
+                let storedScore = await storage.getStorageItem("score");
+                let storedEnergy = await storage.getStorageItem("energy");
+                
+                if (storedScore && !storedScore.err) score = parseInt(storedScore.data) || 0;
+                if (storedEnergy && !storedEnergy.err) energy = parseInt(storedEnergy.data) || 100;
                 updateUI();
             } catch (error) {
                 console.error("Ошибка загрузки данных:", error);
@@ -93,8 +95,8 @@
 
         async function saveProgress() {
             try {
-                await tg.Storage.setItem("score", score.toString());
-                await tg.Storage.setItem("energy", energy.toString());
+                await storage.setStorageItem("score", score.toString());
+                await storage.setStorageItem("energy", energy.toString());
             } catch (error) {
                 console.error("Ошибка сохранения данных:", error);
             }

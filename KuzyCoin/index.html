@@ -160,8 +160,9 @@
     </div>
 
     <div id="shop" class="tab-content">
-        <div class="shop-item" id="boostClickPower">Мощность клика <span>🪙 100 Kuzy Coins</span></div>
+        <div class="shop-item" id="boostClickPower">Мощность клика <span>🪙 1000 Kuzy Coins</span></div>
         <div class="shop-item" id="buyEnergy">Купить энергию <span>🪙 50 Kuzy Coins</span></div>
+        <div class="shop-item" id="LitEnergy">Увеличеть максимальную энергию <span>🪙 500 Kuzy Coins</span></div>
     </div>
 
     <div class="tab-bar">
@@ -178,32 +179,50 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
+    
         let score = parseInt(localStorage.getItem('score')) || 0;
         let energy = parseInt(localStorage.getItem('energy')) || 500;
         let clickPower = parseInt(localStorage.getItem('clickPower')) || 5;
         let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
-        const maxEnergy = 500;
+        let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 500;
         const energyRecoveryRate = 2;
+    
+        const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
 
+            let upgradedLevels = JSON.parse(localStorage.getItem('upgradedLevels')) || [];
+
+            upgradeLevels.forEach(level => {
+                if (score >= level && !upgradedLevels.includes(level)) {
+                    maxEnergy += 100;
+                    clickPower++;
+                    upgradedLevels.push(level);
+                    updateUI()
+                }
+            })
+
+            localStorage.setItem('maxEnergy', maxEnergy);
+            localStorage.setItem('clickPower', clickPower);
+            localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
+
+    
         function updateUI() {
             document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
             document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
             localStorage.setItem('score', score);
             localStorage.setItem('energy', energy);
             localStorage.setItem('clickPower', clickPower);
+            localStorage.setItem('maxEnergy', maxEnergy);
             localStorage.setItem('lastUpdateTime', Date.now());
         }
-
+    
         function showTab(tabName) {
             document.querySelectorAll(".tab-content").forEach(tab => {
                 tab.classList.remove("active");
             });
             document.getElementById(tabName).classList.add("active");
-
             document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
         }
-
+    
         function restoreEnergy() {
             let currentTime = Date.now();
             let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
@@ -215,27 +234,52 @@
                 updateUI();
             }
         }
-
+    
         document.getElementById("boostClickPower").addEventListener("click", () => {
-            if (score >= 100) {
-                score -= 100;
+            if (score >= 1000 && clickPower < 100) {
+                score -= 1000;
                 clickPower++;
                 updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
+            }
+        });
+    
+        document.getElementById("LitEnergy").addEventListener("click", () => {
+            if (score >= 500) {
+                score -= 500;
+                maxEnergy += 100;
+                localStorage.setItem('maxEnergy', maxEnergy);
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins");
             }
         });
 
+        function cheat() {
+            localStorage.setItem("score", "1999"); 
+            location.reload(); 
+        }
+
+        function resetProgress() {
+            localStorage.clear(); 
+            location.reload(); 
+        }
+    
         document.getElementById("buyEnergy").addEventListener("click", () => {
             if (score >= 50) {
                 score -= 50;
                 energy = Math.min(energy + 50, maxEnergy);
                 updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins");
             }
         });
-
+    
         setInterval(restoreEnergy, 1000);
         restoreEnergy();
         updateUI();
-
+    
         document.getElementById("clickBtn").addEventListener("click", () => {
             if (energy > 0) {
                 energy--;
@@ -244,5 +288,6 @@
             }
         });
     </script>
+    
 </body>
 </html>

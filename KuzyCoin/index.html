@@ -79,6 +79,27 @@
         let energy = 100;
         const maxEnergy = 100;
 
+        async function loadProgress() {
+            try {
+                const storedScore = await tg.Storage.getItem("score");
+                const storedEnergy = await tg.Storage.getItem("energy");
+                if (storedScore !== null) score = parseInt(storedScore);
+                if (storedEnergy !== null) energy = parseInt(storedEnergy);
+                updateUI();
+            } catch (error) {
+                console.error("Ошибка загрузки данных:", error);
+            }
+        }
+
+        async function saveProgress() {
+            try {
+                await tg.Storage.setItem("score", score.toString());
+                await tg.Storage.setItem("energy", energy.toString());
+            } catch (error) {
+                console.error("Ошибка сохранения данных:", error);
+            }
+        }
+
         function getClickPower() {
             return score >= 10000 ? 7 : score >= 5000 ? 6 : 5;
         }
@@ -93,6 +114,7 @@
                 energy--;
                 score += getClickPower();
                 updateUI();
+                saveProgress();
             } else {
                 alert("Энергия закончилась!");
             }
@@ -102,8 +124,11 @@
             if (energy < maxEnergy) {
                 energy++;
                 updateUI();
+                saveProgress();
             }
         }, 3000);
+
+        loadProgress();
     </script>
 </body>
 </html>

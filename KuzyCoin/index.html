@@ -18,7 +18,24 @@
             height: 100vh;
             margin: 0;
             position: relative;
+            overflow: hidden;
         }
+
+        /* Адаптация для мобильных устройств */
+        @media (max-width: 480px) {
+            body {
+                font-size: 16px;
+            }
+            #score, #energy {
+                font-size: 20px;
+            }
+            #clickBtn {
+                width: 120px;
+                height: 120px;
+                font-size: 14px;
+            }
+        }
+
         #score {
             font-size: 28px;
             font-weight: bold;
@@ -50,6 +67,7 @@
             transition: transform 0.1s ease, box-shadow 0.1s ease;
             position: relative;
             overflow: hidden;
+            touch-action: manipulation; /* Отключение стандартных жестов */
         }
         #clickBtn img {
             width: 100%;

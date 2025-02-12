@@ -161,7 +161,7 @@
 
     <div id="shop" class="tab-content">
         <div class="shop-item" id="boostClickPower">Мощность клика <span>🪙 1000 Kuzy Coins</span></div>
-        <div class="shop-item" id="buyEnergy">Купить энергию <span>🪙 50 Kuzy Coins</span></div>
+        <div class="shop-item" id="buyEnergy">Купить энергию <span>🪙 500 Kuzy Coins</span></div>
         <div class="shop-item" id="LitEnergy">Увеличеть максимальную энергию <span>🪙 500 Kuzy Coins</span></div>
     </div>
 
@@ -177,7 +177,6 @@
     </div>
 
     <script>
-        resetProgress()
         let tg = window.Telegram.WebApp;
         tg.expand();
     
@@ -258,7 +257,7 @@
         });
 
         function cheat() {
-            localStorage.setItem("score", "1999"); 
+            localStorage.setItem("score", "1488000"); 
             location.reload(); 
         }
 
@@ -268,12 +267,12 @@
         }
     
         document.getElementById("buyEnergy").addEventListener("click", () => {
-            if (score >= 50) {
-                score -= 50;
+            if (score >= 500 && Energy < maxEnergy) {
+                score -= 500;
                 energy = Math.min(energy + 50, maxEnergy);
                 updateUI();
             } else {
-                alert("У вас недостаточно Kuzy Coins");
+                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
             }
         });
     

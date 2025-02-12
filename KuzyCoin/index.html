@@ -198,19 +198,30 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        // Если пользователь не найден, добавляем его
-                        addUser();
+                        // Если ошибка на сервере
+                        console.error("Ошибка при получении данных:", data.error);
+                        addUser(); // Делаем попытку добавить пользователя
                     } else {
-                        // Восстанавливаем данные из базы
-                        score = data.score;
-                        energy = data.energy;
-                        clickPower = data.click_power;
-                        maxEnergy = data.max_energy;
-                        upgradedLevels = JSON.parse(data.upgraded_levels);
-                        lastUpdateTime = new Date(data.last_update_time).getTime();
-                        timestamp = data.timestamp;
-                        updateUI();
+                        try {
+                            // Восстанавливаем данные из базы
+                            score = data.score || 0;
+                            energy = data.energy || 500;
+                            clickPower = data.click_power || 5;
+                            maxEnergy = data.max_energy || 500;
+                            // Проверяем и парсим уровень улучшений (если есть)
+                            upgradedLevels = data.upgraded_levels ? JSON.parse(data.upgraded_levels) : [];
+                            lastUpdateTime = new Date(data.last_update_time).getTime() || Date.now();
+                            timestamp = data.timestamp || Date.now();
+                            updateUI();
+                        } catch (error) {
+                            console.error("Ошибка при обработке данных пользователя:", error);
+                            getUserData(); // Пробуем загрузить данные заново
+                        }
                     }
+                })
+                .catch(error => {
+                    console.error("Ошибка при запросе данных пользователя:", error);
+                    getUserData(); // Попробуем запросить данные снова в случае сетевой ошибки
                 });
         }
     
@@ -228,8 +239,11 @@
                 if (data.status === 'user_created') {
                     // Теперь можно обновить данные
                     updateUI();
+                } else {
+                    console.error("Ошибка при создании пользователя:", data);
                 }
-            });
+            })
+            .catch(error => console.error("Ошибка при добавлении пользователя:", error));
         }
     
         // Функция для обновления данных на сервере
@@ -246,55 +260,18 @@
                 if (data.status === 'success') {
                     console.log('Данные успешно обновлены');
                 }
-            });
+            })
+            .catch(error => console.error("Ошибка при обновлении данных на сервере:", error));
         }
     
-        function showTab(tabName) {
-            document.querySelectorAll(".tab-content").forEach(tab => {
-                tab.classList.remove("active");
-            });
-            document.getElementById(tabName).classList.add("active");
-            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
-        }
-    
-        document.getElementById("boostClickPower").addEventListener("click", () => {
-            if (score >= 1000 && clickPower < 100) {
-                score -= 1000;
-                clickPower++;
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
-            }
-        });
-    
-        document.getElementById("LitEnergy").addEventListener("click", () => {
-            if (score >= 500) {
-                score -= 500;
-                maxEnergy += 100;
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins");
-            }
-        });
-    
-        document.getElementById("buyEnergy").addEventListener("click", () => {
-            if (score >= 500 && energy < maxEnergy) {
-                score -= 500;
-                energy = Math.min(energy + 50, maxEnergy);
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
-            }
-        });
-    
-        // Обновляем интерфейс
+        // Функция для обновления интерфейса
         function updateUI() {
             document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
             document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
             updateData();
         }
     
-        // Восстановление энергии (пасивное обновление)
+        // Функция для восстановления энергии (пасивное обновление)
         function restoreEnergy() {
             let currentTime = Date.now();
             let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
@@ -316,12 +293,52 @@
             }
         });
     
+        // Прослушиватель для кнопки на улучшение мощности клика
+        document.getElementById("boostClickPower").addEventListener("click", () => {
+            if (score >= 1000 && clickPower < 100) {
+                score -= 1000;
+                clickPower++;
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
+            }
+        });
+    
+        // Прослушиватель для кнопки на улучшение энергии
+        document.getElementById("LitEnergy").addEventListener("click", () => {
+            if (score >= 500) {
+                score -= 500;
+                maxEnergy += 100;
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins");
+            }
+        });
+    
+        // Прослушиватель для кнопки на покупку энергии
+        document.getElementById("buyEnergy").addEventListener("click", () => {
+            if (score >= 500 && energy < maxEnergy) {
+                score -= 500;
+                energy = Math.min(energy + 50, maxEnergy);
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
+            }
+        });
+    
+        // Функция для отображения вкладок
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.classList.remove("active");
+            });
+            document.getElementById(tabName).classList.add("active");
+            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
+        }
+    
         // Загрузка данных пользователя
         getUserData();
         setInterval(restoreEnergy, 1000);  // Обновление энергии каждую секунду
-    </script>
-    
-    
+    </script>      
 </body>
 </html>
 

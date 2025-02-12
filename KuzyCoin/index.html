@@ -37,8 +37,8 @@
             border-radius: 10px;
         }
         #clickBtn {
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             background: radial-gradient(circle, #ffcc00, #ff8800);
             border: none;
             border-radius: 50%;
@@ -73,43 +73,12 @@
     
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Обязательно расширяем Web App для Telegram
+        tg.expand(); 
 
-        // Получаем доступ к хранилищу Mini App
-        let storage = tg.useWebAppCloudStorage();
+        let storage = tg.useWebAppCloudStorage(); // Получаем доступ к хранилищу
         let score = 0;
         let energy = 100;
         const maxEnergy = 100;
-
-        // Функция для загрузки данных (прогресс игры)
-        async function loadProgress() {
-            try {
-                let storedScore = await storage.getStorageItem("score");
-                let storedEnergy = await storage.getStorageItem("energy");
-
-                // Обработка значений
-                if (storedScore && storedScore.data) {
-                    score = parseInt(storedScore.data) || 0;
-                }
-                if (storedEnergy && storedEnergy.data) {
-                    energy = parseInt(storedEnergy.data) || 100;
-                }
-                updateUI();
-            } catch (error) {
-                console.error("Ошибка загрузки данных:", error);
-            }
-        }
-
-        // Функция для сохранения данных
-        async function saveProgress() {
-            try {
-                await storage.setStorageItem("score", score.toString());
-                await storage.setStorageItem("energy", energy.toString());
-                console.log("Данные сохранены"); // Выводим в консоль для отладки
-            } catch (error) {
-                console.error("Ошибка сохранения данных:", error);
-            }
-        }
 
         // Функция для получения силы клика
         function getClickPower() {
@@ -122,13 +91,41 @@
             document.getElementById("energy").textContent = `Энергия: ${energy}/${maxEnergy}`;
         }
 
+        // Функция загрузки прогресса
+        async function loadProgress() {
+            try {
+                let storedScore = await storage.getStorageItem("score");
+                let storedEnergy = await storage.getStorageItem("energy");
+
+                if (storedScore && storedScore.data) {
+                    score = parseInt(storedScore.data) || 0;
+                }
+                if (storedEnergy && storedEnergy.data) {
+                    energy = parseInt(storedEnergy.data) || 100;
+                }
+                updateUI();
+            } catch (error) {
+                console.error("Ошибка при загрузке данных:", error);
+            }
+        }
+
+        // Сохранение прогресса
+        async function saveProgress() {
+            try {
+                await storage.setStorageItem("score", score.toString());
+                await storage.setStorageItem("energy", energy.toString());
+            } catch (error) {
+                console.error("Ошибка при сохранении данных:", error);
+            }
+        }
+
         // Обработчик клика по кнопке
-        document.getElementById("clickBtn").addEventListener("click", async () => {
+        document.getElementById("clickBtn").addEventListener("click", () => {
             if (energy > 0) {
                 energy--;
                 score += getClickPower();
                 updateUI();
-                await saveProgress(); // Сохраняем прогресс
+                saveProgress();
             } else {
                 alert("Энергия закончилась!");
             }
@@ -143,7 +140,7 @@
             }
         }, 3000);
 
-        // Загружаем прогресс при старте
+        // Загрузка прогресса при старте
         loadProgress();
     </script>
 </body>

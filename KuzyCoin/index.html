@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuzy Coin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1, height=device-height, overflow:hidden;">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -16,7 +15,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
             position: relative;
@@ -30,16 +29,20 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 2;
         }
+
         #energy {
             font-size: 20px;
             position: absolute;
-            bottom: 20px;
+            bottom: 80px;
             left: 20px;
             background: rgba(0, 0, 0, 0.3);
             padding: 10px 15px;
             border-radius: 10px;
+            z-index: 2;
         }
+
         #clickBtn {
             width: 250px;
             height: 250px;
@@ -51,11 +54,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            position: relative;
-            overflow: hidden;
-            touch-action: manipulation; /* Отключение стандартных жестов */
+            position: absolute;
+            top: calc(50% - 40px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            touch-action: manipulation;
         }
+
         #clickBtn img {
             width: 100%;
             height: 100%;
@@ -63,91 +68,181 @@
             border-radius: 50%;
             pointer-events: none;
         }
+
         #clickBtn:active {
-            transform: scale(0.9);
+            transform: translate(-50%, -50%) scale(0.95);
             box-shadow: 0 3px 8px rgba(255, 136, 0, 0.5);
+        }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .tab-bar button {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .tab-bar .tab-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-content {
+            display: none;
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #shop {
+            display: none; /* Изначально скрыт */
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 100px;
+        }
+
+        .shop-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .shop-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .shop-item span {
+            font-weight: bold;
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
-    <h1 id="score">Очки: 0</h1>
+    <h1 id="score">Kuzy Coins: 0</h1>
     <p id="energy">Энергия: 100/100</p>
-    <button id="clickBtn">
-        <img src="https://kuzymuzy.ru/favicon.ico" alt="Тапни меня полностью">
-    </button>
-    
+
+    <div id="home" class="tab-content active">
+        <button id="clickBtn">
+            <img src="https://kuzymuzy.ru/favicon.ico" alt="Тапни меня полностью">
+        </button>
+    </div>
+
+    <div id="shop" class="tab-content">
+        <div class="shop-item" id="boostClickPower">Мощность клика <span>🪙 100 Kuzy Coins</span></div>
+        <div class="shop-item" id="buyEnergy">Купить энергию <span>🪙 50 Kuzy Coins</span></div>
+    </div>
+
+    <div class="tab-bar">
+        <button onclick="showTab('home')">
+            <div class="tab-icon">🏠</div>
+            Главная
+        </button>
+        <button onclick="showTab('shop')">
+            <div class="tab-icon">🛒</div>
+            Магазин
+        </button>
+    </div>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        const maxEnergy = 500;
         let score = parseInt(localStorage.getItem('score')) || 0;
         let energy = parseInt(localStorage.getItem('energy')) || 500;
+        let clickPower = parseInt(localStorage.getItem('clickPower')) || 5;
         let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
-        const energyRecoveryRate = 3; // Время восстановления энергии в секундах
-
-        function getClickPower() {
-            return score >= 10000 ? 7 : score >= 5000 ? 6 : 5;
-        }
+        const maxEnergy = 500;
+        const energyRecoveryRate = 2;
 
         function updateUI() {
-            document.getElementById("score").textContent = "Очки: " + score;
-            document.getElementById("energy").textContent = `Энергия: ${energy}/${maxEnergy}`;
+            document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
+            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
             localStorage.setItem('score', score);
             localStorage.setItem('energy', energy);
+            localStorage.setItem('clickPower', clickPower);
             localStorage.setItem('lastUpdateTime', Date.now());
         }
+
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.classList.remove("active");
+            });
+            document.getElementById(tabName).classList.add("active");
+
+            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
+        }
+
+        function restoreEnergy() {
+            let currentTime = Date.now();
+            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
+            let energyRecovered = Math.floor(elapsedSeconds / energyRecoveryRate);
+            
+            if (energyRecovered > 0) {
+                energy = Math.min(energy + energyRecovered, maxEnergy);
+                lastUpdateTime += energyRecovered * energyRecoveryRate * 1000;
+                updateUI();
+            }
+        }
+
+        document.getElementById("boostClickPower").addEventListener("click", () => {
+            if (score >= 100) {
+                score -= 100;
+                clickPower++;
+                updateUI();
+            }
+        });
+
+        document.getElementById("buyEnergy").addEventListener("click", () => {
+            if (score >= 50) {
+                score -= 50;
+                energy = Math.min(energy + 50, maxEnergy);
+                updateUI();
+            }
+        });
+
+        setInterval(restoreEnergy, 1000);
+        restoreEnergy();
+        updateUI();
 
         document.getElementById("clickBtn").addEventListener("click", () => {
             if (energy > 0) {
                 energy--;
-                score += getClickPower();
+                score += clickPower;
                 updateUI();
-            } else {
-                alert("Энергия закончилась!");
             }
         });
-
-        let touchCount = 0;
-
-function handleMultiTap(event) {
-    touchCount = event.touches.length;
-
-    if (energy > 0 && touchCount > 0) {
-        // Каждый палец увеличивает счет на getClickPower()
-        energy -= touchCount;
-        if (energy < 0) energy = 0; // Энергия не может быть меньше 0
-
-        score += getClickPower() * touchCount;
-        updateUI();
-    } else if (energy <= 0 && touchCount > 0) {
-        alert("Энергия закончилась!");
-    }
-}
-
-document.getElementById("clickBtn").addEventListener("touchstart", handleMultiTap);
-document.getElementById("clickBtn").addEventListener("touchend", handleMultiTap);
-
-        function updateEnergy() {
-            const currentTime = Date.now();
-            const timePassed = (currentTime - lastUpdateTime) / 1000; // Время прошло в секундах
-
-            if (timePassed >= energyRecoveryRate) {
-                const energyRecovered = Math.floor(timePassed / energyRecoveryRate);
-                energy = Math.min(energy + energyRecovered, maxEnergy); // Энергия не может быть больше максимума
-                lastUpdateTime = currentTime;
-                updateUI();
-            }
-        }
-        
-
-        // Вызываем обновление энергии сразу при открытии страницы
-        updateEnergy();
-
-        // Устанавливаем интервал для обновления энергии (периодически)
-        setInterval(updateEnergy, 1000); // Каждую секунду проверяем обновление энергии
-
-        updateUI(); // Изначально обновляем интерфейс, чтобы отобразить сохраненные значения
     </script>
 </body>
 </html>

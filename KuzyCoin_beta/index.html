@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Kuzy Coin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1, height=device-height, overflow:hidden;">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            touch-action: none;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #1e1e2f, #3a3a5f);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #score {
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        #energy {
+            font-size: 20px;
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        #clickBtn {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #ffcc00, #ff8800);
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 6px 15px rgba(255, 136, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: absolute;
+            top: calc(50% - 40px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            touch-action: manipulation;
+        }
+
+        #clickBtn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        #clickBtn:active {
+            transform: translate(-50%, -50%) scale(0.95);
+            box-shadow: 0 3px 8px rgba(255, 136, 0, 0.5);
+        }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .tab-bar button {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .tab-bar .tab-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-content {
+            display: none;
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #shop {
+            display: none; /* Изначально скрыт */
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 100px;
+        }
+
+        .shop-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .shop-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .shop-item span {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="score">Kuzy Coins: 0</h1>
+    <p id="energy">Энергия: 500/500</p>
+
+    <div id="home" class="tab-content active">
+        <button id="clickBtn">
+            <img src="https://kuzymuzy.ru/favicon.ico" alt="Тапни меня полностью">
+        </button>
+    </div>
+
+    <div id="shop" class="tab-content">
+        <div class="shop-item" id="boostClickPower">Мощность клика <span>🪙 1000 Kuzy Coins</span></div>
+        <div class="shop-item" id="buyEnergy">Купить энергию <span>🪙 500 Kuzy Coins</span></div>
+        <div class="shop-item" id="LitEnergy">Увеличеть максимальную энергию <span>🪙 500 Kuzy Coins</span></div>
+    </div>
+
+    <div class="tab-bar">
+        <button onclick="showTab('home')">
+            <div class="tab-icon" id="home">🏠</div>
+            Главная
+        </button>
+        <button onclick="showTab('shop')">
+            <div class="tab-icon">🛒</div>
+            Магазин
+        </button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        let score = parseInt(localStorage.getItem('score')) || 0;
+        let energy = parseInt(localStorage.getItem('energy')) || 500;
+        let clickPower = parseInt(localStorage.getItem('clickPower')) || 5;
+        let lastUpdateTime = parseInt(localStorage.getItem('lastUpdateTime')) || Date.now();
+        let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 500;
+        const energyRecoveryRate = 2;
+        
+        const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
+        let upgradedLevels = JSON.parse(localStorage.getItem('upgradedLevels')) || [];
+        
+        upgradeLevels.forEach(level => {
+            if (score >= level && !upgradedLevels.includes(level)) {
+                maxEnergy += 100;
+                clickPower++;
+                upgradedLevels.push(level);
+                updateUI();
+            }
+        });
+        
+        localStorage.setItem('maxEnergy', maxEnergy);
+        localStorage.setItem('clickPower', clickPower);
+        localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
+    
+        // Проверка, есть ли имя пользователя в localStorage
+        function promptUsername() {
+            let username = localStorage.getItem('username');
+            if (!username) {
+                username = prompt("Введите ваше имя:");
+                localStorage.setItem('username', username);
+            }
+            return username;
+        }
+    
+        // Сохранение всех данных в базу данных
+        function syncDataToServer() {
+            const userData = {
+                username: promptUsername(),
+                score: score,
+                energy: energy,
+                clickPower: clickPower,
+                lastUpdateTime: lastUpdateTime,
+                maxEnergy: maxEnergy,
+                upgradedLevels: upgradedLevels,
+            };
+    
+            fetch('https://api.kuzymuzy.ru/saveData.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      console.log("Данные успешно загружены на сервер");
+                  } else {
+                      console.error("Ошибка при загрузке данных на сервер");
+                  }
+              });
+        }
+    
+        // Загрузка данных с сервера
+        function loadDataFromServer() {
+            const username = promptUsername();
+            fetch(`https://api.kuzymuzy.ru/loadData.php?username=${username}`, {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    score = data.score;
+                    energy = data.energy;
+                    clickPower = data.clickPower;
+                    lastUpdateTime = data.lastUpdateTime;
+                    maxEnergy = data.maxEnergy;
+                    upgradedLevels = data.upgradedLevels;
+                    updateUI();
+                }
+            });
+        }
+    
+        // Если данные из localStorage не были синхронизированы с сервером, отправляем их
+        if (localStorage.getItem('syncedWithServer') !== 'true') {
+            syncDataToServer();
+            localStorage.setItem('syncedWithServer', 'true');
+        }
+    
+        // Обновление UI
+        function updateUI() {
+            document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
+            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+            
+            // Сохранение данных в localStorage
+            localStorage.setItem('score', score);
+            localStorage.setItem('energy', energy);
+            localStorage.setItem('clickPower', clickPower);
+            localStorage.setItem('maxEnergy', maxEnergy);
+            localStorage.setItem('lastUpdateTime', Date.now());
+            localStorage.setItem('upgradedLevels', JSON.stringify(upgradedLevels));
+        }
+    
+        // Восстановление энергии
+        function restoreEnergy() {
+            let currentTime = Date.now();
+            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
+            let energyRecovered = Math.floor(elapsedSeconds / energyRecoveryRate);
+            
+            if (energyRecovered > 0) {
+                energy = Math.min(energy + energyRecovered, maxEnergy);
+                lastUpdateTime += energyRecovered * energyRecoveryRate * 1000;
+                updateUI();
+            }
+        }
+    
+        // Обработчик кнопок и другие события
+        // Пример для улучшения мощности клика
+        document.getElementById("boostClickPower").addEventListener("click", () => {
+            if (score >= 1000 && clickPower < 100) {
+                score -= 1000;
+                clickPower++;
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
+            }
+        });
+    
+        document.getElementById("LitEnergy").addEventListener("click", () => {
+            if (score >= 500) {
+                score -= 500;
+                maxEnergy += 100;
+                localStorage.setItem('maxEnergy', maxEnergy);
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins");
+            }
+        });
+    
+        document.getElementById("buyEnergy").addEventListener("click", () => {
+            if (score >= 500 && energy < maxEnergy) {
+                score -= 500;
+                energy = Math.min(energy + 50, maxEnergy);
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
+            }
+        });
+    
+        setInterval(restoreEnergy, 1000);
+        restoreEnergy();
+        updateUI();
+    
+        // Перехват кликов
+        document.getElementById("clickBtn").addEventListener("click", () => {
+            if (energy > 0) {
+                energy--;
+                score += clickPower;
+                updateUI();
+            }
+        });
+    
+    </script>
+    
+</body>
+</html>

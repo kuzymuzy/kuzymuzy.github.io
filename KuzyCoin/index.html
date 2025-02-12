@@ -73,75 +73,41 @@
     
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); 
+        tg.expand();
 
-        let storage = tg.useWebAppCloudStorage(); // Получаем доступ к хранилищу
-        let score = 0;
-        let energy = 100;
+        let score = parseInt(localStorage.getItem('score')) || 0;
+        let energy = parseInt(localStorage.getItem('energy')) || 100;
         const maxEnergy = 100;
 
-        // Функция для получения силы клика
         function getClickPower() {
             return score >= 10000 ? 7 : score >= 5000 ? 6 : 5;
         }
 
-        // Обновление UI
         function updateUI() {
             document.getElementById("score").textContent = "Очки: " + score;
             document.getElementById("energy").textContent = `Энергия: ${energy}/${maxEnergy}`;
+            localStorage.setItem('score', score);
+            localStorage.setItem('energy', energy);
         }
 
-        // Функция загрузки прогресса
-        async function loadProgress() {
-            try {
-                let storedScore = await storage.getStorageItem("score");
-                let storedEnergy = await storage.getStorageItem("energy");
-
-                if (storedScore && storedScore.data) {
-                    score = parseInt(storedScore.data) || 0;
-                }
-                if (storedEnergy && storedEnergy.data) {
-                    energy = parseInt(storedEnergy.data) || 100;
-                }
-                updateUI();
-            } catch (error) {
-                console.error("Ошибка при загрузке данных:", error);
-            }
-        }
-
-        // Сохранение прогресса
-        async function saveProgress() {
-            try {
-                await storage.setStorageItem("score", score.toString());
-                await storage.setStorageItem("energy", energy.toString());
-            } catch (error) {
-                console.error("Ошибка при сохранении данных:", error);
-            }
-        }
-
-        // Обработчик клика по кнопке
         document.getElementById("clickBtn").addEventListener("click", () => {
             if (energy > 0) {
                 energy--;
                 score += getClickPower();
                 updateUI();
-                saveProgress();
             } else {
                 alert("Энергия закончилась!");
             }
         });
 
-        // Инкремент энергии каждые 3 секунды
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy++;
                 updateUI();
-                saveProgress();
             }
         }, 3000);
 
-        // Загрузка прогресса при старте
-        loadProgress();
+        updateUI(); // Initial UI update to display saved values
     </script>
 </body>
 </html>

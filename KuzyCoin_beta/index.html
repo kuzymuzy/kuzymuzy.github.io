@@ -178,110 +178,75 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand();
+tg.expand();
 
-        // Получаем user_id и username с Telegram Web App
-        let user_id = tg.initDataUnsafe.user.id;
-        let username = tg.initDataUnsafe.user.username;
+let user_id = tg.initDataUnsafe?.user?.id || 0;
+let username = tg.initDataUnsafe?.user?.username || "Unknown";
 
-        let score = 0;
-        let energy = 500;
-        let clickPower = 5;
-        let maxEnergy = 500;
-        let lastUpdateTime = Date.now();
-        let upgradedLevels = [];
-        let timestamp = Date.now();
+let score = 0;
+let energy = 500;
+let clickPower = 5;
+let maxEnergy = 500;
+let lastUpdateTime = Date.now();
+let upgradedLevels = [];
+let timestamp = Date.now();
 
-        // Функция для получения данных пользователя с сервера
-        function getUserData() {
-            fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        // Если пользователь не найден, добавляем его
-                        addUser();
-                    } else {
-                        // Восстанавливаем данные из базы
-                        score = data.score;
-                        energy = data.energy;
-                        clickPower = data.click_power;
-                        maxEnergy = data.max_energy;
-                        upgradedLevels = JSON.parse(data.upgraded_levels);
-                        lastUpdateTime = new Date(data.last_update_time).getTime();
-                        timestamp = data.timestamp;
-                        updateUI();
-                    }
-                });
+async function getUserData() {
+    try {
+        let response = await fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`);
+        let data = await response.json();
+
+        if (data.error) {
+            console.warn("Пользователь не найден, создаем...");
+            await addUser();
+        } else {
+            score = data.score;
+            energy = data.energy;
+            clickPower = data.click_power;
+            maxEnergy = data.max_energy;
+            upgradedLevels = data.upgraded_levels || [];
+            lastUpdateTime = new Date(data.last_update_time).getTime();
+            timestamp = new Date(data.timestamp).getTime();
+            updateUI();
         }
+    } catch (error) {
+        console.error("Ошибка при получении данных:", error);
+    }
+}
 
-        // Функция для добавления нового пользователя
-        function addUser() {
-            fetch('https://api.kuzymuzy.ru/add_user.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `user_id=${user_id}&username=${username}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'user_created') {
-                    // Теперь можно обновить данные
-                    updateUI();
-                }
-            });
-        }
+async function addUser() {
+    await fetch('https://api.kuzymuzy.ru/add_user.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `user_id=${user_id}&username=${username}`
+    });
+    await getUserData();
+}
 
-        // Функция для обновления данных на сервере
-        function updateData() {
-            fetch('https://api.kuzymuzy.ru/update_user_data.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    console.log('Данные успешно обновлены');
-                }
-            });
-        }
+async function updateData() {
+    await fetch('https://api.kuzymuzy.ru/update_user_data.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, score, energy, click_power: clickPower, max_energy: maxEnergy, last_update_time: lastUpdateTime, upgraded_levels: upgradedLevels })
+    });
+}
 
-        // Обновляем интерфейс
-        function updateUI() {
-            document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
-            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
-            updateData();
-        }
+function updateUI() {
+    document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score}`;
+    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+    updateData();
+}
 
-        // Восстановление энергии (пасивное обновление)
-        function restoreEnergy() {
-            let currentTime = Date.now();
-            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-            let energyRecovered = Math.floor(elapsedSeconds / 2); // Примерное восстановление
+document.getElementById("clickBtn").addEventListener("click", () => {
+    if (energy > 0) {
+        energy--;
+        score += clickPower;
+        updateUI();
+    }
+});
 
-            if (energyRecovered > 0) {
-                energy = Math.min(energy + energyRecovered, maxEnergy);
-                lastUpdateTime += energyRecovered * 2000; // обновляем timestamp
-                updateUI();
-            }
-        }
-
-        // Прослушиватель нажатий
-        document.getElementById("clickBtn").addEventListener("click", () => {
-            if (energy > 0) {
-                energy--;
-                score += clickPower;
-                updateUI();
-            }
-        });
-
-        // Загрузка данных пользователя
-        getUserData();
-        setInterval(restoreEnergy, 1000);  // Обновление энергии каждую секунду
-
+getUserData();
+setInterval(updateData, 10000);
     </script>
     
 </body>

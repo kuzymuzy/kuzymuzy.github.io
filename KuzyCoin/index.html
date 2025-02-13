@@ -150,8 +150,8 @@
     </style>
 </head>
 <body>
-    <h1 id="score">Kuzy Coins: 0</h1>
-    <p id="energy">Энергия: 500/500</p>
+    <h1 id="score">🪙 Kuzy Coins: 0</h1>
+    <p id="energy">⚡️ Энергия: 500/500</p>
 
     <div id="home" class="tab-content active">
         <button id="clickBtn">
@@ -178,111 +178,118 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand();
+tg.expand();
 
-        // Получаем user_id и username с Telegram Web App
-        let user_id = tg.initDataUnsafe.user.id;
-        let username = tg.initDataUnsafe.user.username;
+// Получаем user_id и username с Telegram Web App
+let user_id = tg.initDataUnsafe.user.id;
+let username = tg.initDataUnsafe.user.username;
 
-        let score = 0;
-        let energy = 500;
-        let clickPower = 5;
-        let maxEnergy = 500;
-        let lastUpdateTime = Date.now();
-        let upgradedLevels = [];
-        let timestamp = Date.now();
-
-        // Функция для получения данных пользователя с сервера
-        function getUserData() {
-            fetch(`https://api.kuzymuzy.tu/get_user_data.php?user_id=${user_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        // Если пользователь не найден, добавляем его
-                        addUser();
-                    } else {
-                        // Восстанавливаем данные из базы
-                        score = data.score;
-                        energy = data.energy;
-                        clickPower = data.click_power;
-                        maxEnergy = data.max_energy;
-                        upgradedLevels = JSON.parse(data.upgraded_levels);
-                        lastUpdateTime = new Date(data.last_update_time).getTime();
-                        timestamp = data.timestamp;
-                        updateUI();
-                    }
-                });
-        }
-
-        // Функция для добавления нового пользователя
-        function addUser() {
-            fetch('https://api.kuzymuzy.ru/add_user.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `user_id=${user_id}&username=${username}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'user_created') {
-                    // Теперь можно обновить данные
-                    updateUI();
-                }
-            });
-        }
-
-        // Функция для обновления данных на сервере
-        function updateData() {
-            fetch('https://api.kuzymuzy.ru/update_user_data.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    console.log('Данные успешно обновлены');
-                }
-            });
-        }
-
-        // Обновляем интерфейс
-        function updateUI() {
-            document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
-            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
-            updateData();
-        }
-
-        // Восстановление энергии (пасивное обновление)
-        function restoreEnergy() {
-            let currentTime = Date.now();
-            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-            let energyRecovered = Math.floor(elapsedSeconds / 2); // Примерное восстановление
-
-            if (energyRecovered > 0) {
-                energy = Math.min(energy + energyRecovered, maxEnergy);
-                lastUpdateTime += energyRecovered * 2000; // обновляем timestamp
-                updateUI();
-            }
-        }
-
-        // Прослушиватель нажатий
-        document.getElementById("clickBtn").addEventListener("click", () => {
-            if (energy > 0) {
-                energy--;
-                score += clickPower;
+// Функция для получения данных пользователя с сервера
+function getUserData() {
+    fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                // Если пользователь не найден, добавляем его
+                addUser();
+            } else {
+                // Иначе, восстанавливаем его данные
+                score = data.score;
+                energy = data.energy;
+                clickPower = data.click_power;
+                maxEnergy = data.max_energy;
+                upgradedLevels = JSON.parse(data.upgraded_levels);
                 updateUI();
             }
         });
+}
 
-        // Загрузка данных пользователя
-        getUserData();
-        setInterval(restoreEnergy, 1000);  // Обновление энергии каждую секунду
+// Функция для добавления нового пользователя
+function addUser() {
+    fetch('https://api.kuzymuzy.ru/add_user.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `user_id=${user_id}&username=${username}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'user_created') {
+            // Теперь можно обновить данные
+            updateUI();
+        }
+    });
+}
+
+// Функция для обновления данных на сервере
+function updateData() {
+    fetch('https://api.kuzymuzy.ru/update_user_data.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${Date.now()}&upgraded_levels=${JSON.stringify(upgradedLevels)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('Данные успешно обновлены');
+        }
+    });
+}
+
+document.getElementById("boostClickPower").addEventListener("click", () => {
+            if (score >= 1000 && clickPower < 100) {
+                score -= 1000;
+                clickPower++;
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
+            }
+        });
+    
+        document.getElementById("LitEnergy").addEventListener("click", () => {
+            if (score >= 500) {
+                score -= 500;
+                maxEnergy += 100;
+                localStorage.setItem('maxEnergy', maxEnergy);
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins");
+            }
+        });
+
+        document.getElementById("buyEnergy").addEventListener("click", () => {
+            if (score >= 500 && energy < maxEnergy) {
+                score -= 500;
+                energy = Math.min(energy + 50, maxEnergy);
+                updateUI();
+            } else {
+                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
+            }
+        });
+
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.classList.remove("active");
+            });
+            document.getElementById(tabName).classList.add("active");
+            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
+        }
+
+// Обновляем данные при каждом изменении
+function updateUI() {
+    document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
+    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+    updateData();
+}
+
+// Инициализация
+getUserData();
 
     </script>
 </body>
 </html>
+
 

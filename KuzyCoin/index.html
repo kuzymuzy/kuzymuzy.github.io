@@ -177,187 +177,170 @@
     </div>
 
     <script>
-let tg = window.Telegram.WebApp;
-tg.expand();
-
-let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username;
-
-let score = 0;
-let energy = 500;
-let clickPower = 5;
-let maxEnergy = 500;
-let lastUpdateTime = Date.now();
-let upgradedLevels = [];
-let timestamp = Date.now();
-
-// Получаем данные пользователя с сервера
-function getUserData() {
-    fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                addUser();
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        let user_id = tg.initDataUnsafe.user.id;
+        let username = tg.initDataUnsafe.user.username;
+        
+        let score = 0;
+        let energy = 500;
+        let clickPower = 5;
+        let maxEnergy = 500;
+        let lastUpdateTime = Date.now();
+        let upgradedLevels = [];
+        let timestamp = Date.now();
+        
+        // Получаем данные пользователя с сервера
+        function getUserData() {
+            fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        addUser();
+                    } else {
+                        score = data.score;
+                        energy = data.energy;
+                        clickPower = data.click_power;
+                        maxEnergy = data.max_energy;
+                        upgradedLevels = JSON.parse(data.upgraded_levels);
+                        lastUpdateTime = new Date(data.last_update_time).getTime();
+                        timestamp = data.timestamp;
+                        updateUI();
+                    }
+                });
+        }
+        
+        // Добавляем нового пользователя в БД
+        function addUser() {
+            fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `user_id=${user_id}&username=${username}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'user_created') {
+                    updateUI();
+                }
+            });
+        }
+        
+        // Обновляем данные на сервере
+        function updateData() {
+            fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Данные успешно обновлены');
+                }
+            });
+        }
+        
+        // Проверяем улучшения
+        const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
+        
+        function checkUpgrades() {
+            let upgradesChanged = false;
+        
+            upgradeLevels.forEach(level => {
+                if (score >= level && !upgradedLevels.includes(level)) {
+                    maxEnergy += 100;
+                    clickPower++;
+                    upgradedLevels.push(level);
+                    upgradesChanged = true;
+                }
+            });
+        
+            if (upgradesChanged) {
+                updateData();
+            }
+        }
+        
+        // Покупка усиления кликов
+        document.getElementById("boostClickPower").addEventListener("click", () => {
+            if (score >= 1000 && clickPower < 100) {
+                score -= 1000;
+                clickPower++;
+                updateUI();
             } else {
-                score = data.score;
-                energy = data.energy;
-                clickPower = data.click_power;
-                maxEnergy = data.max_energy;
-                upgradedLevels = JSON.parse(data.upgraded_levels);
-                lastUpdateTime = new Date(data.last_update_time).getTime();
-                timestamp = data.timestamp;
+                alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
+            }
+        });
+        
+        // Увеличение максимальной энергии
+        document.getElementById("LitEnergy").addEventListener("click", () => {
+            if (score >= 5000 && maxEnergy <= 4999) {
+                score -= 5000;
+                maxEnergy += 100;
+                updateUI();
+            } else {
+                alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
+            }
+        });
+        
+        // Покупка энергии
+        document.getElementById("buyEnergy").addEventListener("click", () => {
+            if (score >= 500 && energy < maxEnergy) {
+                score -= 500;
+                energy = Math.min(energy + 50, maxEnergy);
+                updateUI();
+            } else {
+                alert("Недостаточно Kuzy Coins или энергия уже полная");
+            }
+        });
+        
+        // Пассивное восстановление энергии
+        function restoreEnergy() {
+            let currentTime = Date.now();
+            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
+            let energyRecovered = Math.floor(elapsedSeconds / 2);
+        
+            if (energyRecovered > 0) {
+                energy = Math.min(energy + energyRecovered, maxEnergy);
+                lastUpdateTime += energyRecovered * 2000;
+                updateUI();
+            }
+        }
+        
+        // Обновляем интерфейс
+        function updateUI() {
+            document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score}`;
+            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+            updateData();
+        }
+        
+        // Клик по кнопке
+        document.getElementById("clickBtn").addEventListener("click", () => {
+            if (energy > 0) {
+                energy--;
+                score += clickPower;
+                checkUpgrades();
                 updateUI();
             }
         });
-}
-
-// Добавляем нового пользователя в БД
-function addUser() {
-    fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `user_id=${user_id}&username=${username}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'user_created') {
-            updateUI();
+        
+        // Переключение вкладок
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.classList.remove("active");
+            });
+            document.getElementById(tabName).classList.add("active");
+            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
         }
-    });
-}
-
-// Обновляем данные на сервере
-function updateData() {
-    fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            console.log('Данные успешно обновлены');
-        }
-    });
-}
-
-// Проверяем улучшения
-const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
-
-function checkUpgrades() {
-    let upgradesChanged = false;
-
-    upgradeLevels.forEach(level => {
-        if (score >= level && !upgradedLevels.includes(level)) {
-            maxEnergy += 100;
-            clickPower++;
-            upgradedLevels.push(level);
-            upgradesChanged = true;
-        }
-    });
-
-    if (upgradesChanged) {
-        updateData();
-    }
-}
-
-// Покупка усиления кликов
-document.getElementById("boostClickPower").addEventListener("click", () => {
-    if (score >= 1000 && clickPower < 100) {
-        score -= 1000;
-        clickPower++;
-        updateUI();
-    } else {
-        alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
-    }
-});
-
-// Увеличение максимальной энергии
-document.getElementById("LitEnergy").addEventListener("click", () => {
-    if (score >= 5000 && maxEnergy <= 4999) {
-        score -= 5000;
-        maxEnergy += 100;
-        updateUI();
-    } else {
-        alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
-    }
-});
-
-// Покупка энергии
-document.getElementById("buyEnergy").addEventListener("click", () => {
-    if (score >= 500 && energy < maxEnergy) {
-        score -= 500;
-        energy = Math.min(energy + 50, maxEnergy);
-        updateUI();
-    } else {
-        alert("Недостаточно Kuzy Coins или энергия уже полная");
-    }
-});
-
-// Пассивное восстановление энергии
-function restoreEnergy() {
-    let currentTime = Date.now();
-    let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-    let energyRecovered = Math.floor(elapsedSeconds / 2);
-
-    if (energyRecovered > 0) {
-        energy = Math.min(energy + energyRecovered, maxEnergy);
-        lastUpdateTime += energyRecovered * 2000;
-        updateUI();
-    }
-}
-
-// Обновляем интерфейс
-function updateUI() {
-    document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score}`;
-    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
-    updateData();
-}
-
-let lastClickTime = 0;
-let debounceTimeout = null;
-
-// Отложенная отправка данных на сервер (через 500ms)
-function delayedUpdateData() {
-    const currentTime = Date.now();
-    if (currentTime - lastClickTime >= 500) {
-        updateData(); // Функция для отправки данных на сервер
-    } else {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-            updateData();
-        }, 300);
-    }
-}
-
-// Клик по кнопке
-document.getElementById("clickBtn").addEventListener("click", () => {
-    if (energy > 0) {
-        energy--;
-        score += clickPower;
-        checkUpgrades();
-        updateUI();
-        lastClickTime = Date.now();  // Обновляем время последнего клика
-        delayedUpdateData(); // Отложенная отправка данных
-    }
-});
-
-
-// Переключение вкладок
-function showTab(tabName) {
-    document.querySelectorAll(".tab-content").forEach(tab => {
-        tab.classList.remove("active");
-    });
-    document.getElementById(tabName).classList.add("active");
-    document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
-}
-
-// Загружаем данные и запускаем восстановление энергии
-getUserData();
-setInterval(restoreEnergy, 1000);
-
-
+        
+        // Загружаем данные и запускаем восстановление энергии
+        getUserData();
+        setInterval(restoreEnergy, 1000);
+        
+        
     </script>
 </body>
 </html>
+
+
 

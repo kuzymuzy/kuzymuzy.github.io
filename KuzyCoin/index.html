@@ -194,7 +194,7 @@
 
         // Функция для получения данных пользователя с сервера
         function getUserData() {
-            fetch(`https://yourserver.com/get_user_data.php?user_id=${user_id}`)
+            fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -216,7 +216,7 @@
 
         // Функция для добавления нового пользователя
         function addUser() {
-            fetch('https://yourserver.com/add_user.php', {
+            fetch('https://api.kuzymuzy.ru/add_user.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -234,7 +234,7 @@
 
         // Функция для обновления данных на сервере
         function updateData() {
-            fetch('https://yourserver.com/update_user_data.php', {
+            fetch('https://api.kuzymuzy.ru/update_user_data.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

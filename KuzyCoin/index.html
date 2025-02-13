@@ -179,11 +179,11 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-    
+
         // Получаем user_id и username с Telegram Web App
         let user_id = tg.initDataUnsafe.user.id;
         let username = tg.initDataUnsafe.user.username;
-    
+
         let score = 0;
         let energy = 500;
         let clickPower = 5;
@@ -191,40 +191,29 @@
         let lastUpdateTime = Date.now();
         let upgradedLevels = [];
         let timestamp = Date.now();
-    
+
         // Функция для получения данных пользователя с сервера
         function getUserData() {
-            fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+            fetch(`https://api.kuzymuzy.tu/get_user_data.php?user_id=${user_id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        // Если ошибка на сервере
-                        console.error("Ошибка при получении данных:", data.error);
-                        addUser(); // Делаем попытку добавить пользователя
+                        // Если пользователь не найден, добавляем его
+                        addUser();
                     } else {
-                        try {
-                            // Восстанавливаем данные из базы
-                            score = data.score || 0;
-                            energy = data.energy || 500;
-                            clickPower = data.click_power || 5;
-                            maxEnergy = data.max_energy || 500;
-                            // Проверяем и парсим уровень улучшений (если есть)
-                            upgradedLevels = data.upgraded_levels ? JSON.parse(data.upgraded_levels) : [];
-                            lastUpdateTime = new Date(data.last_update_time).getTime() || Date.now();
-                            timestamp = data.timestamp || Date.now();
-                            updateUI();
-                        } catch (error) {
-                            console.error("Ошибка при обработке данных пользователя:", error);
-                            getUserData(); // Пробуем загрузить данные заново
-                        }
+                        // Восстанавливаем данные из базы
+                        score = data.score;
+                        energy = data.energy;
+                        clickPower = data.click_power;
+                        maxEnergy = data.max_energy;
+                        upgradedLevels = JSON.parse(data.upgraded_levels);
+                        lastUpdateTime = new Date(data.last_update_time).getTime();
+                        timestamp = data.timestamp;
+                        updateUI();
                     }
-                })
-                .catch(error => {
-                    console.error("Ошибка при запросе данных пользователя:", error);
-                    getUserData(); // Попробуем запросить данные снова в случае сетевой ошибки
                 });
         }
-    
+
         // Функция для добавления нового пользователя
         function addUser() {
             fetch('https://api.kuzymuzy.ru/add_user.php', {
@@ -239,13 +228,10 @@
                 if (data.status === 'user_created') {
                     // Теперь можно обновить данные
                     updateUI();
-                } else {
-                    console.error("Ошибка при создании пользователя:", data);
                 }
-            })
-            .catch(error => console.error("Ошибка при добавлении пользователя:", error));
+            });
         }
-    
+
         // Функция для обновления данных на сервере
         function updateData() {
             fetch('https://api.kuzymuzy.ru/update_user_data.php', {
@@ -260,30 +246,29 @@
                 if (data.status === 'success') {
                     console.log('Данные успешно обновлены');
                 }
-            })
-            .catch(error => console.error("Ошибка при обновлении данных на сервере:", error));
+            });
         }
-    
-        // Функция для обновления интерфейса
+
+        // Обновляем интерфейс
         function updateUI() {
             document.getElementById("score").textContent = "🪙 Kuzy Coins: " + score;
             document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
             updateData();
         }
-    
-        // Функция для восстановления энергии (пасивное обновление)
+
+        // Восстановление энергии (пасивное обновление)
         function restoreEnergy() {
             let currentTime = Date.now();
             let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
             let energyRecovered = Math.floor(elapsedSeconds / 2); // Примерное восстановление
-    
+
             if (energyRecovered > 0) {
                 energy = Math.min(energy + energyRecovered, maxEnergy);
                 lastUpdateTime += energyRecovered * 2000; // обновляем timestamp
                 updateUI();
             }
         }
-    
+
         // Прослушиватель нажатий
         document.getElementById("clickBtn").addEventListener("click", () => {
             if (energy > 0) {
@@ -292,53 +277,12 @@
                 updateUI();
             }
         });
-    
-        // Прослушиватель для кнопки на улучшение мощности клика
-        document.getElementById("boostClickPower").addEventListener("click", () => {
-            if (score >= 1000 && clickPower < 100) {
-                score -= 1000;
-                clickPower++;
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins или Click Power не может быть больше 100");
-            }
-        });
-    
-        // Прослушиватель для кнопки на улучшение энергии
-        document.getElementById("LitEnergy").addEventListener("click", () => {
-            if (score >= 500) {
-                score -= 500;
-                maxEnergy += 100;
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins");
-            }
-        });
-    
-        // Прослушиватель для кнопки на покупку энергии
-        document.getElementById("buyEnergy").addEventListener("click", () => {
-            if (score >= 500 && energy < maxEnergy) {
-                score -= 500;
-                energy = Math.min(energy + 50, maxEnergy);
-                updateUI();
-            } else {
-                alert("У вас недостаточно Kuzy Coins или еще достаточно энергии");
-            }
-        });
-    
-        // Функция для отображения вкладок
-        function showTab(tabName) {
-            document.querySelectorAll(".tab-content").forEach(tab => {
-                tab.classList.remove("active");
-            });
-            document.getElementById(tabName).classList.add("active");
-            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
-        }
-    
+
         // Загрузка данных пользователя
         getUserData();
         setInterval(restoreEnergy, 1000);  // Обновление энергии каждую секунду
-    </script>      
+
+    </script>
 </body>
 </html>
 

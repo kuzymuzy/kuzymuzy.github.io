@@ -162,7 +162,7 @@
     <div id="shop" class="tab-content">
         <div class="shop-item" id="boostClickPower">Мощность клика <span>🪙 1000 Kuzy Coins</span></div>
         <div class="shop-item" id="buyEnergy">Купить энергию <span>🪙 500 Kuzy Coins</span></div>
-        <div class="shop-item" id="LitEnergy">Увеличеть максимальную энергию <span>🪙 500 Kuzy Coins</span></div>
+        <div class="shop-item" id="LitEnergy">Увеличеть максимальную энергию <span>🪙 5000 Kuzy Coins</span></div>
     </div>
 
     <div class="tab-bar">
@@ -274,12 +274,12 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
 
 // Увеличение максимальной энергии
 document.getElementById("LitEnergy").addEventListener("click", () => {
-    if (score >= 500) {
-        score -= 500;
+    if (score >= 5000 && maxEnergy <= 4999) {
+        score -= 5000;
         maxEnergy += 100;
         updateUI();
     } else {
-        alert("Недостаточно Kuzy Coins");
+        alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
     }
 });
 

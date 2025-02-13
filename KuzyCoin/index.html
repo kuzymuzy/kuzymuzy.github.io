@@ -193,7 +193,7 @@ let timestamp = Date.now();
 
 // Получаем данные пользователя с сервера
 function getUserData() {
-    fetch(`https://api.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+    fetch(`https://gameapi.x10.mx/get_user_data.php?user_id=${user_id}`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -213,7 +213,7 @@ function getUserData() {
 
 // Добавляем нового пользователя в БД
 function addUser() {
-    fetch('https://api.kuzymuzy.ru/add_user.php', {
+    fetch('https://gameapi.x10.mx/add_user.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `user_id=${user_id}&username=${username}`
@@ -228,7 +228,7 @@ function addUser() {
 
 // Обновляем данные на сервере
 function updateData() {
-    fetch('https://api.kuzymuzy.ru/update_user_data.php', {
+    fetch('https://gameapi.x10.mx/update_user_data.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
@@ -314,6 +314,22 @@ function updateUI() {
     updateData();
 }
 
+let lastClickTime = 0;
+let debounceTimeout = null;
+
+// Отложенная отправка данных на сервер (через 500ms)
+function delayedUpdateData() {
+    const currentTime = Date.now();
+    if (currentTime - lastClickTime >= 500) {
+        updateData(); // Функция для отправки данных на сервер
+    } else {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            updateData();
+        }, 300);
+    }
+}
+
 // Клик по кнопке
 document.getElementById("clickBtn").addEventListener("click", () => {
     if (energy > 0) {
@@ -321,8 +337,11 @@ document.getElementById("clickBtn").addEventListener("click", () => {
         score += clickPower;
         checkUpgrades();
         updateUI();
+        lastClickTime = Date.now();  // Обновляем время последнего клика
+        delayedUpdateData(); // Отложенная отправка данных
     }
 });
+
 
 // Переключение вкладок
 function showTab(tabName) {

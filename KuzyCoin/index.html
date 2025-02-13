@@ -193,7 +193,7 @@ let timestamp = Date.now();
 
 // Получаем данные пользователя с сервера
 function getUserData() {
-    fetch(`https://gameapi.x10.mx/get_user_data.php?user_id=${user_id}`)
+    fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -213,7 +213,7 @@ function getUserData() {
 
 // Добавляем нового пользователя в БД
 function addUser() {
-    fetch('https://gameapi.x10.mx/add_user.php', {
+    fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `user_id=${user_id}&username=${username}`
@@ -228,7 +228,7 @@ function addUser() {
 
 // Обновляем данные на сервере
 function updateData() {
-    fetch('https://gameapi.x10.mx/update_user_data.php', {
+    fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`

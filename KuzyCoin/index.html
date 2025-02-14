@@ -206,7 +206,7 @@
 /* Круговая загрузка */
         .loader {
             border: 6px solid rgba(255, 255, 255, 0.3);
-            border-top: 6px solid #ffcc00;
+            border-top: 6px solid #00aeff;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -299,8 +299,8 @@
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username;
+let user_id = 1234;
+let username = "test";
 
 let score = 0;
 let energy = 500;
@@ -309,10 +309,12 @@ let maxEnergy = 500;
 let lastUpdateTime = Date.now();
 let upgradedLevels = [];
 let timestamp = Date.now();
+let ban = 0;
 
 let updateTimeout = null; // Таймер отправки данных
 
 let leaderboardLoaded = false; // Флаг, чтобы загружать лидерборд только один раз
+
 
 // Показываем прелоадер и скрываем через 2 секунды
 setTimeout(() => {
@@ -321,23 +323,6 @@ setTimeout(() => {
         document.getElementById("preloader").style.display = "none";
     }, 500);
 }, 3000);
-
-// 🔍 Проверка бана
-function checkBan() {
-    fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.ban === 1) {
-                document.getElementById("ban-modal").style.display = "flex";
-                document.getElementById("ban-content").style.display = "block";
-            }
-        })
-        .catch(error => console.error("Ошибка проверки бана:", error));
-}
-
-// Вызываем проверку бана при загрузке
-checkBan();
-
 
 // Функция загрузки лидерборда
 function getLeaderboard() {
@@ -382,9 +367,30 @@ function getUserData() {
                 upgradedLevels = data.upgraded_levels || [];
                 lastUpdateTime = data.last_update_time;
                 timestamp = data.timestamp;
+                ban = data.ban;
+
+                // 🔥 Ограничиваем значения
+                if (maxEnergy > 5000) maxEnergy = 5000;
+                if (clickPower > 100) clickPower = 100;
+                if (energy > maxEnergy) energy = maxEnergy;
+
                 updateUI();
             }
         });
+}
+
+
+// 🔍 Проверка бана
+function checkBan() {
+    fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.ban === 1) {
+                document.getElementById("ban-modal").style.display = "flex";
+                document.getElementById("ban-content").style.display = "block";
+            }
+        })
+        .catch(error => console.error("Ошибка проверки бана:", error));
 }
 
 // Добавляем нового пользователя
@@ -395,6 +401,7 @@ function addUser() {
         body: `user_id=${user_id}&username=${username}`
     }).then(response => response.json());
 }
+
 
 // Ожидание 1 секунду после последнего тапа
 function scheduleUpdate() {
@@ -428,24 +435,24 @@ const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
 function checkUpgrades() {
     let upgradesChanged = false;
 
-    // 🛠 Гарантируем, что upgradedLevels - это массив
     if (!Array.isArray(upgradedLevels)) {
         upgradedLevels = [];
     }
 
     upgradeLevels.forEach(level => {
         if (score >= level && !upgradedLevels.includes(level)) {
-            maxEnergy += 100;
-            clickPower++;
-            upgradedLevels.push(level); // Теперь .push() не вызовет ошибку
+            maxEnergy = Math.min(maxEnergy + 100, 5000); // 🔥 Ограничение 5000
+            clickPower = Math.min(clickPower + 1, 100); // 🔥 Ограничение 100
+            upgradedLevels.push(level);
             upgradesChanged = true;
         }
     });
 
     if (upgradesChanged) {
-        scheduleUpdate(); // Запускаем отложенное обновление
+        scheduleUpdate();
     }
 }
+
 
 
 // Обновление интерфейса
@@ -504,6 +511,17 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
             function showTab(tabName) {
             document.querySelectorAll(".tab-content").forEach(tab => {
                 tab.classList.remove("active");
+                if (tabName === "leaderboard"){
+                    document.getElementById("energy").style.display = "none"
+                    document.getElementById("score").style.display = "none"
+                }
+                if (tabName === "home"){
+                    document.getElementById("energy").style.display = "block"
+                    document.getElementById("score").style.display = "block"
+                }
+                if (tabName === "shop"){
+                    document.getElementById("energy").style.display = "none"
+                }
             });
             document.getElementById(tabName).classList.add("active");
             document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
@@ -513,6 +531,7 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
 getUserData();
 getLeaderboard()
 setInterval(restoreEnergy, 1000);
+checkBan();
     </script>
 </body>
 </html>

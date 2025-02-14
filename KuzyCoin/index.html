@@ -23,7 +23,7 @@
         }
 
         #score {
-            font-size: 28px;
+            font-size: 25px;
             font-weight: bold;
             position: absolute;
             top: 20px;
@@ -33,7 +33,7 @@
         }
 
         #energy {
-            font-size: 20px;
+            font-size: 17px;
             position: absolute;
             bottom: 80px;
             left: 20px;
@@ -44,7 +44,7 @@
         }
 
         #name {
-            font-size: 20px;
+            font-size: 17px;
             position: absolute;
             top: 30px;
             right: 20px;
@@ -55,7 +55,7 @@
         }
 
         #ClickPower {
-            font-size: 20px;
+            font-size: 17px;
             position: absolute;
             bottom: 80px;
             right: 20px;
@@ -324,7 +324,10 @@ let tg = window.Telegram.WebApp;
 tg.expand();
 
 let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username;
+let username = tg.initDataUnsafe.user.username; 
+
+// let user_id = 1234;
+// let username = "br4tishkin";
 
 let score = 0;
 let energy = 500;

@@ -147,6 +147,41 @@
             font-weight: bold;
             color: #ffcc00;
         }
+
+        /* Заголовок лидерборда */
+        #leaderboard h2 {
+            font-size: 24px;
+            color: #ffcc00;
+            margin-top: 55px;
+        }
+
+        /* Список лидеров */
+        #leaderboard-list {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0;
+            list-style: none;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Элементы списка */
+        #leaderboard-list li {
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Подсветка ТОП-3 игроков */
+        #leaderboard-list li:nth-child(1) { color: gold; }
+        #leaderboard-list li:nth-child(2) { color: silver; }
+        #leaderboard-list li:nth-child(3) { color: #cd7f32; }
+
+        #leaderboard-list li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -165,6 +200,11 @@
         <div class="shop-item" id="LitEnergy">Увеличеть максимальную энергию <span>🪙 5000 Kuzy Coins</span></div>
     </div>
 
+    <div id="leaderboard" class="tab-content">
+        <h2>🏆 Лидеры</h2>
+        <ul id="leaderboard-list" style="list-style: none; padding: 0; font-size: 18px;"></ul>
+    </div>    
+
     <div class="tab-bar">
         <button onclick="showTab('home')">
             <div class="tab-icon" id="home">🏠</div>
@@ -174,14 +214,18 @@
             <div class="tab-icon">🛒</div>
             Магазин
         </button>
+        <button onclick="showTab('leaderboard')">
+            <div class="tab-icon">🏆</div>
+            Лидеры
+        </button>
     </div>
 
     <script>
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username;
+let user_id = 1234;
+let username = "test";
 
 let score = 0;
 let energy = 500;
@@ -192,6 +236,36 @@ let upgradedLevels = [];
 let timestamp = Date.now();
 
 let updateTimeout = null; // Таймер отправки данных
+
+let leaderboardLoaded = false; // Флаг, чтобы загружать лидерборд только один раз
+
+// Функция загрузки лидерборда
+function getLeaderboard() {
+    if (leaderboardLoaded) return; // Если уже загружен, не делать запрос
+
+    fetch('https://gameapi.kuzymuzy.ru/get_leaderboard.php')
+        .then(response => response.json())
+        .then(data => {
+            let leaderboardList = document.getElementById("leaderboard-list");
+            leaderboardList.innerHTML = ""; // Очищаем список перед обновлением
+
+            if (data.length === 0) {
+                leaderboardList.innerHTML = "<li>Нет данных</li>"; // Если нет игроков
+                return;
+            }
+
+            data.forEach((player, index) => {
+                let listItem = document.createElement("li");
+                listItem.textContent = `${index + 1}. ${player.username} - 🪙 ${player.score}`;
+                leaderboardList.appendChild(listItem);
+            });
+
+            leaderboardLoaded = true; // Запоминаем, что данные загружены
+        })
+        .catch(error => {
+            console.error("Ошибка загрузки лидерборда:", error);
+        });
+}
 
 // Загружаем данные пользователя
 function getUserData() {
@@ -330,6 +404,7 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
 
 // Загружаем данные и запускаем восстановление энергии
 getUserData();
+getLeaderboard()
 setInterval(restoreEnergy, 1000);
     </script>
 </body>

@@ -139,7 +139,7 @@
         }
 
         #shop {
-            display: none; /* Изначально скрыт */
+            display: none;
             flex-direction: column;
             align-items: center;
             gap: 15px;
@@ -170,14 +170,12 @@
             color: #ffcc00;
         }
 
-        /* Заголовок лидерборда */
         #leaderboard h2 {
             font-size: 24px;
             color: #ffcc00;
             margin-top: 5px;
         }
 
-        /* Список лидеров */
         #leaderboard-list {
             max-width: 400px;
             margin: 0 auto;
@@ -188,7 +186,6 @@
             overflow: hidden;
         }
 
-        /* Элементы списка */
         #leaderboard-list li {
             padding: 12px;
             font-size: 18px;
@@ -196,7 +193,6 @@
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Подсветка ТОП-3 игроков */
         #leaderboard-list li:nth-child(1) { color: gold; }
         #leaderboard-list li:nth-child(2) { color: silver; }
         #leaderboard-list li:nth-child(3) { color: #cd7f32; }
@@ -205,7 +201,7 @@
             border-bottom: none;
         }
 
-        /* 🔄 Прелоадер (анимация загрузки) */
+    
         #preloader {
             position: fixed;
             width: 100%;
@@ -225,7 +221,7 @@
             margin-top: 15px;
         }
 
-/* Круговая загрузка */
+
         .loader {
             border: 6px solid rgba(255, 255, 255, 0.3);
             border-top: 6px solid #00aeff;
@@ -240,7 +236,7 @@
             100% { transform: rotate(360deg); }
         }
 
-/* 🔒 Модальное окно бана */
+
         #ban-modal {
             position: fixed;
             top: 0;
@@ -264,12 +260,59 @@
             font-size: 22px;
         }
 
+        @media (max-width: 450px) {
+            #name {
+                font-size: 18px;
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 10px;
+                z-index: 3;
+            }
+
+            #score {
+                font-size: 25px;
+                font-weight: bold;
+                position: absolute;
+                top: 50px; 
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 2;
+            }
+
+            #energy {
+                font-size: 13px;
+                position: absolute;
+                bottom: 80px;
+                left: 20px;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 10px;
+                z-index: 2;
+            }
+
+            #ClickPower {
+                font-size: 13px;
+                position: absolute;
+                bottom: 80px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 10px;
+                z-index: 2;
+            }
+        }
+
+
     </style>
 </head>
 <body>
     <h1 id="score">🪙 Kuzy Coins: 0</h1>
-    <p id="energy">⚡️ Энергия: 500/500</p>
     <p id="name">🌍 Имя</p>
+    <p id="energy">⚡️ Энергия: 500/500</p>
     <p id="ClickPower">💥 Сила клика: 5</p>
 
     <div id="home" class="tab-content active">
@@ -304,13 +347,11 @@
         </button>
     </div>
 
-    <!-- Прелоадер -->
     <div id="preloader">
         <div class="loader"></div>
             <p id="preloader-text">Загрузка...</p>
     </div>
 
-<!-- Модальное окно для забаненных -->
     <div id="ban-modal">
         <div class="ban-content" id="ban-content">
             <h2>⛔ Вы забанены</h2>
@@ -323,11 +364,11 @@
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username; 
+//let user_id = tg.initDataUnsafe.user.id;
+//let username = tg.initDataUnsafe.user.username; 
 
-// let user_id = 1234;
-// let username = "br4tishkin";
+let user_id = 1234;
+let username = "br4tishkin";
 
 let score = 0;
 let energy = 500;
@@ -338,14 +379,13 @@ let upgradedLevels = [];
 let timestamp = Date.now();
 let ban = 0;
 
-let updateTimeout = null; // Таймер отправки данных
+let updateTimeout = null; 
 
-let leaderboardLoaded = false; // Флаг, чтобы загружать лидерборд только один раз
+let leaderboardLoaded = false;
 
 document.getElementById("name").textContent = `🌍 ${username}`;
 
 
-// Показываем прелоадер и скрываем через 2 секунды
 setTimeout(() => {
     document.getElementById("preloader").style.opacity = "0";
     setTimeout(() => {
@@ -353,18 +393,17 @@ setTimeout(() => {
     }, 500);
 }, 3000);
 
-// Функция загрузки лидерборда
 function getLeaderboard() {
-    if (leaderboardLoaded) return; // Если уже загружен, не делать запрос
+    if (leaderboardLoaded) return;
 
     fetch('https://gameapi.kuzymuzy.ru/get_leaderboard.php')
         .then(response => response.json())
         .then(data => {
             let leaderboardList = document.getElementById("leaderboard-list");
-            leaderboardList.innerHTML = ""; // Очищаем список перед обновлением
+            leaderboardList.innerHTML = "";
 
             if (data.length === 0) {
-                leaderboardList.innerHTML = "<li>Нет данных</li>"; // Если нет игроков
+                leaderboardList.innerHTML = "<li>Нет данных</li>";
                 return;
             }
 
@@ -374,14 +413,13 @@ function getLeaderboard() {
                 leaderboardList.appendChild(listItem);
             });
 
-            leaderboardLoaded = true; // Запоминаем, что данные загружены
+            leaderboardLoaded = true;
         })
         .catch(error => {
             console.error("Ошибка загрузки лидерборда:", error);
         });
 }
 
-// Загружаем данные пользователя
 function getUserData() {
     fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
         .then(response => response.json())
@@ -398,7 +436,6 @@ function getUserData() {
                 timestamp = data.timestamp;
                 ban = data.ban;
 
-                // 🔥 Ограничиваем значения
                 if (maxEnergy > 5000) maxEnergy = 5000;
                 if (clickPower > 100) clickPower = 100;
                 if (energy > maxEnergy) energy = maxEnergy;
@@ -408,8 +445,6 @@ function getUserData() {
         });
 }
 
-
-// 🔍 Проверка бана
 function checkBan() {
     fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
         .then(response => response.json())
@@ -422,7 +457,7 @@ function checkBan() {
         .catch(error => console.error("Ошибка проверки бана:", error));
 }
 
-// Добавляем нового пользователя
+
 function addUser() {
     fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
         method: 'POST',
@@ -432,13 +467,12 @@ function addUser() {
 }
 
 
-// Ожидание 1 секунду после последнего тапа
 function scheduleUpdate() {
-    clearTimeout(updateTimeout); // Сбрасываем предыдущий таймер
-    updateTimeout = setTimeout(updateData, 1000); // Запускаем новый через 1 секунду
+    clearTimeout(updateTimeout); 
+    updateTimeout = setTimeout(updateData, 1000);
 }
 
-// Отправка данных на сервер
+
 function updateData() {
     fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
         method: 'POST',
@@ -447,18 +481,16 @@ function updateData() {
     }).then(response => response.json());
 }
 
-// Клик по кнопке (энергия уменьшается, монеты увеличиваются)
 document.getElementById("clickBtn").addEventListener("click", () => {
     if (energy > 0) {
         energy--;
         score += clickPower;
         checkUpgrades();
         updateUI();
-        scheduleUpdate(); // Запускаем таймер обновления
+        scheduleUpdate();
     }
 });
 
-// Проверка улучшений
 const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
 
 function checkUpgrades() {
@@ -470,28 +502,24 @@ function checkUpgrades() {
 
     upgradeLevels.forEach(level => {
         if (score >= level && !upgradedLevels.includes(level)) {
-            maxEnergy = Math.min(maxEnergy + 100, 5000); // 🔥 Ограничение 5000
-            clickPower = Math.min(clickPower + 1, 100); // 🔥 Ограничение 100
-            upgradedLevels.push(level);
+            maxEnergy = Math.min(maxEnergy + 100, 5000);
+            clickPower = Math.min(clickPower + 1, 100);
+            upgradedLevels.push(level); // Добавляем новый уровень в массив
             upgradesChanged = true;
         }
     });
 
     if (upgradesChanged) {
-        scheduleUpdate();
+        scheduleUpdate(); // Обновляем UI
     }
 }
 
-
-
-// Обновление интерфейса
 function updateUI() {
     document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score}`;
     document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
     document.getElementById("ClickPower").textContent = `💥 Сила клика:  ${clickPower}`;
 }
 
-// Пассивное восстановление энергии раз в 1 секунду
 function restoreEnergy() {
     let currentTime = Date.now();
     let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
@@ -501,22 +529,22 @@ function restoreEnergy() {
         energy = Math.min(energy + energyRecovered, maxEnergy);
         lastUpdateTime += energyRecovered * 2000;
         updateUI();
-        scheduleUpdate(); // Запускаем отложенное обновление
+        scheduleUpdate(); 
     }
 }
 
 document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
-    event.preventDefault(); // Предотвращаем стандартное поведение
+    event.preventDefault();
 
-    let touches = event.touches.length; // Количество касаний
-    let taps = Math.min(touches, Math.floor(energy / clickPower)); // Число возможных кликов (не больше энергии)
+    let touches = event.touches.length; 
+    let taps = Math.min(touches, Math.floor(energy / maxEnergy));
 
     if (taps > 0) {
         energy -= taps;
         score += clickPower * taps;
         checkUpgrades();
         updateUI();
-        scheduleUpdate(); // Отправка обновлений на сервер
+        scheduleUpdate(); 
     }
 });
 
@@ -531,7 +559,6 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
             }
         });
         
-        // Увеличение максимальной энергии
         document.getElementById("LitEnergy").addEventListener("click", () => {
             if (score >= 5000 && maxEnergy <= 4999) {
                 score -= 5000;
@@ -542,7 +569,6 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
             }
         });
         
-        // Покупка энергии
         document.getElementById("buyEnergy").addEventListener("click", () => {
             if (score >= 500 && energy < maxEnergy) {
                 score -= 500;
@@ -553,7 +579,6 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
             }
         });
         
-                // Переключение вкладок
             function showTab(tabName) {
             document.querySelectorAll(".tab-content").forEach(tab => {
                 tab.classList.remove("active");
@@ -580,7 +605,6 @@ document.getElementById("boostClickPower").addEventListener("click", () => {
             document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
         }
 
-// Загружаем данные и запускаем восстановление энергии
 getUserData();
 getLeaderboard()
 setInterval(restoreEnergy, 1000);

@@ -360,15 +360,15 @@
     </div>
 
 
-    <script>
+<script>
 let tg = window.Telegram.WebApp;
 tg.expand();
 
 let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username; 
+let username = tg.initDataUnsafe.user.username;
 
-// let user_id = 1234;
-// let username = "br4tishkin";
+//let user_id = 1234;
+//let username = "br4tishkin";
 
 let score = 0;
 let energy = 500;
@@ -379,12 +379,10 @@ let upgradedLevels = [];
 let timestamp = Date.now();
 let ban = 0;
 
-let updateTimeout = null; 
-
+let updateTimeout = null;
 let leaderboardLoaded = false;
 
 document.getElementById("name").textContent = `🌍 ${username}`;
-
 
 setTimeout(() => {
     document.getElementById("preloader").style.opacity = "0";
@@ -415,9 +413,7 @@ function getLeaderboard() {
 
             leaderboardLoaded = true;
         })
-        .catch(error => {
-            console.error("Ошибка загрузки лидерборда:", error);
-        });
+        .catch(error => console.error("Ошибка загрузки лидерборда:", error));
 }
 
 function getUserData() {
@@ -431,7 +427,12 @@ function getUserData() {
                 energy = data.energy;
                 clickPower = data.click_power;
                 maxEnergy = data.max_energy;
-                upgradedLevels = data.upgraded_levels || [];
+                try {
+                    upgradedLevels = JSON.parse(data.upgraded_levels) || [];
+                } catch (e) {
+                    upgradedLevels = [];
+                }
+
                 lastUpdateTime = data.last_update_time;
                 timestamp = data.timestamp;
                 ban = data.ban;
@@ -445,6 +446,7 @@ function getUserData() {
         });
 }
 
+
 function checkBan() {
     fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
         .then(response => response.json())
@@ -457,7 +459,6 @@ function checkBan() {
         .catch(error => console.error("Ошибка проверки бана:", error));
 }
 
-
 function addUser() {
     fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
         method: 'POST',
@@ -466,12 +467,10 @@ function addUser() {
     }).then(response => response.json());
 }
 
-
 function scheduleUpdate() {
-    clearTimeout(updateTimeout); 
+    clearTimeout(updateTimeout);
     updateTimeout = setTimeout(updateData, 1000);
 }
-
 
 function updateData() {
     fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
@@ -495,6 +494,13 @@ const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
 
 function checkUpgrades() {
     let upgradesChanged = false;
+    if (typeof upgradedLevels === "string") {
+        try {
+            upgradedLevels = JSON.parse(upgradedLevels);
+        } catch (e) {
+            upgradedLevels = [];
+        }
+    }
 
     if (!Array.isArray(upgradedLevels)) {
         upgradedLevels = [];
@@ -502,22 +508,25 @@ function checkUpgrades() {
 
     upgradeLevels.forEach(level => {
         if (score >= level && !upgradedLevels.includes(level)) {
+            upgradedLevels.push(level);
+
             maxEnergy = Math.min(maxEnergy + 100, 5000);
             clickPower = Math.min(clickPower + 1, 100);
-            upgradedLevels.push(level); // Добавляем новый уровень в массив
             upgradesChanged = true;
+
+            console.log(`✅ Добавлен апгрейд: ${level}`);
         }
     });
 
     if (upgradesChanged) {
-        scheduleUpdate(); // Обновляем UI
+        scheduleUpdate();
     }
 }
 
 function updateUI() {
     document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score}`;
     document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
-    document.getElementById("ClickPower").textContent = `💥 Сила клика:  ${clickPower}`;
+    document.getElementById("ClickPower").textContent = `💥 Сила клика: ${clickPower}`;
 }
 
 function restoreEnergy() {
@@ -529,14 +538,14 @@ function restoreEnergy() {
         energy = Math.min(energy + energyRecovered, maxEnergy);
         lastUpdateTime += energyRecovered * 2000;
         updateUI();
-        scheduleUpdate(); 
+        scheduleUpdate();
     }
 }
 
 document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
     event.preventDefault();
 
-    let touches = event.touches.length; 
+    let touches = event.touches.length;
     let taps = Math.min(touches, Math.floor(energy / maxEnergy));
 
     if (taps > 0) {
@@ -544,74 +553,70 @@ document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
         score += clickPower * taps;
         checkUpgrades();
         updateUI();
-        scheduleUpdate(); 
+        scheduleUpdate();
     }
 });
 
-
 document.getElementById("boostClickPower").addEventListener("click", () => {
-            if (score >= 1000 && clickPower < 100) {
-                score -= 1000;
-                clickPower++;
-                updateUI();
-            } else {
-                alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
-            }
-        });
-        
-        document.getElementById("LitEnergy").addEventListener("click", () => {
-            if (score >= 5000 && maxEnergy <= 4999) {
-                score -= 5000;
-                maxEnergy += 100;
-                updateUI();
-            } else {
-                alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
-            }
-        });
-        
-        document.getElementById("buyEnergy").addEventListener("click", () => {
-            if (score >= 500 && energy < maxEnergy) {
-                score -= 500;
-                energy = Math.min(energy + 50, maxEnergy);
-                updateUI();
-            } else {
-                alert("Недостаточно Kuzy Coins или энергия уже полная");
-            }
-        });
-        
-            function showTab(tabName) {
-            document.querySelectorAll(".tab-content").forEach(tab => {
-                tab.classList.remove("active");
-                if (tabName === "leaderboard"){
-                    document.getElementById("name").style.display = "none"
-                    document.getElementById("ClickPower").style.display = "none"
-                    document.getElementById("energy").style.display = "none"
-                    document.getElementById("score").style.display = "none"
-                }
-                if (tabName === "home"){
-                    document.getElementById("name").style.display = "block"
-                    document.getElementById("ClickPower").style.display = "block"
-                    document.getElementById("energy").style.display = "block"
-                    document.getElementById("score").style.display = "block"
-                }
-                if (tabName === "shop"){
-                    document.getElementById("name").style.display = "none"
-                    document.getElementById("ClickPower").style.display = "none"
-                    document.getElementById("score").style.display = "none"
-                    document.getElementById("energy").style.display = "none"
-                }
-            });
-            document.getElementById(tabName).classList.add("active");
-            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
+    if (score >= 1000 && clickPower < 100) {
+        score -= 1000;
+        clickPower++;
+        updateUI();
+    } else {
+        alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
+    }
+});
+
+document.getElementById("LitEnergy").addEventListener("click", () => {
+    if (score >= 5000 && maxEnergy <= 4999) {
+        score -= 5000;
+        maxEnergy += 100;
+        updateUI();
+    } else {
+        alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
+    }
+});
+
+document.getElementById("buyEnergy").addEventListener("click", () => {
+    if (score >= 500 && energy < maxEnergy) {
+        score -= 500;
+        energy = Math.min(energy + 50, maxEnergy);
+        updateUI();
+    } else {
+        alert("Недостаточно Kuzy Coins или энергия уже полная");
+    }
+});
+
+function showTab(tabName) {
+    document.querySelectorAll(".tab-content").forEach(tab => {
+        tab.classList.remove("active");
+
+        if (tabName === "leaderboard") {
+            document.getElementById("name").style.display = "none";
+            document.getElementById("ClickPower").style.display = "none";
+            document.getElementById("energy").style.display = "none";
+            document.getElementById("score").style.display = "none";
+        } else if (tabName === "home") {
+            document.getElementById("name").style.display = "block";
+            document.getElementById("ClickPower").style.display = "block";
+            document.getElementById("energy").style.display = "block";
+            document.getElementById("score").style.display = "block";
+        } else if (tabName === "shop") {
+            document.getElementById("name").style.display = "none";
+            document.getElementById("ClickPower").style.display = "none";
+            document.getElementById("score").style.display = "none";
+            document.getElementById("energy").style.display = "none";
         }
+    });
+
+    document.getElementById(tabName).classList.add("active");
+    document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
+}
 
 getUserData();
-getLeaderboard()
+getLeaderboard();
 setInterval(restoreEnergy, 1000);
 checkBan();
-    </script>
+</script>
 </body>
 </html>
-
-
-

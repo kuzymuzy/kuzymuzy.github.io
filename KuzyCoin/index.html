@@ -182,6 +182,66 @@
         #leaderboard-list li:last-child {
             border-bottom: none;
         }
+
+        /* 🔄 Прелоадер (анимация загрузки) */
+        #preloader {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e1e2f, #3a3a5f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #preloader-text {
+            font-size: 22px;
+            color: white;
+            margin-top: 15px;
+        }
+
+/* Круговая загрузка */
+        .loader {
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid #ffcc00;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+/* 🔒 Модальное окно бана */
+        #ban-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10000;
+        }
+
+        .ban-content {
+            display: none;
+            background: rgba(255, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 22px;
+        }
+
     </style>
 </head>
 <body>
@@ -220,12 +280,27 @@
         </button>
     </div>
 
+    <!-- Прелоадер -->
+    <div id="preloader">
+        <div class="loader"></div>
+            <p id="preloader-text">Загрузка...</p>
+    </div>
+
+<!-- Модальное окно для забаненных -->
+    <div id="ban-modal">
+        <div class="ban-content" id="ban-content">
+            <h2>⛔ Вы забанены</h2>
+            <p>Вы были заблокированы за нарушение правил.</p>
+        </div>
+    </div>
+
+
     <script>
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username;
+let user_id = 7909005424;
+let username = "test";
 
 let score = 0;
 let energy = 500;
@@ -238,6 +313,31 @@ let timestamp = Date.now();
 let updateTimeout = null; // Таймер отправки данных
 
 let leaderboardLoaded = false; // Флаг, чтобы загружать лидерборд только один раз
+
+// Показываем прелоадер и скрываем через 2 секунды
+setTimeout(() => {
+    document.getElementById("preloader").style.opacity = "0";
+    setTimeout(() => {
+        document.getElementById("preloader").style.display = "none";
+    }, 500);
+}, 3000);
+
+// 🔍 Проверка бана
+function checkBan() {
+    fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.ban === 1) {
+                document.getElementById("ban-modal").style.display = "flex";
+                document.getElementById("ban-content").style.display = "block";
+            }
+        })
+        .catch(error => console.error("Ошибка проверки бана:", error));
+}
+
+// Вызываем проверку бана при загрузке
+checkBan();
+
 
 // Функция загрузки лидерборда
 function getLeaderboard() {

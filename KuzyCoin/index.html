@@ -546,7 +546,7 @@ document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
     event.preventDefault();
 
     let touches = event.touches.length;
-    let taps = Math.min(touches, Math.floor(energy / maxEnergy));
+    let taps = Math.min(touches, Math.floor(energy / clickPower));
 
     if (taps > 0) {
         energy -= taps;

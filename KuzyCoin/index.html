@@ -299,8 +299,8 @@
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-let user_id = 1234;
-let username = "test";
+let user_id = tg.initDataUnsafe.user.id;
+let username = tg.initDataUnsafe.user.username;
 
 let score = 0;
 let energy = 500;

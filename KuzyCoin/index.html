@@ -406,14 +406,17 @@ function getLeaderboard() {
             }
 
             data.forEach((player, index) => {
+                let formattedScore = Number(player.score).toLocaleString("en-US");
                 let listItem = document.createElement("li");
-                listItem.textContent = `${index + 1}. ${player.username} - 🪙 ${player.score}`;
+                listItem.textContent = `${index + 1}. ${player.username} - 🪙 ${formattedScore}`;
                 leaderboardList.appendChild(listItem);
             });
 
             leaderboardLoaded = true;
         })
-        .catch(error => console.error("Ошибка загрузки лидерборда:", error));
+        .catch(error => {
+            console.error("Ошибка загрузки лидерборда:", error);
+        });
 }
 
 function getUserData() {
@@ -524,10 +527,11 @@ function checkUpgrades() {
 }
 
 function updateUI() {
-    document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score}`;
-    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy}/${maxEnergy}`;
+    document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score.toLocaleString("en-US")}`;
+    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy.toLocaleString("ru-RU")}/${maxEnergy.toLocaleString("ru-RU")}`;
     document.getElementById("ClickPower").textContent = `💥 Сила клика: ${clickPower}`;
 }
+
 
 function restoreEnergy() {
     let currentTime = Date.now();

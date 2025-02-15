@@ -360,267 +360,274 @@
     </div>
 
 
-<script>
-let tg = window.Telegram.WebApp;
-tg.expand();
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-let user_id = tg.initDataUnsafe.user.id;
-let username = tg.initDataUnsafe.user.username;
+        let user_id = tg.initDataUnsafe.user.id;
+        let username = tg.initDataUnsafe.user.username;
 
-//let user_id = 1234;
-//let username = "br4tishkin";
+        //let user_id = 1278563840;
+        //let username = "Sasha";
 
-let score = 0;
-let energy = 500;
-let clickPower = 5;
-let maxEnergy = 500;
-let lastUpdateTime = Date.now();
-let upgradedLevels = [];
-let timestamp = Date.now();
-let ban = 0;
+        let score = 0;
+        let energy = 500;
+        let clickPower = 5;
+        let maxEnergy = 500;
+        let lastUpdateTime = Date.now();
+        let upgradedLevels = [];
+        let timestamp = Date.now();
+        let ban = 0;
 
-let updateTimeout = null;
-let leaderboardLoaded = false;
+        let updateTimeout = null;
+        let leaderboardLoaded = false;
 
-document.getElementById("name").textContent = `🌍 ${username}`;
+        document.getElementById("name").textContent = `🌍 ${username}`;
 
-setTimeout(() => {
-    document.getElementById("preloader").style.opacity = "0";
-    setTimeout(() => {
-        document.getElementById("preloader").style.display = "none";
-    }, 500);
-}, 3000);
+        setTimeout(() => {
+            document.getElementById("preloader").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("preloader").style.display = "none";
+            }, 500);
+        }, 3000);
 
-function getLeaderboard() {
-    if (leaderboardLoaded) return;
+        function getLeaderboard() {
+            if (leaderboardLoaded) return;
 
-    fetch('https://gameapi.kuzymuzy.ru/get_leaderboard.php')
-        .then(response => response.json())
-        .then(data => {
-            let leaderboardList = document.getElementById("leaderboard-list");
-            leaderboardList.innerHTML = "";
+            fetch('https://gameapi.kuzymuzy.ru/get_leaderboard.php')
+                .then(response => response.json())
+                .then(data => {
+                    let leaderboardList = document.getElementById("leaderboard-list");
+                    leaderboardList.innerHTML = "";
 
-            if (data.length === 0) {
-                leaderboardList.innerHTML = "<li>Нет данных</li>";
-                return;
+                    if (data.length === 0) {
+                        leaderboardList.innerHTML = "<li>Нет данных</li>";
+                        return;
+                    }
+
+                    data.forEach((player, index) => {
+                        let formattedScore = Number(player.score).toLocaleString("en-US");
+                        let listItem = document.createElement("li");
+                        listItem.textContent = `${index + 1}. ${player.username} - 🪙 ${formattedScore}`;
+                        leaderboardList.appendChild(listItem);
+                    });
+
+                    leaderboardLoaded = true;
+                })
+                .catch(error => {
+                    console.error("Ошибка загрузки лидерборда:", error);
+                });
+        }
+
+        function getUserData() {
+            fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        addUser();
+                    } else {
+                        score = data.score;
+                        energy = data.energy;
+                        clickPower = data.click_power;
+                        maxEnergy = data.max_energy;
+                        try {
+                            upgradedLevels = JSON.parse(data.upgraded_levels) || [];
+                        } catch (e) {
+                            upgradedLevels = [];
+                        }
+
+                        lastUpdateTime = data.last_update_time;
+                        timestamp = data.timestamp;
+                        ban = data.ban;
+
+                        if (maxEnergy > 5000) maxEnergy = 5000;
+                        if (clickPower > 100) clickPower = 100;
+                        if (energy > maxEnergy) energy = maxEnergy;
+
+                        updateUI();
+                    }
+                });
+        }
+
+        function checkBan() {
+            fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ban === 1) {
+                        document.getElementById("ban-modal").style.display = "flex";
+                        document.getElementById("ban-content").style.display = "block";
+                    }
+                })
+                .catch(error => console.error("Ошибка проверки бана:", error));
+        }
+
+        function addUser() {
+            fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `user_id=${user_id}&username=${username}`
+            }).then(response => response.json());
+            NewUserAert()
+        }
+
+        function NewUserAert() {
+            fetch(`https://gameapi.kuzymuzy.ru/NewUserAlert.php?user_id=${user_id}&username=${username}`, { 
+                    method: "POST",
+                })
+        }
+
+
+        function scheduleUpdate() {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(updateData, 1000);
+        }
+
+        function updateData() {
+            fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `user_id=${user_id}&username=${username}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
+            }).then(response => response.json());
+        }
+
+        document.getElementById("clickBtn").addEventListener("click", () => {
+            if (energy > 0) {
+                energy--;
+                score += clickPower;
+                checkUpgrades();
+                updateUI();
+                scheduleUpdate();
             }
-
-            data.forEach((player, index) => {
-                let formattedScore = Number(player.score).toLocaleString("en-US");
-                let listItem = document.createElement("li");
-                listItem.textContent = `${index + 1}. ${player.username} - 🪙 ${formattedScore}`;
-                leaderboardList.appendChild(listItem);
-            });
-
-            leaderboardLoaded = true;
-        })
-        .catch(error => {
-            console.error("Ошибка загрузки лидерборда:", error);
         });
-}
 
-function getUserData() {
-    fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                addUser();
-            } else {
-                score = data.score;
-                energy = data.energy;
-                clickPower = data.click_power;
-                maxEnergy = data.max_energy;
+        const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
+
+        function checkUpgrades() {
+            let upgradesChanged = false;
+            if (typeof upgradedLevels === "string") {
                 try {
-                    upgradedLevels = JSON.parse(data.upgraded_levels) || [];
+                    upgradedLevels = JSON.parse(upgradedLevels);
                 } catch (e) {
                     upgradedLevels = [];
                 }
+            }
 
-                lastUpdateTime = data.last_update_time;
-                timestamp = data.timestamp;
-                ban = data.ban;
+            if (!Array.isArray(upgradedLevels)) {
+                upgradedLevels = [];
+            }
 
-                if (maxEnergy > 5000) maxEnergy = 5000;
-                if (clickPower > 100) clickPower = 100;
-                if (energy > maxEnergy) energy = maxEnergy;
+            upgradeLevels.forEach(level => {
+                if (score >= level && !upgradedLevels.includes(level)) {
+                    upgradedLevels.push(level);
 
+                    maxEnergy = Math.min(maxEnergy + 100, 5000);
+                    clickPower = Math.min(clickPower + 1, 100);
+                    upgradesChanged = true;
+
+                    console.log(`✅ Добавлен апгрейд: ${level}`);
+                }
+            });
+
+            if (upgradesChanged) {
+                scheduleUpdate();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score.toLocaleString("en-US")}`;
+            document.getElementById("energy").textContent = `⚡️ Энергия: ${energy.toLocaleString("ru-RU")}/${maxEnergy.toLocaleString("ru-RU")}`;
+            document.getElementById("ClickPower").textContent = `💥 Сила клика: ${clickPower}`;
+        }
+
+
+        function restoreEnergy() {
+            let currentTime = Date.now();
+            let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
+            let energyRecovered = Math.floor(elapsedSeconds / 2);
+
+            if (energyRecovered > 0) {
+                energy = Math.min(energy + energyRecovered, maxEnergy);
+                lastUpdateTime += energyRecovered * 2000;
                 updateUI();
+                scheduleUpdate();
+            }
+        }
+
+        document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
+            event.preventDefault();
+
+            let touches = event.touches.length;
+            let taps = Math.min(touches, Math.floor(energy / clickPower));
+
+            if (taps > 0) {
+                energy -= taps;
+                score += clickPower * taps;
+                checkUpgrades();
+                updateUI();
+                scheduleUpdate();
             }
         });
-}
 
-
-function checkBan() {
-    fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.ban === 1) {
-                document.getElementById("ban-modal").style.display = "flex";
-                document.getElementById("ban-content").style.display = "block";
+        document.getElementById("boostClickPower").addEventListener("click", () => {
+            if (score >= 1000 && clickPower < 100) {
+                score -= 1000;
+                clickPower++;
+                updateUI();
+            } else {
+                alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
             }
-        })
-        .catch(error => console.error("Ошибка проверки бана:", error));
-}
+        });
 
-function addUser() {
-    fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `user_id=${user_id}&username=${username}`
-    }).then(response => response.json());
-}
+        document.getElementById("LitEnergy").addEventListener("click", () => {
+            if (score >= 5000 && maxEnergy <= 4999) {
+                score -= 5000;
+                maxEnergy += 100;
+                updateUI();
+            } else {
+                alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
+            }
+        });
 
-function scheduleUpdate() {
-    clearTimeout(updateTimeout);
-    updateTimeout = setTimeout(updateData, 1000);
-}
+        document.getElementById("buyEnergy").addEventListener("click", () => {
+            if (score >= 500 && energy < maxEnergy) {
+                score -= 500;
+                energy = Math.min(energy + 50, maxEnergy);
+                updateUI();
+            } else {
+                alert("Недостаточно Kuzy Coins или энергия уже полная");
+            }
+        });
 
-function updateData() {
-    fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
-    }).then(response => response.json());
-}
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.classList.remove("active");
 
-document.getElementById("clickBtn").addEventListener("click", () => {
-    if (energy > 0) {
-        energy--;
-        score += clickPower;
-        checkUpgrades();
-        updateUI();
-        scheduleUpdate();
-    }
-});
+                if (tabName === "leaderboard") {
+                    document.getElementById("name").style.display = "none";
+                    document.getElementById("ClickPower").style.display = "none";
+                    document.getElementById("energy").style.display = "none";
+                    document.getElementById("score").style.display = "none";
+                } else if (tabName === "home") {
+                    document.getElementById("name").style.display = "block";
+                    document.getElementById("ClickPower").style.display = "block";
+                    document.getElementById("energy").style.display = "block";
+                    document.getElementById("score").style.display = "block";
+                } else if (tabName === "shop") {
+                    document.getElementById("name").style.display = "none";
+                    document.getElementById("ClickPower").style.display = "none";
+                    document.getElementById("score").style.display = "none";
+                    document.getElementById("energy").style.display = "none";
+                }
+            });
 
-const upgradeLevels = [2000, 5000, 10000, 20000, 50000];
-
-function checkUpgrades() {
-    let upgradesChanged = false;
-    if (typeof upgradedLevels === "string") {
-        try {
-            upgradedLevels = JSON.parse(upgradedLevels);
-        } catch (e) {
-            upgradedLevels = [];
+            document.getElementById(tabName).classList.add("active");
+            document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
         }
-    }
 
-    if (!Array.isArray(upgradedLevels)) {
-        upgradedLevels = [];
-    }
-
-    upgradeLevels.forEach(level => {
-        if (score >= level && !upgradedLevels.includes(level)) {
-            upgradedLevels.push(level);
-
-            maxEnergy = Math.min(maxEnergy + 100, 5000);
-            clickPower = Math.min(clickPower + 1, 100);
-            upgradesChanged = true;
-
-            console.log(`✅ Добавлен апгрейд: ${level}`);
-        }
-    });
-
-    if (upgradesChanged) {
-        scheduleUpdate();
-    }
-}
-
-function updateUI() {
-    document.getElementById("score").textContent = `🪙 Kuzy Coins: ${score.toLocaleString("en-US")}`;
-    document.getElementById("energy").textContent = `⚡️ Энергия: ${energy.toLocaleString("ru-RU")}/${maxEnergy.toLocaleString("ru-RU")}`;
-    document.getElementById("ClickPower").textContent = `💥 Сила клика: ${clickPower}`;
-}
-
-
-function restoreEnergy() {
-    let currentTime = Date.now();
-    let elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-    let energyRecovered = Math.floor(elapsedSeconds / 2);
-
-    if (energyRecovered > 0) {
-        energy = Math.min(energy + energyRecovered, maxEnergy);
-        lastUpdateTime += energyRecovered * 2000;
-        updateUI();
-        scheduleUpdate();
-    }
-}
-
-document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
-    event.preventDefault();
-
-    let touches = event.touches.length;
-    let taps = Math.min(touches, Math.floor(energy / clickPower));
-
-    if (taps > 0) {
-        energy -= taps;
-        score += clickPower * taps;
-        checkUpgrades();
-        updateUI();
-        scheduleUpdate();
-    }
-});
-
-document.getElementById("boostClickPower").addEventListener("click", () => {
-    if (score >= 1000 && clickPower < 100) {
-        score -= 1000;
-        clickPower++;
-        updateUI();
-    } else {
-        alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
-    }
-});
-
-document.getElementById("LitEnergy").addEventListener("click", () => {
-    if (score >= 5000 && maxEnergy <= 4999) {
-        score -= 5000;
-        maxEnergy += 100;
-        updateUI();
-    } else {
-        alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
-    }
-});
-
-document.getElementById("buyEnergy").addEventListener("click", () => {
-    if (score >= 500 && energy < maxEnergy) {
-        score -= 500;
-        energy = Math.min(energy + 50, maxEnergy);
-        updateUI();
-    } else {
-        alert("Недостаточно Kuzy Coins или энергия уже полная");
-    }
-});
-
-function showTab(tabName) {
-    document.querySelectorAll(".tab-content").forEach(tab => {
-        tab.classList.remove("active");
-
-        if (tabName === "leaderboard") {
-            document.getElementById("name").style.display = "none";
-            document.getElementById("ClickPower").style.display = "none";
-            document.getElementById("energy").style.display = "none";
-            document.getElementById("score").style.display = "none";
-        } else if (tabName === "home") {
-            document.getElementById("name").style.display = "block";
-            document.getElementById("ClickPower").style.display = "block";
-            document.getElementById("energy").style.display = "block";
-            document.getElementById("score").style.display = "block";
-        } else if (tabName === "shop") {
-            document.getElementById("name").style.display = "none";
-            document.getElementById("ClickPower").style.display = "none";
-            document.getElementById("score").style.display = "none";
-            document.getElementById("energy").style.display = "none";
-        }
-    });
-
-    document.getElementById(tabName).classList.add("active");
-    document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
-}
-
-getUserData();
-getLeaderboard();
-setInterval(restoreEnergy, 1000);
-checkBan();
-</script>
+        getUserData();
+        getLeaderboard();
+        setInterval(restoreEnergy, 1000);
+        checkBan();
+    </script>
 </body>
 </html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR генератор</title>
+    <script src="index.js"></script>
+    <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="QR генератор">
+    <meta name="description" content="Быстрая и бесплатная генерация QR">
+    <meta name="keywords" content="Генерация QR, Генерация кюар кодов, Генерация QR кода, QR">
+    <meta property="og:title" content="О Кузе Музе">
+    <meta property="og:description" content="Быстрая и бесплатная генерация QR">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Генератор QR кодов">
+    <meta property="og:image" content="/assets/img/apple-touch-icon.png">
+    <meta property="og:locale" content="ru_RU">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1e1e1e;;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+
+        input {
+            width: 93%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        footer.footer-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9em;
+            background-color: #181818;
+            color: #aaa;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-bar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .footer-bar p {
+            margin: 5px 0;
+        }
+
+        .footer-bar a {
+            color: #007aff;
+            text-decoration: none;
+        }
+
+        .footer-bar a:hover {
+            text-decoration: underline;
+            color: #005dc0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background:#007aff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #005dc0;
+        }
+
+        #qrcode1 {
+            margin-top: 15px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Генератор QR-кода</h2>
+        <div style="display: none;" id="qrcode1"></div>
+        <form id="QRform">
+            <input id="QRtext" type="text" placeholder="Введите данные для QR" required>
+            <button type="submit">Генерировать</button>
+        </form>    
+        <button id="download" style="display: none;" onclick="QRdownload()">Скачать</button>
+    </div>
+
+    <footer class="footer-bar">
+        <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
+        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
+    </footer>
+
+    <script>
+        let qrcode1 = null;
+        document.getElementById("QRform").addEventListener("submit", function (e) {
+            e.preventDefault();
+            GRgen();
+        });
+
+        function QRdownload() {
+            const image = 'png'; 
+            qrcode1.download('QR-by-kuzymuzy.ru.' + image, image);  
+        }
+
+        function GRgen(){
+            let QRtext = document.getElementById('QRtext').value;
+            qrcode1 = QRCreator(QRtext, {
+                eccl: 0,
+                version: 3,
+                mask: 1,
+                image: 'PNG',
+                modsize: 9,
+                margin: 0
+            });
+            document.getElementById('download').style.display=""
+            document.getElementById('qrcode1').style.display="inline-block"
+            document.getElementById('qrcode1').innerHTML = ""; 
+            document.getElementById('qrcode1').append(content(qrcode1));
+        }
+
+        const content = (qrcode) => {
+            return qrcode.error ? 
+                `Ошибка: ${qrcode.error}` : 
+                qrcode.result;
+        };
+    </script>
+
+</body>
+</html>

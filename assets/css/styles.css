@@ -51,11 +51,6 @@ nav ul {
     transition: opacity 0.8s, transform 0.8s;
 }
 
-.hmstr {
-    width: 400px; 
-    height: 600px;
-}
-
 nav a {
     text-decoration: none;
     color: #333;

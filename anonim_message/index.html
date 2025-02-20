@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матвеев не ну ты реально изгой?</title>
+    <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Матвеев не ну ты реально изгой?">
+    <meta name="description" content="Напомнить матвееву о том что он реально изгой">
+    <meta property="og:title" content="Матвеев не ну ты реально изгой?">
+    <meta property="og:description" content="Напомнить матвееву о том что он реально изгой">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Матвеев не ну ты реально изгой?">
+    <meta property="og:image" content="/assets/img/apple-touch-icon.png">
+    <meta property="og:locale" content="ru_RU">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1e1e1e;;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+
+        input {
+            width: 93%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        footer.footer-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9em;
+            background-color: #181818;
+            color: #aaa;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-bar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .footer-bar p {
+            margin: 5px 0;
+        }
+
+        .footer-bar a {
+            color: #007aff;
+            text-decoration: none;
+        }
+
+        .footer-bar a:hover {
+            text-decoration: underline;
+            color: #005dc0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background:#007aff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #005dc0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Напомнить матвееву что он изгой?</h2>
+        <form id="message_form">
+            <input id="message_text" type="text" placeholder="Матвеев, не ну ты реально изгой?" required>
+            <button type="submit">Отправить</button>
+        </form>    
+    </div>
+
+    <footer class="footer-bar">
+        <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
+        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
+    </footer>
+
+    <script>
+        document.getElementById("message_form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            send();
+        });
+
+        function send() {
+            let message = document.getElementById("message_text").value;
+            fetch(`https://gameapi.kuzymuzy.ru/message_anon.php?message=${message}`, { 
+                method: "POST",
+            })
+            console.log(`${message}`)
+        }
+    </script>
+
+</body>
+</html>

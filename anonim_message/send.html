@@ -173,7 +173,9 @@
         }
 
         function send() {
-            chat_id = document.getElementById("chat_id").value;
+            if (chat_id === ""){
+                chat_id = document.getElementById("chat_id").value;
+            }
             console.log(`${chat_id}`)
             let message = document.getElementById("message_text").value;
             fetch(`https://gameapi.kuzymuzy.ru/message_anon.php?chat_id=${chat_id}&message=${message}`, { 

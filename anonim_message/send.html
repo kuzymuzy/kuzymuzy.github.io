@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матвеев не ну ты реально изгой?</title>
+    <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Матвеев не ну ты реально изгой?">
+    <meta name="description" content="Напомнить матвееву о том что он реально изгой">
+    <meta property="og:title" content="Матвеев не ну ты реально изгой?">
+    <meta property="og:description" content="Напомнить матвееву о том что он реально изгой">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Матвеев не ну ты реально изгой?">
+    <meta property="og:image" content="/assets/img/apple-touch-icon.png">
+    <meta property="og:locale" content="ru_RU">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1e1e1e;;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+
+        input {
+            width: 93%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        footer.footer-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9em;
+            background-color: #181818;
+            color: #aaa;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-bar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .footer-bar p {
+            margin: 5px 0;
+        }
+
+        .footer-bar a {
+            color: #007aff;
+            text-decoration: none;
+        }
+
+        .footer-bar a:hover {
+            text-decoration: underline;
+            color: #005dc0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background:#007aff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #005dc0;
+        }
+
+        .logout{
+            position: fixed;
+            width: 100px;
+            top: 1%;
+            right: 1%
+        }
+    </style>
+</head>
+<body>
+
+    <button class="logout" onclick="logout()">Выйти</button>
+    <div class="container">
+        <h2>Напомнить матвееву что он изгой?</h2>
+        <select id="id-select">
+            <option value="5946679370">Матвеев</option>
+            <option value="-1002198576919">Коперские И14-2</option>
+            <option value="-1002314944039">Изгои И14-2</option>
+            <option value="">Свой варинат</option>
+        </select>
+        <form id="message_form">
+            <input id="chat_id" style="display: none;" type="text" placeholder="chatID">
+            <input id="message_text" type="text" placeholder="Матвеев, не ну ты реально изгой?" required>
+            <button type="submit">Отправить</button>
+        </form>    
+    </div>
+
+    <footer class="footer-bar">
+        <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
+    </footer>
+
+    <script>
+        const remember = localStorage.getItem("remember");
+        const AuthToken = localStorage.getItem("authToken");
+        const username = localStorage.getItem("username");
+
+        fetch(`https://gameapi.kuzymuzy.ru/LoginForm/checktoken.php?username=${username}&AuthToken=${AuthToken}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.valid)
+                    if (data.valid) {
+                        if (remember === "0"){
+                            console.log("Token saved no");
+                        }
+                        if (remember === "1"){
+                            console.log("Token saved");
+                        }
+                    } 
+                    if (!data.valid) {
+                        console.log(data.valid)
+                        window.location.href = "index.html";
+                    }
+        });
+
+        let chat_id = document.getElementById("id-select").value;
+        const IdSelect = document.getElementById("id-select");
+        IdSelect.addEventListener('change', () => {
+            chat_id = document.getElementById("id-select").value;
+            console.log(`${chat_id}`)
+            if (chat_id === ""){
+                document.getElementById("chat_id").style.display = "block";
+            }
+            else{
+                document.getElementById("chat_id").style.display = "none";
+            }
+        });
+
+        function logout(){
+            localStorage.clear()
+            window.location.href = "index.html"
+        }
+
+        function send() {
+            chat_id = document.getElementById("chat_id").value;
+            console.log(`${chat_id}`)
+            let message = document.getElementById("message_text").value;
+            fetch(`https://gameapi.kuzymuzy.ru/message_anon.php?chat_id=${chat_id}&message=${message}`, { 
+                method: "POST",
+            })
+            console.log(`${chat_id}`)
+            console.log(`${message}`)
+        }
+            
+        document.getElementById("message_form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            send();
+        });
+    </script>
+
+</body>
+</html>

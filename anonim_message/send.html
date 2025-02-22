@@ -142,7 +142,7 @@
                     console.log(data.valid)
                     if (data.valid) {
                         if (remember === "0"){
-                            console.log("Token saved no");
+                            localStorage.removeItem("authToken")
                         }
                         if (remember === "1"){
                             console.log("Token saved");

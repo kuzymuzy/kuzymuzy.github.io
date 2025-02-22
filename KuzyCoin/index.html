@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Kuzy Coin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1, height=device-height, overflow:hidden;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1, height=device-height">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
@@ -447,14 +447,11 @@
         }
 
 
-        document.getElementById('ton-connect').addEventListener('click', () => {
+        document.getElementById('ton-connect').addEventListener('click', async () => {
             console.log('Попытка подключить кошелек...');
-            tonConnectUI.connectWallet().then(() => {
-                waitForWalletConnection(); 
-            }).catch(error => {
-                console.error("Ошибка при подключении:", error);
-            });
+            waitForWalletConnection(); 
         });
+        
     </script>
 
     <script>

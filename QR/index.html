@@ -38,7 +38,7 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            width: 300px;
+            max-width: 500px;
         }
 
         input {
@@ -54,8 +54,8 @@
         }
 
         footer.footer-bar {
-            position: fixed;
-            bottom: 0;
+            position: relative;
+            top: 20vmin;
             width: 100%;
             text-align: center;
             padding: 15px;
@@ -110,6 +110,19 @@
             background: #2a2a2a;
             border-radius: 8px;
         }
+
+        select {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +131,15 @@
         <h2>Генератор QR-кода</h2>
         <div style="display: none;" id="qrcode1"></div>
         <form id="QRform">
+            <p style="color:red;">От версии QR-кода зависит его размер и количество данных, которые он может содержать.</p>
+            <select id="version-select" required>
+                <option value="">-- Выберите версию --</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
             <input id="QRtext" type="text" placeholder="Введите данные для QR" required>
             <button type="submit">Генерировать</button>
         </form>    
@@ -130,6 +152,13 @@
     </footer>
 
     <script>
+        let verSelect = document.getElementById("version-select");
+        let selectedVer = verSelect.value;
+
+        verSelect.addEventListener('change', () => {
+            selectedVer = verSelect.value;
+        });
+
         let qrcode1 = null;
         document.getElementById("QRform").addEventListener("submit", function (e) {
             e.preventDefault();
@@ -145,7 +174,7 @@
             let QRtext = document.getElementById('QRtext').value;
             qrcode1 = QRCreator(QRtext, {
                 eccl: 0,
-                version: 3,
+                version: parseInt(selectedVer),
                 mask: 1,
                 image: 'PNG',
                 modsize: 9,
@@ -162,6 +191,21 @@
                 `Ошибка: ${qrcode.error}` : 
                 qrcode.result;
         };
+    </script>
+
+    <script>
+        let userAgent = window.navigator.userAgent;
+
+        if (userAgent.includes("AppleWebKit")) {
+            const style = document.createElement('style');
+            style.textContent = `
+                select {
+                    appearance: auto;
+                    -webkit-appearance: none;
+                }
+            `;
+            document.head.appendChild(style);
+        }
     </script>
 
 </body>

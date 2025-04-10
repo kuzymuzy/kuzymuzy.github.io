@@ -38,7 +38,7 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
+            max-width: 5000px;
         }
 
         input {
@@ -131,15 +131,6 @@
         <h2>Генератор QR-кода</h2>
         <div style="display: none;" id="qrcode1"></div>
         <form id="QRform">
-            <p style="color:red;">От версии QR-кода зависит его размер и количество данных, которые он может содержать.</p>
-            <select id="version-select" required>
-                <option value="">-- Выберите версию --</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-            </select>
             <input id="QRtext" type="text" placeholder="Введите данные для QR" required>
             <button type="submit">Генерировать</button>
         </form>    
@@ -152,12 +143,8 @@
     </footer>
 
     <script>
-        let verSelect = document.getElementById("version-select");
-        let selectedVer = verSelect.value;
-
-        verSelect.addEventListener('change', () => {
-            selectedVer = verSelect.value;
-        });
+        let selectedVer = 1;
+        const maxVer = 20;
 
         let qrcode1 = null;
         document.getElementById("QRform").addEventListener("submit", function (e) {
@@ -171,26 +158,44 @@
         }
 
         function GRgen(){
-            let QRtext = document.getElementById('QRtext').value;
-            qrcode1 = QRCreator(QRtext, {
-                eccl: 0,
-                version: parseInt(selectedVer),
-                mask: 1,
-                image: 'PNG',
-                modsize: 9,
-                margin: 0
-            });
+            selectedVer = 1
             document.getElementById('download').style.display=""
             document.getElementById('qrcode1').style.display="inline-block"
             document.getElementById('qrcode1').innerHTML = ""; 
             document.getElementById('qrcode1').append(content(qrcode1));
         }
 
-        const content = (qrcode) => {
-            return qrcode.error ? 
-                `Ошибка: ${qrcode.error}` : 
-                qrcode.result;
+        const content = (qrcodeInit) => {
+            let QRtext = document.getElementById('QRtext').value;
+
+            while (selectedVer <= maxVer) {
+                try {
+                    let qrcode = QRCreator(QRtext, {
+                        eccl: 0,
+                        version: selectedVer,
+                        mask: 1,
+                        image: 'PNG',
+                        modsize: 9,
+                        margin: 0
+                    });
+
+                    if (qrcode.error) {
+                        throw new Error(qrcode.error);
+                    }
+
+                    return qrcode.result;
+                } catch (err) {
+                    if (err.message.includes("version") || err.message.includes("Версия")) {
+                        selectedVer++;
+                    } else {
+                        return `Ошибка: ${err.message}`;
+                    }
+                }
+            }
+
+            return "Не удалось сгенерировать QR-код даже на максимальной версии 😢";
         };
+
     </script>
 
     <script>

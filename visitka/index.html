@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>No more internet!</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 48px;
+      flex-direction: column;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <p id="p">removing the Internet</p>
+  <div id="countdown">5</div>
+
+  <script>
+    let counter = 5;
+    const countdownEl = document.getElementById("countdown");
+
+    const interval = setInterval(() => {
+      counter--;
+      if (counter > 0) {
+        countdownEl.textContent = counter;
+      } else {
+        clearInterval(interval);
+        countdownEl.textContent = "Success";
+        document.getElementById("p").style.display = "none";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

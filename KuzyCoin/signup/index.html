@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login in to KuzyCoin</title>
+    <title>Sign Up in to KuzyCoin</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,8 +55,12 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6 col-lg-4 mx-auto">
-                <h2 class="text-center">Login</h2>
+                <h2 class="text-center">Sign Up</h2>
                 <form id="login-form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+                    </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
@@ -66,16 +70,15 @@
                         <div class="input-group">
                             <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
                             <button id="showpass" onclick="showpassword()" type="button">🙉</button>
+                        </div><br>
+                        <div class="input-group">
+                            <input type="password" id="repassword" name="repassword" class="form-control" placeholder="Re-Enter password" required>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <input type="checkbox" id="rememberme" name="rememberme" checked/>
-                        <label for="rememberme">Remember me</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
                     <div id="login-message" class="mt-3 text-center"></div>
                 </form><br>
-                <center><a href="/KuzyCoin/signup/index.html">No account yet?</a></center><br>
+                <center><a href="/KuzyCoin/login/index.html">Already have an account?</a></center><br>
                 <a href="/"><--- Back to kuzymuzy.ru</a>
             </div>
         </div>
@@ -96,37 +99,41 @@
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberme').checked;
+            const repassword = document.getElementById('repassword').value;
             const loginMessage = document.getElementById('login-message');
-            fetch(`https://gameapi.kuzymuzy.ru/login.php?email=${email}&password=${password}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (rememberMe) {
-                            localStorage.setItem("remember", "1");
+            if (password === repassword){
+                fetch(`https://gameapi.kuzymuzy.ru/signup.php?username=${username}&email=${email}&password=${password}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            localStorage.setItem('userid', data.user_id);
+                            localStorage.setItem('authToken', data.authToken);
+                            window.location.href = "/KuzyCoin/index.html";
                         } else {
-                            localStorage.setItem("remember", "0");
+                            loginMessage.textContent = 'Invalid username or password!';
+                            loginMessage.classList.add('text-danger');
                         }
-                        localStorage.setItem('userid', data.user_id);
-                        localStorage.setItem('authToken', data.authToken);
-                        window.location.href = "/KuzyCoin/index.html";
-                    } else {
-                        loginMessage.textContent = 'Invalid username or password!';
-                        loginMessage.classList.add('text-danger');
-                    }
-            });
+                });
+            }else{
+                loginMessage.textContent = "Passwords does't match";
+                loginMessage.classList.add('text-danger');
+            }
         })
 
         function showpassword() {
             const password = document.getElementById('password');
+            const repassword = document.getElementById('repassword');
             const buttonshow = document.getElementById("showpass");
             if (buttonshow.textContent === "🙉"){
                 password.type = "text"
+                repassword.type = "text"
                 buttonshow.textContent = "🙈"
             }
             else {
                 password.type = "password"
+                repassword.type = "password"
                 buttonshow.textContent = "🙉"
             }
         }       

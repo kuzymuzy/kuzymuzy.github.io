@@ -20,108 +20,125 @@
     <meta property="og:locale" content="ru_RU">
     <script src="/assets/scripts/ukraine.js"></script>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            padding-bottom: 100px;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: url('/assets/img/backgound.png') no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
-            background-color: #1e1e1e;;
+            align-items: center;
             color: #fff;
-            font-family: Arial, sans-serif;
             text-align: center;
         }
 
         .container {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            max-width: 5000px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: auto;
+            max-width: 90vw;
+            animation: fadeIn 0.8s ease forwards;
+            margin-bottom: 60px;
         }
 
-        input {
-            width: 93%;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 8px;
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffffdd;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 10px 0;
             border: none;
-            outline: none;
-            background: #2a2a2a;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
             color: #fff;
             font-size: 16px;
+            transition: 0.3s;
         }
 
-        footer.footer-bar {
-            position: relative;
-            top: 20vmin;
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.9em;
-            background-color: #181818;
-            color: #aaa;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .footer-bar img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-        }
-
-        .footer-bar p {
-            margin: 5px 0;
-        }
-
-        .footer-bar a {
-            color: #007aff;
-            text-decoration: none;
-        }
-
-        .footer-bar a:hover {
-            text-decoration: underline;
-            color: #005dc0;
+        input:focus, select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.4);
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px 16px;
             margin-top: 10px;
-            background:#007aff;
+            background: rgba(0, 122, 255, 0.7);
             border: none;
-            color: #fff;
+            border-radius: 12px;
+            color: white;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
         }
 
         button:hover {
-            background: #005dc0;
+            background: rgba(0, 122, 255, 0.9);
+            transform: scale(1.02);
         }
 
         #qrcode1 {
             margin-top: 15px;
             padding: 10px;
-            background: #2a2a2a;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: inline-block;
+            max-width: 100%;
+            overflow: visible;
         }
 
-        select {
-            display: block;
+        footer.footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            margin: 10px 0;
-            padding: 12px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            transition: all 0.3s ease;
+            background-color: rgba(24, 24, 24, 0.7);
+            backdrop-filter: blur(8px);
+            color: #ccc;
+            padding: 15px;
+            font-size: 0.9em;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .footer-bar a {
+            color: #55aaff;
+            text-decoration: none;
+        }
+
+        .footer-bar a:hover {
+            text-decoration: underline;
+            color: #88ccff;
         }
     </style>
 </head>
@@ -139,7 +156,7 @@
 
     <footer class="footer-bar">
         <p>© 2024 KuzyMuzy inc. Все права защищены.</p>
-        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
+        <a title="Форма входа в админку(убрать на релизе)" href="/admin.html">Пароль от адмники: 1234admin1234</a>
     </footer>
 
     <script>
@@ -153,6 +170,25 @@
         });
 
         function QRdownload() {
+            const container = document.getElementById('qrcode1');
+            const img = container.querySelector('img') || container.querySelector('canvas');
+
+            const link = document.createElement("a");
+
+            if (img.tagName === 'IMG') {
+                link.href = img.src;
+            } else if (img.tagName === 'CANVAS') {
+                link.href = img.toDataURL("image/png");
+            } else {
+                return alert("Формат QR неизвестен.");
+            }
+
+            link.download = "QR-by-kuzymuzy.ru.png";
+            link.click();
+        }
+
+
+        function QRdownloadOriginalOne() {
             const image = 'png'; 
             qrcode1.download('QR-by-kuzymuzy.ru.' + image, image);  
         }

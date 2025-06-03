@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up in to KuzyCoin</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -109,10 +109,22 @@
                     .then(data => {
                         if (data.success) {
                             localStorage.setItem('userid', data.user_id);
-                            localStorage.setItem('authToken', data.authToken);
-                            window.location.href = "/KuzyCoin/index.html";
+                            localStorage.setItem('email', email);
+                            localStorage.setItem('signupstep', "final")
+                            const authtoken = data.authToken;
+                            const userid = data.user_id;
+                            fetch(`https://gameapi.x10.mx/sendmail.php?user_id=${userid}&username=${username}&email=${email}&authToken=${authtoken}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        window.location.href = "/KuzyCoin/signup/finalstep.html";
+                                    } else{
+                                        loginMessage.textContent = "Failed to send verification email please contact support to activate your account";
+                                        loginMessage.classList.add('text-danger');
+                                    }
+                                })
                         } else {
-                            loginMessage.textContent = 'Invalid username or password!';
+                            loginMessage.textContent = data.message;
                             loginMessage.classList.add('text-danger');
                         }
                 });

@@ -291,6 +291,190 @@
                 z-index: 2;
             }
         }
+        .account-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 300px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .account-buttons button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4a90e2, #007aff);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .account-buttons button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #5aa4f2, #1a8cff);
+        }       
+
+        .account-buttons button:active {
+            transform: scale(0.98);
+        }
+
+        .account-buttons .logout {
+            background: linear-gradient(135deg, #ff5f6d, #ffc371);
+        }
+
+        .account-buttons .logout:hover {
+            background: linear-gradient(135deg, #ff7f83, #ffd28a);
+        }
+
+        .account-buttons .delete {
+            background: linear-gradient(135deg, #ff3b30, #ff5e57);
+        }
+
+        .account-buttons .delete:hover {
+            background: linear-gradient(135deg, #ff625b, #ff7a76);
+        }
+
+        .account-buttons .change-password {
+            background: linear-gradient(135deg, #34c759, #30d158);
+        }
+
+        .account-buttons .change-password:hover {
+            background: linear-gradient(135deg, #5fda83, #45e178);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal * {
+            box-sizing: border-box;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1e1e2f, #3a3a5f);
+            border-radius: 20px;
+            padding: 24px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            color: #fff;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .modal input {
+            width: 100%;
+            display: block;
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-size: 16px;
+            color: #fff;
+            background: linear-gradient(135deg, #2b2b40, #444466);
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+        }
+
+        .modal input::placeholder {
+            color: #aaa;
+        }
+
+        .modal input:focus {
+            border: 1px solid #67b5ff;
+            box-shadow: 0 0 8px rgba(103, 181, 255, 0.5);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .modal-actions .primary {
+            background-color: #007aff;
+            color: white;
+        }
+
+        .modal-actions .primary:hover {
+            background-color: #339aff;
+        }
+
+        #deleteButton {
+            background-color: #ccc;
+            color: white;
+        }
+
+        #deleteButton.enabled {
+            background-color: #ff3b30;
+        }
+
+        #deleteButton.enabled:hover {
+            background-color: #ff5c53;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0px);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                background-color: rgba(0,0,0,0);
+            }
+            to {
+                background-color: rgba(0,0,0,0.6);
+            }
+        }
+
+        #showpass {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -314,7 +498,18 @@
     <div id="leaderboard" class="tab-content">
         <h2>🏆 Лидеры</h2>
         <ul id="leaderboard-list" style="list-style: none; padding: 0; font-size: 18px;"></ul>
-    </div>    
+    </div>
+
+
+    <div id="settings" class="tab-content">
+        <h2>⚙️ Настройки</h2>
+        <h3>Аккаунт:</h3>
+        <div class="account-buttons">
+            <button class="logout" onclick="accoundexit()">🔒 Выйти</button>
+            <button onclick="openModal('changePasswordModal')" class="change-password">🔑 Сменить пароль</button>
+            <button onclick="openModal('deleteAccountModal')" class="delete">🗑️ Удалить аккаунт</button>
+        </div>
+    </div>     
  
 
     <div class="tab-bar">
@@ -330,6 +525,41 @@
             <div class="tab-icon">🏆</div>
             Лидеры
         </button>
+        <button onclick="showTab('settings')">
+            <div class="tab-icon">⚙️</div>
+            Настройки
+        </button>
+    </div>
+
+    <div id="changePasswordModal" class="modal-overlay">
+        <div class="modal">
+            <h2>Сменить пароль</h2>
+            <input type="password" id="old_password" placeholder="Старый пароль" required>
+            <button id="showpass" onclick="showpassword()" type="button">🙉</button>
+            <input type="password" id="new_password" placeholder="Новый пароль" required>
+            <input type="password" id="new_repassword" placeholder="Подтвердите новый пароль" required>
+            <div class="modal-actions">
+                <button id="cancelbuttonc" onclick="closeModal('changePasswordModal')">Отмена</button>
+                <button id="changebuttonc" onclick="changepassword()" class="primary">Сменить</button>
+                <center><button id="closebuttonc" style="display: none;" onclick="closeModal('changePasswordModal')" class="primary">Закрыть</button></center>
+            </div>
+            <div id="login-message" class="mt-3 text-center"></div>
+        </div>
+    </div>
+
+    <div id="deleteAccountModal" class="modal-overlay">
+        <div class="modal">
+            <h2>Удалить аккаунт</h2>
+            <p>Это действие необратимо. Сначала введите пароль, затем слово <strong>DELETE</strong>.</p>
+            <input type="password" id="deletePassword" placeholder="Введите пароль" required>
+            <button id="showpass" onclick="showpassword()" type="button">🙉</button>
+            <input type="text" id="deleteConfirm" placeholder="Введите слово DELETE" oninput="checkDeleteConfirm()" required>
+            <div class="modal-actions">
+                <button onclick="closeModal('deleteAccountModal')">Отмена</button>
+                <button onclick="deleteaccount()" id="deleteButton" disabled>Удалить аккаунт</button>
+            </div>
+            <div id="login-message" class="mt-3 text-center"></div>
+        </div>
     </div>
 
     <div id="preloader">
@@ -463,7 +693,6 @@
                     method: "POST",
                 })
         }
-
 
         function scheduleUpdate() {
             clearTimeout(updateTimeout);
@@ -612,12 +841,109 @@
                     document.getElementById("name").style.display = "none";
                     document.getElementById("score").style.display = "none";
                     document.getElementById("energy").style.display = "none";
+                } else if (tabName === "settings") {
+                    document.getElementById("name").style.display = "none";
+                    document.getElementById("ClickPower").style.display = "none";
+                    document.getElementById("energy").style.display = "none";
+                    document.getElementById("score").style.display = "none";
                 }
             });
 
             document.getElementById(tabName).classList.add("active");
             document.getElementById("shop").style.display = tabName === "shop" ? "flex" : "none";
         }
+
+        function accoundexit(){
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("remember");
+            localStorage.removeItem("userid");
+            window.location.href='/KuzyCoin/login'
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function checkDeleteConfirm() {
+            const passwordf = document.getElementById('deletePassword').value;
+            const confirmText = document.getElementById('deleteConfirm').value;
+            const deleteBtn = document.getElementById('deleteButton');
+
+            if (confirmText === 'DELETE' && passwordf.length > 0) {
+                deleteBtn.disabled = false;
+                deleteBtn.classList.add('enabled');
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.classList.remove('enabled');
+            }
+        }
+
+        function deleteaccount(){
+            const loginMessage = document.getElementById('login-message');
+            const passwordfmodal = document.getElementById("deletePassword").value;
+            fetch(`https://gameapi.kuzymuzy.ru/deleteaccount.php?user_id=${userid}&authToken=${AuthToken}&passwordfmodal=${passwordfmodal}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    accoundexit()
+                } else {
+                    loginMessage.textContent = data.message;
+                    loginMessage.style.color="red";
+                }     
+            })
+        }
+
+        function changepassword(){
+            const cancelbuttonc = document.getElementById("cancelbuttonc");
+            const changebuttonc = document.getElementById("changebuttonc");
+            const closebuttonc = document.getElementById("closebuttonc");
+            const loginMessage = document.getElementById('login-message');
+            const old_password = document.getElementById("old_password").value;
+            const new_password = document.getElementById("new_password").value;
+            const new_repassword = document.getElementById("new_repassword").value;
+            if (new_password === new_repassword){
+                fetch(`https://gameapi.kuzymuzy.ru/changepassword.php?user_id=${userid}&authToken=${AuthToken}&old_password=${old_password}&new_password=${new_password}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success){
+                        cancelbuttonc.style.display = "none";
+                        changebuttonc.style.display = "none";
+                        closebuttonc.style.removeProperty('display');
+                        loginMessage.textContent = "Пароль успешно изменен";
+                        loginMessage.style.color= "green";
+                    } else {
+                        loginMessage.textContent = data.message;
+                        loginMessage.style.color= "red";
+                    }     
+                })
+            }
+        }
+
+        function showpassword() {
+            const deletePassword = document.getElementById('deletePassword');
+            const old_password = document.getElementById('old_password');
+            const new_repassword = document.getElementById('new_repassword');
+            const new_password = document.getElementById('new_password');
+            const buttonshow = document.getElementById("showpass");
+            if (buttonshow.textContent === "🙉"){
+                deletePassword.type = "text"
+                old_password.type = "text"
+                new_repassword.type = "text"
+                new_password.type = "text"
+                buttonshow.textContent = "🙈"
+            }
+            else {
+                deletePassword.type = "password"
+                old_password.type = "password"
+                new_repassword.type = "password"
+                new_password.type = "password"
+                buttonshow.textContent = "🙉"
+            }
+        }  
 
         getUserData();
         getLeaderboard();

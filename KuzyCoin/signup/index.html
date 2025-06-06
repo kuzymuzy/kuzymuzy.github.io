@@ -113,7 +113,7 @@
                             localStorage.setItem('signupstep', "final")
                             const authtoken = data.authToken;
                             const userid = data.user_id;
-                            fetch(`https://gameapi.x10.mx/sendmail.php?user_id=${userid}&username=${username}&email=${email}&authToken=${authtoken}`)
+                            fetch(`https://api.kuzymuzy.ru/send_mail.php?user_id=${userid}&username=${username}&email=${email}&authToken=${authtoken}`)
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {

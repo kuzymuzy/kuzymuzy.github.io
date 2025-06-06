@@ -568,14 +568,6 @@
     </div>
 
     <script>
-        fetch(`https://gameapi.kuzymuzy.ru/getusername.php?user_id=${userid}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.username)
-                let username = data.username;
-                document.getElementById("name").textContent = `🌍 ${username}`;
-        });
-
         let user_id = localStorage.getItem("userid");
 
         let score = 0;
@@ -644,7 +636,11 @@
                 .then(data => {
                     if (data.error) {
                         addUser();
+                    } if (data.ban === 1) {
+                        window.location.replace("/KuzyCoin/ban.html")
                     } else {
+                        let username = data.username;
+                        document.getElementById("name").textContent = `🌍 ${username}`;
                         score = data.score;
                         energy = data.energy;
                         clickPower = data.click_power;
@@ -666,17 +662,6 @@
                         updateUI();
                     }
                 });
-        }
-
-        function checkBan() {
-            fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ban === 1) {
-                        window.location.replace("/KuzyCoin/ban.html")
-                    }
-                })
-                .catch(error => console.error("Ошибка проверки бана:", error));
         }
 
         function addUser() {

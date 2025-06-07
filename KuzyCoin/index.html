@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <title>Kuzy Coin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1, height=device-height">
+    <script src="/assets/scripts/cookie.js"></script>
     <script>
-        const AuthToken = localStorage.getItem("authToken");
-        const userid = localStorage.getItem("userid");
-        fetch(`https://gameapi.kuzymuzy.ru/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.valid)
-                    if (!data.valid) {
-                        window.location.href = "/KuzyCoin/login/index.html"
-                    }
-        });
+        const AuthToken = getCookie("authToken");
+        const userid = getCookie("userid");
+        if (AuthToken || userid){
+            fetch(`https://gameapi.kuzymuzy.ru/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.valid)
+                if (!data.valid) {
+                    window.location.href = "/KuzyCoin/login/index.html"
+                }
+            });
+        }else{
+            window.location.href = "/KuzyCoin/login/index.html"
+        }
     </script>
     <style>
         body {
@@ -568,7 +573,7 @@
     </div>
 
     <script>
-        let user_id = localStorage.getItem("userid");
+        let user_id = getCookie("userid");
 
         let score = 0;
         let energy = 500;
@@ -839,9 +844,9 @@
         }
 
         function accoundexit(){
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("remember");
-            localStorage.removeItem("userid");
+            deleteCookie("authToken");
+            deleteCookie("remember");
+            deleteCookie("userid");
             window.location.href='/KuzyCoin/login'
         }
 
@@ -932,7 +937,6 @@
 
         getUserData();
         getLeaderboard();
-        checkBan();
         setInterval(restoreEnergy, 1000);
     </script>
     <script src="/assets/scripts/ukraine.js"></script>

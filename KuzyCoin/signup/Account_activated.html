@@ -10,7 +10,9 @@
     <script>
         const currentUrl = new URL(window.location.href);
         const params = currentUrl.searchParams;
-        if (!params.get('valid')){
+        if (params.get('valid') === true){
+            console.log("valid")
+        } else {
             window.location.href = "https://kuzymuzy.ru/KuzyCoin/login.html"
         }
     </script>

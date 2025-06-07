@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Final Step</title>
     <script>
-        if(localStorage.getItem("signupstep") === "final"){
+        if(getCookie("signupstep") === "final"){
         } else{
             window.location.href="/KuzyCoin/login/index.html"
         }
@@ -63,7 +63,7 @@
         </div>
     </div>
     <script>
-        let email = localStorage.getItem("email")
+        let email = getCookie("email")
         document.getElementById("thankstext").textContent = `Thank you for registering, a link to activate your account has been sent to your email: ${email}`;
     </script>
 </body>

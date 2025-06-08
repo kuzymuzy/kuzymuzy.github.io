@@ -888,7 +888,7 @@
             const old_password = document.getElementById("old_password").value;
             const new_password = document.getElementById("new_password").value;
             const new_repassword = document.getElementById("new_repassword").value;
-            if (new_password === new_repassword){
+            if (new_password === new_repassword && old_password !== new_password){
                 fetch(`https://gameapi.kuzymuzy.ru/changepassword.php?user_id=${userid}&authToken=${AuthToken}&old_password=${old_password}&new_password=${new_password}`)
                 .then(response => response.json())
                 .then(data => {
@@ -903,6 +903,12 @@
                         loginMessage.style.color= "red";
                     }     
                 })
+            }else if(new_password !== new_repassword) {
+                loginMessage.textContent = "Новый пароль не совпадает";
+                loginMessage.style.color= "red";   
+            }else if(old_password === new_password) {
+                loginMessage.textContent = "Новый пароль не может сопадать со старым";
+                loginMessage.style.color= "red";  
             }
         }
 

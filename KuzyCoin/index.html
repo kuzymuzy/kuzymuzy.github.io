@@ -675,13 +675,6 @@
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `user_id=${user_id}&username=${username}`
             }).then(response => response.json());
-            NewUserAert()
-        }
-
-        function NewUserAert() {
-            fetch(`https://gameapi.kuzymuzy.ru/NewUserAlert.php?user_id=${user_id}&username=${username}`, { 
-                    method: "POST",
-                })
         }
 
         function scheduleUpdate() {

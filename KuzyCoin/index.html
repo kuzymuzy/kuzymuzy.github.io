@@ -627,12 +627,15 @@
         document.getElementById("skinchanger").addEventListener("click", () => {
             if (score >= 1 ) {
                 score -= 1;
-                document.getElementById("skin1").style.display ="none";
-                document.getElementById("skin2").style.display="block";
+                function changeskin (skiname, maneskin)
             } else {
                 alert("Недостаточно Kuzy Coins");
             }
         });
+        function changeskin (skiname, maneskin){
+            document.getElementById("maneskin").style.display ="none";
+            document.getElementById("skiname").style.display="block";
+        }
         */
 
         function getUserData() {
@@ -821,6 +824,7 @@
                     document.getElementById("energy").style.display = "block";
                     document.getElementById("score").style.display = "block";
                 } else if (tabName === "shop") {
+                    document.getElementById("ClickPower").style.display = "block";
                     document.getElementById("name").style.display = "none";
                     document.getElementById("score").style.display = "none";
                     document.getElementById("energy").style.display = "none";

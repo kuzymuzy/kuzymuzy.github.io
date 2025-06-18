@@ -352,3 +352,39 @@ a {
         top: 0;
     }
 }    
+
+section a {
+  position: relative;
+  color: #459fff;
+  text-decoration: none;
+}
+
+section a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  opacity: 0.3; 
+  pointer-events: none;
+}
+
+section a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+section a:hover::after {
+  transform: scaleX(1);
+}

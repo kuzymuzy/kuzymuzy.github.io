@@ -9,11 +9,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="/assets/scripts/cookie.js"></script>
+    <script src="/assets/scripts/testmode.js"></script>
     <script>
         const AuthToken = getCookie("authToken");
         const userid = getCookie("userid");
         if (AuthToken || userid){
-            fetch(`https://gameapi.kuzymuzy.ru/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
+            fetch(`${bacendserv}/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data.valid)
@@ -108,7 +109,7 @@
             const repassword = document.getElementById('repassword').value;
             const loginMessage = document.getElementById('login-message');
             if (password === repassword){
-                fetch(`https://gameapi.kuzymuzy.ru/signup.php?username=${username}&email=${email}&password=${password}`)
+                fetch(`${bacendserv}/signup.php?username=${username}&email=${email}&password=${password}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {

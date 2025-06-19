@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ты забанен сука, нахуя ты вообще открыл игры?</title>
     <script src="/assets/scripts/cookie.js"></script>
+    <script src="/assets/scripts/testmode.js"></script>
     <style>
         #ban-modal {
             display: flex;
@@ -41,7 +42,7 @@
     <script>
         function checkBan() {
             const user_id = getCookie("userid")
-            fetch(`https://gameapi.kuzymuzy.ru/check_ban.php?user_id=${user_id}`)
+            fetch(`${bacendserv}/check_ban.php?user_id=${user_id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.ban === 0) {

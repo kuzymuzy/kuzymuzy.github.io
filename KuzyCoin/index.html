@@ -5,11 +5,12 @@
     <title>Kuzy Coin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1, height=device-height">
     <script src="/assets/scripts/cookie.js"></script>
+    <script src="/assets/scripts/testmode.js"></script>
     <script>
         const AuthToken = getCookie("authToken");
         const userid = getCookie("userid");
         if (AuthToken || userid){
-            fetch(`https://gameapi.kuzymuzy.ru/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
+            fetch(`${bacendserv}/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data.valid)
@@ -597,7 +598,7 @@
         function getLeaderboard() {
             if (leaderboardLoaded) return;
 
-            fetch('https://gameapi.kuzymuzy.ru/get_leaderboard.php')
+            fetch(`${bacendserv}/get_leaderboard.php`)
                 .then(response => response.json())
                 .then(data => {
                     let leaderboardList = document.getElementById("leaderboard-list");
@@ -639,7 +640,7 @@
         */
 
         function getUserData() {
-            fetch(`https://gameapi.kuzymuzy.ru/get_user_data.php?user_id=${user_id}`)
+            fetch(`${bacendserv}/get_user_data.php?user_id=${user_id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -673,7 +674,7 @@
         }
 
         function addUser() {
-            fetch('https://gameapi.kuzymuzy.ru/add_user.php', {
+            fetch(`${bacendserv}/add_user.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `user_id=${user_id}&username=${username}`
@@ -687,7 +688,7 @@
         }
 
         function updateData() {
-            fetch('https://gameapi.kuzymuzy.ru/update_user_data.php', {
+            fetch(`${bacendserv}/update_user_data.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `user_id=${user_id}&score=${score}&energy=${energy}&click_power=${clickPower}&max_energy=${maxEnergy}&last_update_time=${lastUpdateTime}&upgraded_levels=${JSON.stringify(upgradedLevels)}&timestamp=${timestamp}`
@@ -763,12 +764,11 @@
             }
         }
 
-
         document.getElementById("clickBtn").addEventListener("touchstart", (event) => {
             event.preventDefault();
 
             let touches = event.touches.length;
-            let taps = Math.min(touches, Math.floor(energy / clickPower));
+            let taps = Math.min(touches, energy);
 
             if (taps > 0) {
                 energy -= taps;
@@ -872,7 +872,7 @@
         function deleteaccount(){
             const loginMessage = document.getElementById('login-message');
             const passwordfmodal = document.getElementById("deletePassword").value;
-            fetch(`https://gameapi.kuzymuzy.ru/deleteaccount.php?user_id=${userid}&authToken=${AuthToken}&passwordfmodal=${passwordfmodal}`)
+            fetch(`${bacendserv}/deleteaccount.php?user_id=${userid}&authToken=${AuthToken}&passwordfmodal=${passwordfmodal}`)
             .then(response => response.json())
             .then(data => {
                 if(data.success){
@@ -893,7 +893,7 @@
             const new_password = document.getElementById("new_password").value;
             const new_repassword = document.getElementById("new_repassword").value;
             if (new_password === new_repassword && old_password !== new_password){
-                fetch(`https://gameapi.kuzymuzy.ru/changepassword.php?user_id=${userid}&authToken=${AuthToken}&old_password=${old_password}&new_password=${new_password}`)
+                fetch(`${bacendserv}/changepassword.php?user_id=${userid}&authToken=${AuthToken}&old_password=${old_password}&new_password=${new_password}`)
                 .then(response => response.json())
                 .then(data => {
                     if(data.success){

@@ -6,9 +6,8 @@
     <title>Final Step</title>
     <script src="/assets/scripts/cookie.js"></script>
     <script>
-        if(getCookie("signupstep") === "final"){
-        } else{
-            window.location.href="/KuzyCoin/login/index.html"
+        if (getCookie("signupstep") !== "final") {
+            window.location.href = "/KuzyCoin/login/index.html";
         }
     </script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">

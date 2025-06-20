@@ -484,6 +484,11 @@
     </style>
 </head>
 <body>
+    <div id="preloader">
+        <div class="loader"></div>
+        <p id="preloader-text">Загрузка...</p>
+    </div>
+
     <h1 id="score">🪙 Kuzy Coins: 0</h1>
     <p id="name">🌍 Имя</p>
     <p id="energy">⚡️ Энергия: 500/500</p>
@@ -568,11 +573,6 @@
         </div>
     </div>
 
-    <div id="preloader">
-        <div class="loader"></div>
-        <p id="preloader-text">Загрузка...</p>
-    </div>
-
     <script>
         let user_id = getCookie("userid");
 
@@ -587,13 +587,6 @@
 
         let updateTimeout = null;
         let leaderboardLoaded = false;
-
-        setTimeout(() => {
-            document.getElementById("preloader").style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById("preloader").style.display = "none";
-            }, 500);
-        }, 3000);
 
         function getLeaderboard() {
             if (leaderboardLoaded) return;
@@ -943,5 +936,13 @@
         setInterval(restoreEnergy, 1000);
     </script>
     <script src="/assets/scripts/ukraine.js"></script>
+    <script>
+        setTimeout(() => {
+            document.getElementById("preloader").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("preloader").style.display = "none";
+            }, 500);
+        }, 500);
+    </script>
 </body>
 </html>

@@ -237,7 +237,6 @@
             margin-top: 15px;
         }
 
-
         .loader {
             border: 6px solid rgba(255, 255, 255, 0.3);
             border-top: 6px solid #00aeff;
@@ -247,56 +246,13 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .okbutton {
+            margin: auto;
+            background: radial-gradient(circle, #ffcc00, #ff8800);
+            color: #ffffff;
+            font-size: 16px;
         }
 
-        @media (max-width: 450px) {
-            #name {
-                font-size: 18px;
-                position: absolute;
-                top: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.3);
-                padding: 10px 15px;
-                border-radius: 10px;
-                z-index: 3;
-            }
-
-            #score {
-                font-size: 25px;
-                font-weight: bold;
-                position: absolute;
-                top: 50px; 
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 2;
-            }
-
-            #energy {
-                font-size: 13px;
-                position: absolute;
-                bottom: 80px;
-                left: 20px;
-                background: rgba(0, 0, 0, 0.3);
-                padding: 10px 15px;
-                border-radius: 10px;
-                z-index: 2;
-            }
-
-            #ClickPower {
-                font-size: 13px;
-                position: absolute;
-                bottom: 80px;
-                right: 20px;
-                background: rgba(0, 0, 0, 0.3);
-                padding: 10px 15px;
-                border-radius: 10px;
-                z-index: 2;
-            }
-        }
         .account-buttons {
             display: flex;
             flex-direction: column;
@@ -450,6 +406,18 @@
             background-color: #ff5c53;
         }
 
+        #showpass {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
+
         @keyframes slideIn {
             from {
                 transform: translateY(-20px);
@@ -470,16 +438,55 @@
             }
         }
 
-        #showpass {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            z-index: 10;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 450px) {
+            #name {
+                font-size: 18px;
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 10px;
+                z-index: 3;
+            }
+
+            #score {
+                font-size: 25px;
+                font-weight: bold;
+                position: absolute;
+                top: 50px; 
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 2;
+            }
+
+            #energy {
+                font-size: 13px;
+                position: absolute;
+                bottom: 80px;
+                left: 20px;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 10px;
+                z-index: 2;
+            }
+
+            #ClickPower {
+                font-size: 13px;
+                position: absolute;
+                bottom: 80px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 10px;
+                z-index: 2;
+            }
         }
     </style>
 </head>
@@ -573,6 +580,16 @@
         </div>
     </div>
 
+
+    <div id="notenothmony" class="modal-overlay">
+        <div class="modal">
+            <h2 id="notenothmonytext"></h2>
+            <div class="modal-actions">
+                <button class="okbutton" onclick="closeModal('notenothmony')">Ok</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let user_id = getCookie("userid");
 
@@ -623,7 +640,8 @@
                 score -= 1;
                 function changeskin (skiname, maneskin)
             } else {
-                alert("Недостаточно Kuzy Coins");
+                openModal('notenothmony')
+                document.getElementById("notenothmonytext").textContent = "Недостаточно Kuzy Coins";
             }
         });
         function changeskin (skiname, maneskin){
@@ -768,7 +786,8 @@
                 clickPower++;
                 updateUI();
             } else {
-                alert("Недостаточно Kuzy Coins или Click Power не может быть выше 100");
+                openModal('notenothmony')
+                document.getElementById("notenothmonytext").textContent = "Недостаточно Kuzy Coins или Click Power не может быть выше 100";
             }
         });
 
@@ -778,7 +797,8 @@
                 maxEnergy += 100;
                 updateUI();
             } else {
-                alert("Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000");
+                openModal('notenothmony')
+                document.getElementById("notenothmonytext").textContent = "Недостаточно Kuzy Coins или maxEnergy не может быть больше 5000";
             }
         });
 
@@ -788,7 +808,8 @@
                 energy = Math.min(energy + 50, maxEnergy);
                 updateUI();
             } else {
-                alert("Недостаточно Kuzy Coins или энергия уже полная");
+                openModal('notenothmony')
+                document.getElementById("notenothmonytext").textContent = "Недостаточно Kuzy Coins или энергия уже полная";
             }
         });
 

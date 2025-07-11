@@ -16,4 +16,5 @@ function testmodeon() {
 }
 function testmodeoff() {
     location.reload()
+    accoundexit()
 }

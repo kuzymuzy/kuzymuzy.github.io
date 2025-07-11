@@ -590,6 +590,16 @@
         </div>
     </div>
 
+    <div id="DownloadModal" class="modal-overlay">
+        <div class="modal">
+            <h2 id="DownloadModalText">Скачать Kuzy Coin на ваше устройство? Это намного удобнее чем играть через сайт ;)</h2>
+            <div class="modal-actions">
+                <button class="okbutton" onclick="window.location.replace('https://github.com/kuzymuzy/kuzycoin/releases/tag/1.0.0')">Скачать</button>
+                <button class="okbutton" onclick="closeModal('DownloadModal')">Не сейчас</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let user_id = getCookie("userid");
 
@@ -940,11 +950,33 @@
                 new_password.type = "password"
                 buttonshow.textContent = "🙉"
             }
-        }  
+        }
+        
+        function downloadmessage(){
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+
+            const isAndroid = /Android/i.test(ua);
+            const isWindows = /Windows NT/i.test(ua);
+            const isIOS = /iPhone|iPad|iPod/i.test(ua);
+            const isMac = /Macintosh|Mac OS X/i.test(ua) && !isIOS;
+            const showdownloadmodal = localStorage.getItem("showdownloadmodal")
+
+            if (isWindows || isMac || isAndroid) {
+                if (!showdownloadmodal) {
+                    openModal('DownloadModal')
+                    localStorage.setItem("showdownloadmodal", "true")
+                } else {
+                    console.log(123)
+                }
+            } else {
+                console.log("ios")
+            }
+        }
 
         getUserData();
         getLeaderboard();
         setInterval(restoreEnergy, 1000);
+        downloadmessage()
     </script>
     <script src="/assets/scripts/ukraine.js"></script>
     <script>

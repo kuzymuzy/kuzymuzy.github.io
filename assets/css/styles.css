@@ -100,7 +100,6 @@ section {
     animation: fadeIn 1s ease-out;
 }
 
-
 .video-container {
     margin-top: 30px;
     display: flex;
@@ -257,7 +256,6 @@ a {
         overflow: hidden;
     }
     
-
     .logo {
         display: none;
     }

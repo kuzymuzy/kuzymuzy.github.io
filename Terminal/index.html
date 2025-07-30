@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                </div>
+                <div class="terminal-title">root — -zsh - 80x24</div>
+            </div>
+            <div class="terminal-body">
+                <div class="prompt">
+                    <input class="command" />
+                </div>
+            </div>
+        </div>
+            <div class="copy-container" id="copyWrapper" style="display: none;">
+                <button class="btn-copy" onclick="copyIframeCode(this)">
+                    <span>Скопировать iFrame</span>
+                    <div class="checkmark"></div>
+                </button>
+            </div>
+    </div>
+    <center>
+        <p id="text">Я как бы этот, как его, крч я это спиздил, ну точнее не код, а стиль, я спиздил этот терминал у <a id="link" href="https://ymp-co.github.io/">YMP Yuri</a></p>
+    </center>
+    <script>
+        const command = document.querySelector(".command");
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlcommand = urlParams.get("command");
+        const isInIframe = window.self !== window.top;
+
+        if (urlcommand) {
+            command.value = urlcommand;
+        }
+
+        if (isInIframe) {
+            command.setAttribute("readonly", true);
+        } else {
+            document.getElementById("copyWrapper").style.display = "flex";
+        }
+
+        function copyIframeCode(button) {
+            const commandValue = encodeURIComponent(command.value);
+            const iframeCode = `<iframe src="https://kuzymuzy.ru/Terminal/index.html?command=${commandValue}" style="border:none; width: 80%; height: 400px; display: block;" scrolling="no" frameborder="0"></iframe>`;
+            navigator.clipboard.writeText(iframeCode).then(() => {
+                button.classList.add("success");
+                setTimeout(() => {
+                    button.classList.remove("success");
+                }, 2000);
+            });
+        }
+    </script>
+    <script>
+        if (window !== window.parent) {
+            document.body.classList.add('embedded');
+            document.getElementById('link').style.display = "none";
+            document.getElementById('text').style.display = "none";
+        }
+    </script>
+</body>
+</html>

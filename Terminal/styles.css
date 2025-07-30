@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-color: #050510;
+    --terminal-bg: #1a1e24;
+    --terminal-border: #2c333d;
+    --text-color: #e9ecef;
+    --success-color: #64d790;
+    --comment-color: #768390;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Fira Code', monospace;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-color: var(--bg-color);
+    background-image:
+        linear-gradient(var(--terminal-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--terminal-border) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.2;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    position: relative;
+}
+
+.terminal {
+    background-color: var(--terminal-bg);
+    border-radius: 10px;
+    border: 1px solid var(--terminal-border);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--terminal-border);
+}
+
+.terminal-buttons {
+    display: flex;
+    margin-right: 1rem;
+}
+
+.terminal-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.close {
+    background-color: #ff5f56;
+}
+
+.minimize {
+    background-color: #ffbd2e;
+}
+
+.maximize {
+    background-color: #27c93f;
+}
+
+.terminal-title {
+    font-size: 0.8rem;
+    color: var(--comment-color);
+}
+
+.terminal-body {
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.command {
+    background: transparent;
+    border: none;
+    color: var(--success-color);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
+}
+
+.prompt {
+    color: var(--success-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.prompt::before {
+    content: "linux@root:~$ ";
+    white-space: pre;
+}
+
+
+.command[readonly] {
+  cursor: default;
+}
+
+.copy-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.btn-copy {
+  padding: 12px 30px;
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  font-family: 'Fira Code', monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.btn-copy:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(42, 107, 204, 0.4);
+}
+
+.btn-copy .checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 10px;
+  border-left: 3px solid white;
+  border-bottom: 3px solid white;
+  transform: translate(-50%, -50%) scale(0) rotate(-45deg);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.btn-copy.success .checkmark {
+  transform: translate(-50%, -50%) scale(1) rotate(-45deg);
+  opacity: 1;
+}
+
+.btn-copy.success span {
+  visibility: hidden;
+}
+
+body:has(iframe),
+body.embedded {
+    background: transparent !important;
+}
+
+body.embedded::before {
+    display: none;
+}

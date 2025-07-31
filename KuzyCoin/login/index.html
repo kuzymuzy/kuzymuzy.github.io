@@ -16,7 +16,10 @@
         const AuthToken = getCookie("authToken");
         const userid = getCookie("userid");
         if (AuthToken || userid){
-            fetch(`${bacendserv}/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
+            fetch(`${bacendserv}/checktoken.php`, {
+                method: "POST",
+                body: JSON.stringify({userid, AuthToken})
+            })
             .then(response => response.json())
             .then(data => {
                 console.log(data.valid)
@@ -105,7 +108,10 @@
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberme').checked;
             const loginMessage = document.getElementById('login-message');
-            fetch(`${bacendserv}/login.php?email=${email}&password=${password}`)
+            fetch(`${bacendserv}/login.php`, {
+                method: "POST",
+                body: JSON.stringify({email, password})
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

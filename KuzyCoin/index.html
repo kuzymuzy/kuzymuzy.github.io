@@ -10,7 +10,10 @@
         const AuthToken = getCookie("authToken");
         const userid = getCookie("userid");
         if (AuthToken || userid){
-            fetch(`${bacendserv}/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
+            fetch(`${bacendserv}/checktoken.php`, {
+                method: "POST",
+                body: JSON.stringify({userid, AuthToken})
+            })
             .then(response => response.json())
             .then(data => {
                 console.log(data.valid)
@@ -253,7 +256,7 @@
             font-size: 16px;
         }
 
-        .account-buttons {
+        .account-buttons, .theme-buttons  {
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -262,7 +265,7 @@
             padding: 20px;
         }
 
-        .account-buttons button {
+        .account-buttons button, .theme-buttons button {
             padding: 12px 20px;
             border: none;
             border-radius: 12px;
@@ -275,13 +278,13 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .account-buttons button:hover {
+        .account-buttons button:hover, .theme-buttons button:hover  {
             transform: translateY(-3px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
             background: linear-gradient(135deg, #5aa4f2, #1a8cff);
         }       
 
-        .account-buttons button:active {
+        .account-buttons button:active, .theme-buttons button:active {
             transform: scale(0.98);
         }
 
@@ -527,9 +530,15 @@
             <button onclick="openModal('changePasswordModal')" class="change-password">🔑 Сменить пароль</button>
             <button onclick="openModal('deleteAccountModal')" class="delete">🗑️ Удалить аккаунт</button>
         </div>
+        <!--
+        <div class="theme-buttons">
+            <button class="skinchange" onclick="openModal('changeSkinModal')">Сменить скин</button>
+            <button class="backgroundchange" onclick="openModal('changeBackgroundModal')">Сменить бекраунд</button>
+        </div>
+        -->
         <p style="display: none;" id="appver"></p>
         <p style="display: none;" id="buildver"></p>
-        <p id="copyright">© 2025 KuzyMuzy inc. All rights reserved.</p>
+        <p id="copyright">Copyright © 2025 KuzyMuzy Inc. All rights reserved.</p>
     </div>     
  
 
@@ -583,6 +592,14 @@
         </div>
     </div>
 
+    <div id="changeSkinModal" class="modal-overlay">
+        <div class="modal">
+            <h2>Сменить скин</h2>
+            <div class="modal-actions">
+                <button onclick="closeModal('changeSkinModal')">Отмена</button>
+            </div>
+        </div>
+    </div>
 
     <div id="notenothmony" class="modal-overlay">
         <div class="modal">
@@ -647,24 +664,11 @@
         }
 
 
-        /* ЛОГИКА СКИНОВ (СЛИШКОМ В ПАДЛУ ИХ ДЕЛАТЬ)
-        document.getElementById("skinchanger").addEventListener("click", () => {
-            if (score >= 1 ) {
-                score -= 1;
-                function changeskin (skiname, maneskin)
-            } else {
-                openModal('notenothmony')
-                document.getElementById("notenothmonytext").textContent = "Недостаточно Kuzy Coins";
-            }
-        });
-        function changeskin (skiname, maneskin){
-            document.getElementById("maneskin").style.display ="none";
-            document.getElementById("skiname").style.display="block";
-        }
-        */
-
         function getUserData() {
-            fetch(`${bacendserv}/get_user_data.php?user_id=${user_id}`)
+            fetch(`${bacendserv}/get_user_data.php`, {
+                method: "POST",
+                body: JSON.stringify({user_id})
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.ban === 1) {
@@ -889,7 +893,10 @@
         function deleteaccount(){
             const loginMessage = document.getElementById('login-message');
             const passwordfmodal = document.getElementById("deletePassword").value;
-            fetch(`${bacendserv}/deleteaccount.php?user_id=${userid}&authToken=${AuthToken}&passwordfmodal=${passwordfmodal}`)
+            fetch(`${bacendserv}/deleteaccount.php`, {
+                method: "POST",
+                body: JSON.stringify({userid, AuthToken, passwordfmodal})
+            })
             .then(response => response.json())
             .then(data => {
                 if(data.success){
@@ -910,7 +917,10 @@
             const new_password = document.getElementById("new_password").value;
             const new_repassword = document.getElementById("new_repassword").value;
             if (new_password === new_repassword && old_password !== new_password){
-                fetch(`${bacendserv}/changepassword.php?user_id=${userid}&authToken=${AuthToken}&old_password=${old_password}&new_password=${new_password}`)
+                fetch(`${bacendserv}/changepassword.php`, {
+                    method: "POST",
+                    body: JSON.stringify({userid, AuthToken, old_password, new_password})
+                })
                 .then(response => response.json())
                 .then(data => {
                     if(data.success){

@@ -14,7 +14,10 @@
         const AuthToken = getCookie("authToken");
         const userid = getCookie("userid");
         if (AuthToken || userid){
-            fetch(`${bacendserv}/checktoken.php?userid=${userid}&AuthToken=${AuthToken}`)
+            fetch(`${bacendserv}/checktoken.php`, {
+                method: "POST",
+                body: JSON.stringify({userid, AuthToken})
+            })
             .then(response => response.json())
             .then(data => {
                 console.log(data.valid)
@@ -109,16 +112,22 @@
             const repassword = document.getElementById('repassword').value;
             const loginMessage = document.getElementById('login-message');
             if (password === repassword){
-                fetch(`${bacendserv}/signup.php?username=${username}&email=${email}&password=${password}`)
+                fetch(`${bacendserv}/signup.php`, {
+                    method: "POST",
+                    body: JSON.stringify({username, email, password})
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             setCookie('userid', data.user_id);
                             setCookie('email', email);
                             setCookie('signupstep', "final")
-                            const authtoken = data.authToken;
-                            const userid = data.user_id; 
-                            fetch(`${apiserver}/send_mail.php?user_id=${userid}&username=${username}&email=${email}&authToken=${authtoken}`)
+                            const authToken = data.authToken;
+                            const user_id = data.user_id; 
+                            fetch(`${apiserver}/send_mail.php`, {
+                                method: "POST",
+                                body: JSON.stringify({user_id, username, email, authToken})
+                            })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {

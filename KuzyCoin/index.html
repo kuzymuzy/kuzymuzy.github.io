@@ -527,6 +527,9 @@
             <button onclick="openModal('changePasswordModal')" class="change-password">🔑 Сменить пароль</button>
             <button onclick="openModal('deleteAccountModal')" class="delete">🗑️ Удалить аккаунт</button>
         </div>
+        <p style="display: none;" id="appver"></p>
+        <p style="display: none;" id="buildver"></p>
+        <p id="copyright">© 2025 KuzyMuzy inc. All rights reserved.</p>
     </div>     
  
 
@@ -847,7 +850,7 @@
                     document.getElementById("ClickPower").style.display = "none";
                     document.getElementById("energy").style.display = "none";
                     document.getElementById("score").style.display = "none";
-                }
+                } 
             });
 
             document.getElementById(tabName).classList.add("active");
@@ -966,14 +969,28 @@
                     openModal('DownloadModal')
                     localStorage.setItem("showdownloadmodal", "true")
                 } else {
-                    console.log(123)
+                    console.log("i all ready show download modal")
                 }
             } else {
-                console.log("ios")
+                console.log("ios or it is an app")
+            }
+        }
+        function ifapplication(){
+            if (navigator.userAgent.includes("KuzyCoinApp")){
+                const appverdoc = document.getElementById("appver");
+                const buildverdoc = document.getElementById("buildver");
+                const urlParams = new URLSearchParams(window.location.search);
+                const appver = urlParams.get('appver');
+                const buildver = urlParams.get('buildver');
+                appverdoc.style.display = "block"
+                buildverdoc.style.display = "block"
+                appverdoc.textContent = `Version: ${appver}`;
+                buildverdoc.textContent = `Build Version: ${buildver}`;
             }
         }
 
         getUserData();
+        ifapplication();
         getLeaderboard();
         setInterval(restoreEnergy, 1000);
         downloadmessage()

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dot</title>
+    <style>
+       body{
+         background-color: gray;
+       }
+      .dot {
+        color: red;
+        font-size: 200px;
+        animation: blink 4s infinite linear;
+      }
+      
+      @keyframes blink {
+        20% {
+          color: orange;
+        }
+        40% {
+          color: yellow;
+        }
+        60% {
+          color: green;
+        }
+        80% {
+          color: blue;
+        }
+        100% {
+          color: purple;
+        }
+    </style>
+</head>
+<body>
+    <center>
+       <p id="dot" class="dot">.</p>
+
+        <footer>
+            <p style="color: white;">&copy; 2025 Simple Dot. All rights reserved.</p>
+        </footer>
+    </center>
+</body>
+</html>

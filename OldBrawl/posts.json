@@ -1,0 +1,39 @@
+{
+    "posts": [
+        {
+            "count": 1,
+            "name": "О проекте",
+            "posturl": "about-project",
+            "fileuri": "/OldBrawl/Postsmd/about-project.md",
+            "description": "О проекте сервера OldBrawl"
+        },
+        {
+            "count": 2,
+            "name": "Параметры в config.json OldBrawl",
+            "posturl": "params-in-config-oldbrawl",
+            "fileuri": "/OldBrawl/Postsmd/params-in-config-oldbrawl.md",
+            "description": "Описание всех параметров в config.json сервера OldBrawl"
+        },
+        {
+            "count": 3,
+            "name": "Поднимаем сервер на своей VPSке",
+            "posturl": "deploy-on-vps-server",
+            "fileuri": "/OldBrawl/Postsmd/deploy-on-vps-server.md",
+            "description": "Инструкция как запустить сервер на своем впс хосте"
+        },
+        {
+            "count": 4,
+            "name": "Поднимаем сервер окально на телефоне (Android only)",
+            "posturl": "setup-server-local-on-android",
+            "fileuri": "/OldBrawl/Postsmd/setup-server-local-on-android.md",
+            "description": "Инструкция как запустить сервер на android"
+        },
+        {
+            "count": 5,
+            "name": "Поднимаем сервер локально на пк (Windows/Linux/MacOS)",
+            "posturl": "setup-server-local-on-pc",
+            "fileuri": "/OldBrawl/Postsmd/setup-server-local-on-pc.md",
+            "description": "Инструкция как запустить сервер на своем пк"
+        }
+    ]
+}

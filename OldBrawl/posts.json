@@ -34,6 +34,13 @@
             "posturl": "setup-server-local-on-pc",
             "fileuri": "/OldBrawl/Postsmd/setup-server-local-on-pc.md",
             "description": "Инструкция как запустить сервер на своем пк"
+        },
+        {
+            "count": 6,
+            "name": "Как добовлять/изменять предметы в магазине",
+            "posturl": "edit-shop-offers",
+            "fileuri": "/OldBrawl/Postsmd/edit-shop-offers.md",
+            "description": "Краткая инструкция по редактированию /Logic/shop.py"
         }
     ]
 }

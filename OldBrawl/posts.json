@@ -23,7 +23,7 @@
         },
         {
             "count": 4,
-            "name": "Поднимаем сервер окально на телефоне (Android only)",
+            "name": "Поднимаем сервер локально на телефоне (Android only)",
             "posturl": "setup-server-local-on-android",
             "fileuri": "/OldBrawl/Postsmd/setup-server-local-on-android.md",
             "description": "Инструкция как запустить сервер на android"

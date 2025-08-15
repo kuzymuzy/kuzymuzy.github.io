@@ -41,6 +41,20 @@
             "posturl": "edit-shop-offers",
             "fileuri": "/OldBrawl/Postsmd/edit-shop-offers.md",
             "description": "Краткая инструкция по редактированию /Logic/shop.py"
+        },
+        {
+            "count": 7,
+            "name": "Как изменить эвенты и карты",
+            "posturl": "edit-events-maps",
+            "fileuri": "/OldBrawl/Postsmd/edit-events-maps.md",
+            "description": "Краткая инструкция по редактированию /Logic/EventSlots.py/"
+        },
+        {
+            "count": 8,
+            "name": "Как добавить новый бокс или поменять те что есть",
+            "posturl": "edit-boxes-drops",
+            "fileuri": "/OldBrawl/Postsmd/edit-shop-offers.md",
+            "description": "Краткая инструкция по редактированию /Logic/Boxes.py"
         }
     ]
 }

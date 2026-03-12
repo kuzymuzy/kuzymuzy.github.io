@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Decision center</title>
+    <link rel="stylesheet" href="/assets/css/random.css">
+    <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Рандомайзер цифр">
+    <meta name="keywords" content="Генератор, цифр, цифры, рандомайзер">
+    <meta property="og:title" content="Рандомайзер">
+    <meta property="og:description" content="Рандомайзер">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Рандомайзер">
+    <meta property="og:image" content="/assets/img/apple-touch-icon.png">
+    <meta property="og:locale" content="ru_RU">
+    <meta name="robots" content="index, follow">
+    <script src="/assets/scripts/ukraine.js"></script>
+</head>
+<body>
+    <header class="nav-bar">
+        <nav>
+            <ul>
+                <li><a title="Вернуться на главную страницу" href="index.html"><img src="favicon.ico" alt="Логотип" class="logo"></a></li>
+                <li class="theme-container">
+                    <span title="Это то какая у тебя темя будет)" class="theme-icon" id="theme-icon">🌑</span>
+                    <label title="Сменить оформление" class="theme-switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Генератор случайных чисел</h2>
+        <form id="random-form" class="form-container">
+            <div class="input-group">
+                <label for="min">Минимальное значение:</label>
+                <input type="number" value="1" id="min" required>
+            </div>
+            <div class="input-group">
+                <label for="max">Максимальное значение:</label>
+                <input type="number" value="100" id="max" required>
+            </div>
+            <button type="submit" class="btn">Сгенерировать</button>
+        </form>
+        <p id="result" class="result-text"></p>
+        <p id="division2" class="result-text"></p>
+        <p id="oddorevene" class="result-text"></p>
+    </main>
+
+    <footer style="position:fixed;" class="footer-bar">
+        <img class="bankimg" src="favicon.ico" width="40"><br><br>
+        <p>© 2026 KuzyMuzy inc. Все права защищены.</p>
+        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
+    </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('random-form');
+    const result = document.getElementById('result');
+    const division2 = document.getElementById('division2');
+    const oddorevene = document.getElementById('oddorevene');
+
+    function oddoreven(n) {
+        if (n % 2 === 0) {
+            return 'Четное';
+        }
+        if (n % 2 !== 0) {
+            return 'Нечетное';
+        }
+    }
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const min = parseInt(document.getElementById('min').value);
+        const max = parseInt(document.getElementById('max').value);
+
+        if (min >= max) {
+            result.textContent = "Минимальное значение должно быть меньше максимального.";
+            return;
+        }
+
+        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+        result.textContent = `Случайное число: ${randomNumber}`;
+        division2.textContent = `Деленное на два: ${randomNumber/2}`;
+        oddorevene.textContent = `Четное не четное: ${oddoreven(randomNumber)}`;
+
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const themeIcon = document.getElementById('theme-icon');
+    const themeToggle = document.getElementById('theme-toggle');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.fade-in');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            window.scrollTo({
+                top: targetSection.offsetTop - 60,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    const options = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, options);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.body.classList.add(savedTheme);
+        if (savedTheme === 'dark-theme') {
+            themeToggle.checked = true;
+            themeIcon.textContent = '🌕';
+        } else {
+            themeIcon.textContent = '🌑';
+        }
+    } else {
+        themeToggle.checked = true;
+        document.body.classList.add('dark-theme');
+        themeIcon.textContent = '🌕';
+    }
+
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.body.classList.remove('light-theme');
+            document.body.classList.add('dark-theme');
+            themeIcon.textContent = '🌕';
+            localStorage.setItem('theme', 'dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+            document.body.classList.add('light-theme');
+            themeIcon.textContent = '🌑';
+            localStorage.setItem('theme', 'light-theme');
+        }
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #151518;
+    --surface2: #1e1e23;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #f0ede8;
+    --muted: rgba(240,237,232,0.45);
+    --dim: rgba(240,237,232,0.2);
+    --a: #d4f5a0;
+    --a-dark: #8db840;
+    --b: #f5a0d4;
+    --b-dark: #b840a0;
+    --gold: #f5d080;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(212,245,160,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 35% at 80% 90%, rgba(245,160,212,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 580px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .header h1 {
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .header p {
+    margin-top: 0.6rem;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── Setup panel ── */
+  #setup {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .vs-divider {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--dim);
+    text-align: center;
+    padding-bottom: 14px;
+    letter-spacing: 0.1em;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .field-a label { color: var(--a-dark); }
+  .field-b label { color: var(--b-dark); }
+
+  .field input {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-a input:focus { border-color: var(--a-dark); }
+  .field-b input:focus { border-color: var(--b-dark); }
+
+  .start-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .start-btn:hover { opacity: 0.9; }
+  .start-btn:active { transform: scale(0.98); }
+  .start-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  /* ── Arena ── */
+  #arena { display: none; }
+
+  /* Scoreboard */
+  .scoreboard {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1rem;
+    text-align: center;
+    transition: border-color 0.4s, background 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .score-card.card-a::before { background: radial-gradient(ellipse at 50% 0%, rgba(212,245,160,0.12) 0%, transparent 70%); }
+  .score-card.card-b::before { background: radial-gradient(ellipse at 50% 0%, rgba(245,160,212,0.12) 0%, transparent 70%); }
+  .score-card.active-a { border-color: rgba(212,245,160,0.3); }
+  .score-card.active-a::before { opacity: 1; }
+  .score-card.active-b { border-color: rgba(245,160,212,0.3); }
+  .score-card.active-b::before { opacity: 1; }
+  .score-card.winner-card { border-color: var(--gold) !important; }
+  .score-card.loser-card { opacity: 0.4; }
+
+  .score-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-a .score-label { color: var(--a-dark); }
+  .card-b .score-label { color: var(--b-dark); }
+  .score-num {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .score-pips {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  .pip {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    transition: background 0.35s, border-color 0.35s, transform 0.35s;
+  }
+  .pip.on-a { background: var(--a); border-color: var(--a); transform: scale(1.15); }
+  .pip.on-b { background: var(--b); border-color: var(--b); transform: scale(1.15); }
+
+  .vs-center {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* Round log */
+  .log-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .log-head {
+    padding: 10px 16px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .log-list {
+    list-style: none;
+    max-height: 220px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+  .log-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    animation: slideIn 0.3s ease;
+  }
+  .log-list li:last-child { border-bottom: none; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .log-round {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    min-width: 28px;
+  }
+  .log-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    min-width: 36px;
+    text-align: center;
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+  .log-parity {
+    font-size: 11px;
+    color: var(--muted);
+    flex: 1;
+  }
+  .log-winner {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .log-winner.w-a { background: rgba(212,245,160,0.12); color: var(--a); }
+  .log-winner.w-b { background: rgba(245,160,212,0.12); color: var(--b); }
+
+  /* Winner banner */
+  .winner-banner {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+    animation: bannerIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes bannerIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .winner-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,208,128,0.08) 0%, transparent 70%);
+  }
+  .winner-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .winner-name {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .winner-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    display: none;
+  }
+  .reset-btn:hover { border-color: var(--border2); color: var(--text); }
+
+  /* Pulse animation on active score card */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50% { box-shadow: 0 0 0 4px rgba(240,237,232,0.04); }
+  }
+  .score-card.scoring { animation: pulse-border 0.4s ease; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-label">// decision engine</div>
+    <h1>Decision Center</h1>
+    <p>Let the numbers settle it once and for all.</p>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setup">
+    <div class="input-grid">
+      <div class="field field-a">
+        <label>Option A</label>
+        <input id="inp-a" type="text" placeholder="e.g. Pizza" maxlength="22">
+      </div>
+      <div class="vs-divider">vs</div>
+      <div class="field field-b">
+        <label>Option B</label>
+        <input id="inp-b" type="text" placeholder="e.g. Sushi" maxlength="22">
+      </div>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="startGame()">Decide →</button>
+  </div>
+
+  <!-- ARENA -->
+  <div id="arena">
+    <div class="scoreboard">
+      <div class="score-card card-a" id="card-a">
+        <div class="score-label" id="label-a">Option A</div>
+        <div class="score-num" id="num-a">0</div>
+        <div class="score-pips" id="pips-a"></div>
+      </div>
+      <div class="vs-center">vs</div>
+      <div class="score-card card-b" id="card-b">
+        <div class="score-label" id="label-b">Option B</div>
+        <div class="score-num" id="num-b">0</div>
+        <div class="score-pips" id="pips-b"></div>
+      </div>
+    </div>
+
+    <div class="log-wrap">
+      <div class="log-head">Round log</div>
+      <ul class="log-list" id="log"></ul>
+    </div>
+
+    <div class="winner-banner" id="winner-banner">
+      <div class="winner-eyebrow">✦ final decision ✦</div>
+      <div class="winner-name" id="winner-name"></div>
+      <div class="winner-sub" id="winner-sub"></div>
+    </div>
+
+    <button class="reset-btn" id="reset-btn" onclick="resetGame()">↺ Try again</button>
+  </div>
+</div>
+
+<script>
+  const MAX = 3, DELAY = 850;
+  let sA = 0, sB = 0, round = 0, busy = false;
+  let nameA = '', nameB = '';
+
+  function renderPips(el, count, cls) {
+    el.innerHTML = '';
+    for (let i = 0; i < MAX; i++) {
+      const d = document.createElement('div');
+      d.className = 'pip' + (i < count ? ' ' + cls : '');
+      el.appendChild(d);
+    }
+  }
+
+  function flashCard(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('scoring');
+    void el.offsetWidth;
+    el.classList.add('scoring');
+  }
+
+  function addLog(n, winner) {
+    const li = document.createElement('li');
+    const parity = n % 2 === 0 ? 'even' : 'odd';
+    const wName = winner === 'a' ? nameA : nameB;
+    const wClass = winner === 'a' ? 'w-a' : 'w-b';
+    li.innerHTML = `
+      <span class="log-round">#${round}</span>
+      <span class="log-number">${n}</span>
+      <span class="log-parity">${parity}</span>
+      <span class="log-winner ${wClass}">${wName}</span>
+    `;
+    const list = document.getElementById('log');
+    list.insertBefore(li, list.firstChild);
+  }
+
+  function setActiveCard(winner) {
+    document.getElementById('card-a').classList.remove('active-a', 'active-b');
+    document.getElementById('card-b').classList.remove('active-a', 'active-b');
+    if (winner === 'a') {
+      document.getElementById('card-a').classList.add('active-a');
+      document.getElementById('card-b').classList.remove('active-b');
+    } else {
+      document.getElementById('card-b').classList.add('active-b');
+      document.getElementById('card-a').classList.remove('active-a');
+    }
+  }
+
+  async function runRound() {
+    round++;
+    const n = Math.floor(Math.random() * 99) + 1;
+    const winner = n % 2 === 0 ? 'a' : 'b';
+    if (winner === 'a') sA++; else sB++;
+
+    document.getElementById('num-a').textContent = sA;
+    document.getElementById('num-b').textContent = sB;
+    renderPips(document.getElementById('pips-a'), sA, 'on-a');
+    renderPips(document.getElementById('pips-b'), sB, 'on-b');
+    flashCard(winner === 'a' ? 'card-a' : 'card-b');
+    setActiveCard(winner);
+    addLog(n, winner);
+  }
+
+  async function startGame() {
+    if (busy) return;
+    busy = true;
+    nameA = document.getElementById('inp-a').value.trim() || 'Option A';
+    nameB = document.getElementById('inp-b').value.trim() || 'Option B';
+
+    document.getElementById('label-a').textContent = nameA;
+    document.getElementById('label-b').textContent = nameB;
+    document.getElementById('start-btn').disabled = true;
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('arena').style.display = 'block';
+    document.getElementById('log').innerHTML = '';
+    document.getElementById('winner-banner').style.display = 'none';
+    document.getElementById('reset-btn').style.display = 'none';
+    sA = 0; sB = 0; round = 0;
+    renderPips(document.getElementById('pips-a'), 0, 'on-a');
+    renderPips(document.getElementById('pips-b'), 0, 'on-b');
+
+    await new Promise(r => setTimeout(r, 400));
+
+    while (sA < MAX && sB < MAX) {
+      await runRound();
+      if (sA < MAX && sB < MAX) await new Promise(r => setTimeout(r, DELAY));
+    }
+
+    await new Promise(r => setTimeout(r, 300));
+    finishGame();
+  }
+
+  function finishGame() {
+    const won = sA >= MAX ? 'a' : 'b';
+    const winName = won === 'a' ? nameA : nameB;
+    const losName = won === 'a' ? nameB : nameA;
+
+    document.getElementById('card-a').classList.remove('active-a', 'active-b', 'scoring');
+    document.getElementById('card-b').classList.remove('active-a', 'active-b', 'scoring');
+
+    if (won === 'a') {
+      document.getElementById('card-a').classList.add('winner-card');
+      document.getElementById('card-b').classList.add('loser-card');
+    } else {
+      document.getElementById('card-b').classList.add('winner-card');
+      document.getElementById('card-a').classList.add('loser-card');
+    }
+
+    document.getElementById('winner-name').textContent = winName;
+    document.getElementById('winner-sub').textContent = `${won === 'a' ? sA : sB}–${won === 'a' ? sB : sA} over ${losName} after ${round} rounds`;
+    document.getElementById('winner-banner').style.display = 'block';
+    document.getElementById('reset-btn').style.display = 'block';
+    busy = false;
+  }
+
+  function resetGame() {
+    document.getElementById('card-a').className = 'score-card card-a';
+    document.getElementById('card-b').className = 'score-card card-b';
+    document.getElementById('num-a').textContent = '0';
+    document.getElementById('num-b').textContent = '0';
+    document.getElementById('setup').style.display = 'block';
+    document.getElementById('arena').style.display = 'none';
+    document.getElementById('start-btn').disabled = false;
+    document.getElementById('inp-a').value = '';
+    document.getElementById('inp-b').value = '';
+    document.getElementById('inp-a').focus();
+  }
+</script>
+</body>
+</html>

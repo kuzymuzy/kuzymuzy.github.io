@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude fun</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --md-primary: #6750A4;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #EADDFF;
+      --md-on-primary-container: #21005D;
+      --md-surface: #FEF7FF;
+      --md-on-surface: #1C1B1F;
+      --md-on-surface-variant: #49454F;
+      --md-outline: #79747E;
+      --md-background: #FEF7FF;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --md-primary: #D0BCFF;
+        --md-on-primary: #381E72;
+        --md-primary-container: #4F378B;
+        --md-on-primary-container: #EADDFF;
+        --md-surface: #1C1B1F;
+        --md-on-surface: #E6E1E5;
+        --md-on-surface-variant: #CAC4D0;
+        --md-outline: #938F99;
+        --md-background: #141218;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--md-background);
+      color: var(--md-on-surface);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--md-on-surface);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--md-on-surface-variant);
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* MD3 Filled button */
+    .btn-filled {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 24px;
+      border-radius: 20px;
+      border: none;
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.2s, filter 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-filled:hover {
+      box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15);
+      filter: brightness(1.08);
+    }
+    .btn-filled:active { filter: brightness(0.92); }
+
+    /* MD3 Tonal button */
+    .btn-tonal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 24px;
+      border-radius: 20px;
+      border: none;
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.2s, filter 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-tonal:hover {
+      box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 2px 6px 2px rgba(0,0,0,.1);
+      filter: brightness(0.96);
+    }
+    .btn-tonal:active { filter: brightness(0.9); }
+
+    /* MD3 Outlined button */
+    .btn-outlined {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 24px;
+      border-radius: 20px;
+      border: 1px solid var(--md-outline);
+      background: transparent;
+      color: var(--md-primary);
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-outlined:hover { background: rgba(103, 80, 164, 0.08); }
+    .btn-outlined:active { background: rgba(103, 80, 164, 0.16); }
+
+    .material-icons { font-size: 18px; }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: scale(0);
+      animation: ripple 0.5s ease-out;
+      pointer-events: none;
+    }
+    .btn-tonal .ripple,
+    .btn-outlined .ripple {
+      background: rgba(103, 80, 164, 0.2);
+    }
+    @keyframes ripple {
+      to { transform: scale(4); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>3 Странички от клода, которые он сделал потому что сам хотел</h1>
+  <p class="subtitle">Выбери</p>
+
+  <div class="buttons">
+    <a href="generative_portrait.html" class="btn-filled">
+      <span class="material-icons">smart_toy</span>
+      Generative portrait
+    </a>
+
+    <a href="procedural_city.html" class="btn-tonal">
+      <span class="material-icons">smart_toy</span>
+      Procedural city
+    </a>
+
+    <a href="procedural_garden.html" class="btn-tonal">
+      <span class="material-icons">smart_toy</span>
+      procedural_garden
+    </a>
+  </div>
+
+  <script>
+    document.querySelectorAll('.btn-filled, .btn-tonal, .btn-outlined').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        r.style.width = r.style.height = size + 'px';
+        r.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        r.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        this.appendChild(r);
+        r.addEventListener('animationend', () => r.remove());
+      });
+    });
+  </script>
+</body>
+</html>

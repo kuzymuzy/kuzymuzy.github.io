@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кузя Музя</title>
+  <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KuzyMuzy" />
+  <meta name="description" content="О Кузе Музе" />
+  <meta name="keywords" content="Кузя Музя, Саша Кузнецов, блогер, KuzyMuzy" />
+  <meta property="og:title" content="О Кузе Музе" />
+  <meta property="og:description" content="Визитная карточка Кузи" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="О Кузе Музе" />
+  <meta property="og:image" content="/assets/img/apple-touch-icon.png" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta name="robots" content="index, follow" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;700&family=Roboto:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+  <script src="/assets/scripts/ukraine.js" defer></script>
+
+  <style>
+    /* ═══════════════════════════════════════════════════
+       MD3 DESIGN TOKENS
+    ═══════════════════════════════════════════════════ */
+    :root {
+      /* Seed: #4B8CFF (синий / tech) */
+      --md-primary:             #1A5FCC;
+      --md-on-primary:          #FFFFFF;
+      --md-primary-container:   #D6E4FF;
+      --md-on-primary-cont:     #001944;
+
+      --md-secondary:           #555F71;
+      --md-secondary-container: #D9E2F8;
+      --md-on-secondary-cont:   #111C2C;
+
+      --md-tertiary:            #6F527A;
+      --md-tertiary-container:  #F7D9FF;
+      --md-on-tertiary-cont:    #280D34;
+
+      --md-error:               #BA1A1A;
+      --md-error-container:     #FFDAD6;
+      --md-on-error-cont:       #410002;
+
+      --md-surface:             #F8FAFE;
+      --md-surface-variant:     #E0E2EC;
+      --md-on-surface:          #191C20;
+      --md-on-surface-var:      #44474E;
+      --md-outline:             #74777F;
+      --md-outline-var:         #C4C6D0;
+
+      --md-surf-1: color-mix(in srgb, var(--md-primary) 5%,  var(--md-surface));
+      --md-surf-2: color-mix(in srgb, var(--md-primary) 8%,  var(--md-surface));
+      --md-surf-3: color-mix(in srgb, var(--md-primary) 11%, var(--md-surface));
+
+      --r-xs:   4px;
+      --r-sm:   8px;
+      --r-md:   12px;
+      --r-lg:   16px;
+      --r-xl:   28px;
+      --r-full: 9999px;
+
+      --elev-1: 0 1px 2px rgba(0,0,0,.10), 0 1px 3px 1px rgba(0,0,0,.07);
+      --elev-2: 0 1px 2px rgba(0,0,0,.10), 0 2px 6px 2px rgba(0,0,0,.07);
+      --elev-3: 0 4px 8px 3px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.12);
+
+      --font-d: 'Google Sans Display', sans-serif;
+      --font-b: 'Google Sans', sans-serif;
+      --font-l: 'Roboto', sans-serif;
+
+      --nav-h: 64px;
+      --nb-h:  80px;
+    }
+
+    [data-theme="dark"] {
+      --md-primary:             #A8C8FF;
+      --md-on-primary:          #002E6A;
+      --md-primary-container:   #004494;
+      --md-on-primary-cont:     #D6E4FF;
+
+      --md-secondary:           #BBC6DB;
+      --md-secondary-container: #3D4758;
+      --md-on-secondary-cont:   #D9E2F8;
+
+      --md-tertiary:            #DBBDE6;
+      --md-tertiary-container:  #563960;
+      --md-on-tertiary-cont:    #F7D9FF;
+
+      --md-surface:             #111318;
+      --md-surface-variant:     #44474E;
+      --md-on-surface:          #E2E2E9;
+      --md-on-surface-var:      #C4C6D0;
+      --md-outline:             #8E9099;
+      --md-outline-var:         #44474E;
+
+      --md-surf-1: color-mix(in srgb, var(--md-primary) 5%,  var(--md-surface));
+      --md-surf-2: color-mix(in srgb, var(--md-primary) 8%,  var(--md-surface));
+      --md-surf-3: color-mix(in srgb, var(--md-primary) 11%, var(--md-surface));
+    }
+
+    /* ═══════════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--md-surface);
+      color: var(--md-on-surface);
+      min-height: 100vh;
+      transition: background .3s, color .3s;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--md-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ═══════════════════════════════════════════════════
+       TOP APP BAR
+    ═══════════════════════════════════════════════════ */
+    .top-bar {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-h);
+      background: var(--md-surf-2);
+      display: flex; align-items: center;
+      padding: 0 8px 0 16px;
+      box-shadow: var(--elev-1);
+      transition: background .3s;
+      gap: 4px;
+    }
+    .top-bar__logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; margin-right: auto;
+    }
+    .top-bar__logo img {
+      width: 32px; height: 32px; border-radius: var(--r-sm);
+    }
+    .top-bar__wordmark {
+      font-family: var(--font-d); font-size: 20px; font-weight: 700;
+      color: var(--md-on-surface);
+    }
+
+    /* Desktop nav links */
+    .top-bar__links {
+      display: flex; list-style: none; gap: 2px;
+    }
+    .top-bar__links a {
+      display: flex; align-items: center; height: 40px; padding: 0 14px;
+      border-radius: var(--r-full); color: var(--md-on-surface-var);
+      font-size: 14px; font-weight: 500; font-family: var(--font-l);
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .top-bar__links a:hover {
+      background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+      color: var(--md-on-surface); text-decoration: none;
+    }
+
+    .icon-btn {
+      display: grid; place-items: center;
+      width: 48px; height: 48px;
+      border-radius: var(--r-full);
+      border: none; cursor: pointer; background: transparent;
+      color: var(--md-on-surface-var); font-size: 24px;
+      font-family: 'Material Icons Round';
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
+
+    /* Mobile hamburger */
+    .nav-toggle {
+      display: none;
+      width: 48px; height: 48px;
+      border-radius: var(--r-full); border: none; cursor: pointer;
+      background: transparent; color: var(--md-on-surface-var);
+      font-size: 24px; font-family: 'Material Icons Round';
+      align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .nav-toggle::before { content: 'menu'; font-family: 'Material Icons Round'; font-size: 24px; }
+    .nav-toggle:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
+
+    /* ═══════════════════════════════════════════════════
+       DRAWER (mobile)
+    ═══════════════════════════════════════════════════ */
+    .drawer-scrim {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.32);
+    }
+    .drawer-scrim.open { display: block; }
+
+    .drawer {
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 201;
+      width: 300px; background: var(--md-surf-2);
+      border-radius: 0 var(--r-xl) var(--r-xl) 0;
+      box-shadow: var(--elev-3);
+      display: flex; flex-direction: column;
+      transform: translateX(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+    }
+    .drawer.open { transform: translateX(0); }
+
+    .drawer__header {
+      padding: 24px 24px 16px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid var(--md-outline-var);
+    }
+    .drawer__header img { width: 48px; height: 48px; border-radius: var(--r-md); }
+    .drawer__name { font-family: var(--font-d); font-size: 18px; font-weight: 700; }
+    .drawer__sub  { font-size: 13px; color: var(--md-on-surface-var); }
+
+    .drawer__list {
+      list-style: none; padding: 12px 12px; overflow-y: auto; flex: 1;
+    }
+    .drawer__list li a {
+      display: flex; align-items: center; gap: 16px;
+      height: 56px; padding: 0 16px;
+      border-radius: var(--r-full);
+      color: var(--md-on-surface-var); font-size: 14px; font-weight: 500;
+      font-family: var(--font-l); transition: background .15s, color .15s;
+    }
+    .drawer__list li a .material-icons-round { font-size: 22px; }
+    .drawer__list li a:hover {
+      background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+      color: var(--md-on-surface); text-decoration: none;
+    }
+    .drawer__list li a.active {
+      background: var(--md-secondary-container);
+      color: var(--md-on-secondary-cont);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ═══════════════════════════════════════════════════ */
+    .page {
+      max-width: 900px; margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════════════════════════ */
+    .hero {
+      background: linear-gradient(135deg,
+        var(--md-primary-container) 0%,
+        var(--md-secondary-container) 100%);
+      border-radius: var(--r-xl);
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      display: flex; gap: 28px; align-items: center;
+      position: relative; overflow: hidden;
+      animation: fadeUp .45s ease both;
+    }
+    .hero::before {
+      content: ''; position: absolute;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: color-mix(in srgb, var(--md-primary) 14%, transparent);
+      top: -80px; right: -60px;
+    }
+    .hero__avatar {
+      width: 100px; height: 100px; border-radius: var(--r-xl);
+      object-fit: cover; flex-shrink: 0; position: relative; z-index: 1;
+      box-shadow: var(--elev-2);
+    }
+    .hero__text { z-index: 1; }
+    .hero__name {
+      font-family: var(--font-d); font-size: 30px; font-weight: 700;
+      color: var(--md-on-primary-cont); margin-bottom: 8px; line-height: 1.2;
+    }
+    .hero__tagline {
+      font-size: 15px; color: var(--md-on-secondary-cont); line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .hero__note {
+      font-size: 10px; color: var(--md-outline); font-style: italic;
+    }
+    .hero__links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ═══════════════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 40px; padding: 0 24px;
+      border-radius: var(--r-full); border: none; cursor: pointer;
+      font-family: var(--font-l); font-size: 14px; font-weight: 500;
+      transition: box-shadow .2s, background .15s;
+    }
+    .btn .material-icons-round { font-size: 18px; }
+    .btn--filled  { background: var(--md-primary); color: var(--md-on-primary); }
+    .btn--filled:hover  { box-shadow: var(--elev-2); filter: brightness(1.06); }
+    .btn--tonal   { background: var(--md-secondary-container); color: var(--md-on-secondary-cont); }
+    .btn--tonal:hover   { box-shadow: var(--elev-1); }
+    .btn--outlined { background: transparent; color: var(--md-primary); border: 1px solid var(--md-outline); }
+    .btn--outlined:hover { background: color-mix(in srgb, var(--md-primary) 8%, transparent); }
+
+    /* ═══════════════════════════════════════════════════
+       SECTION BLOCK
+    ═══════════════════════════════════════════════════ */
+    .section-block {
+      background: var(--md-surf-1);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: var(--elev-1);
+      transition: background .3s;
+      animation: fadeUp .45s ease both;
+    }
+    .section-title {
+      font-family: var(--font-d); font-size: 20px; font-weight: 700;
+      color: var(--md-on-surface); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title .material-icons-round {
+      font-size: 24px; color: var(--md-primary);
+      background: var(--md-primary-container);
+      padding: 6px; border-radius: var(--r-sm);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       LINK TILES (list items)
+    ═══════════════════════════════════════════════════ */
+    .link-list { display: flex; flex-direction: column; gap: 4px; }
+
+    .link-tile {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 16px; border-radius: var(--r-md);
+      text-decoration: none; color: var(--md-on-surface);
+      transition: background .15s; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .link-tile:hover {
+      background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+      text-decoration: none;
+    }
+    .link-tile__icon {
+      width: 44px; height: 44px; border-radius: var(--r-md);
+      display: grid; place-items: center; flex-shrink: 0;
+      background: var(--md-secondary-container);
+      overflow: hidden;
+    }
+    .link-tile__icon img {
+      width: 28px; height: 28px; object-fit: contain;
+      border-radius: var(--r-xs);
+    }
+    .link-tile__icon .material-icons-round {
+      font-size: 22px; color: var(--md-on-secondary-cont);
+    }
+    .link-tile__body { flex: 1; }
+    .link-tile__label {
+      font-size: 15px; font-weight: 500;
+    }
+    .link-tile__sub {
+      font-size: 13px; color: var(--md-on-surface-var);
+    }
+    .link-tile__arrow {
+      font-family: 'Material Icons Round'; font-size: 20px;
+      color: var(--md-outline); flex-shrink: 0;
+    }
+    .link-tile__arrow::before { content: 'chevron_right'; }
+
+    /* ═══════════════════════════════════════════════════
+       DONATION CARD
+    ═══════════════════════════════════════════════════ */
+    .donation-card {
+      background: linear-gradient(135deg,
+        var(--md-tertiary-container) 0%,
+        var(--md-primary-container) 100%);
+      border-radius: var(--r-xl);
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 20px;
+      box-shadow: var(--elev-1);
+      animation: fadeUp .45s ease both;
+    }
+    .donation-card__icon {
+      font-family: 'Material Icons Round'; font-size: 44px;
+      color: var(--md-on-tertiary-cont); flex-shrink: 0;
+    }
+    .donation-card__text { flex: 1; }
+    .donation-card__title {
+      font-family: var(--font-d); font-size: 18px; font-weight: 700;
+      color: var(--md-on-primary-cont); margin-bottom: 4px;
+    }
+    .donation-card__sub {
+      font-size: 14px; color: var(--md-on-tertiary-cont);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════ */
+    .footer {
+      text-align: center; padding: 28px 16px;
+      color: var(--md-on-surface-var); font-size: 13px;
+      font-family: var(--font-l);
+      border-top: 1px solid var(--md-outline-var);
+      margin-top: 8px;
+    }
+    .footer img { width: 32px; border-radius: var(--r-sm); margin-bottom: 8px; }
+
+    /* ═══════════════════════════════════════════════════
+       THEME TOGGLE (FAB-style)
+    ═══════════════════════════════════════════════════ */
+    #theme-icon {
+      font-size: 20px; line-height: 1; cursor: default;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       ANIMATIONS
+    ═══════════════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .section-block:nth-child(1) { animation-delay: .05s; }
+    .section-block:nth-child(2) { animation-delay: .10s; }
+    .section-block:nth-child(3) { animation-delay: .15s; }
+    .section-block:nth-child(4) { animation-delay: .20s; }
+    .section-block:nth-child(5) { animation-delay: .25s; }
+    .donation-card              { animation-delay: .30s; }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 700px) {
+      .top-bar__links { display: none; }
+      .nav-toggle { display: flex; }
+      .hero { flex-direction: column; align-items: flex-start; }
+      .hero__avatar { width: 80px; height: 80px; }
+      .hero__name { font-size: 24px; }
+      .donation-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     TOP APP BAR
+═══════════════════════════════════════════════════ -->
+<header class="top-bar">
+  <button class="nav-toggle" id="drawerToggle" aria-label="Меню"></button>
+
+  <a href="index.html" class="top-bar__logo">
+    <img src="https://kuzymuzy.ru/favicon.ico" alt="Логотип" />
+    <span class="top-bar__wordmark">KuzyMuzy</span>
+  </a>
+
+  <ul class="top-bar__links">
+    <li><a href="#about">Обо мне</a></li>
+    <li><a href="#creativity">Творчество</a></li>
+    <li><a href="#features">Доп.Функции</a></li>
+    <li><a href="#games">Игры</a></li>
+    <li><a href="#contact">Контакты</a></li>
+    <li><a href="#buymeacoffe">☕ Кофе</a></li>
+  </ul>
+
+  <span id="theme-icon" title="Переключить тему">🌑</span>
+  <button class="icon-btn" id="themeToggle" title="Сменить оформление">dark_mode</button>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     DRAWER (mobile)
+═══════════════════════════════════════════════════ -->
+<div class="drawer-scrim" id="drawerScrim"></div>
+<nav class="drawer" id="drawer">
+  <div class="drawer__header">
+    <img src="https://kuzymuzy.ru/favicon.ico" alt="Аватар" />
+    <div>
+      <div class="drawer__name">Саша Кузнецов</div>
+      <div class="drawer__sub">kuzymuzy.ru</div>
+    </div>
+  </div>
+  <ul class="drawer__list">
+    <li><a href="#about" class="nav-link active">
+      <span class="material-icons-round">person</span> Обо мне
+    </a></li>
+    <li><a href="#creativity" class="nav-link">
+      <span class="material-icons-round">brush</span> Творчество
+    </a></li>
+    <li><a href="#features" class="nav-link">
+      <span class="material-icons-round">apps</span> Доп.Функции
+    </a></li>
+    <li><a href="#games" class="nav-link">
+      <span class="material-icons-round">sports_esports</span> Игры
+    </a></li>
+    <li><a href="#contact" class="nav-link">
+      <span class="material-icons-round">mail</span> Контакты
+    </a></li>
+    <li><a href="#buymeacoffe" class="nav-link">
+      <span class="material-icons-round">coffee</span> Купить кофе
+    </a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════════ -->
+<main class="page">
+
+  <!-- HERO / ABOUT -->
+  <section id="about">
+    <div class="hero">
+      <img
+        class="hero__avatar"
+        src="https://kuzymuzy.ru/favicon.ico"
+        alt="Фото Саши"
+      />
+      <div class="hero__text">
+        <div class="hero__name">Саша Кузнецов*</div>
+        <div class="hero__tagline">
+          Стандартный русский парень, занимаюсь разработкой сайтов на HTML.<br>
+          Я <strong>не</strong> fullstack, я frontender.&nbsp;
+          <a href="/why-iam-not-fullstack-developer.html">(Почему?)</a>
+        </div>
+        <div class="hero__links">
+          <button class="btn btn--filled" onclick="location.href='#creativity'">
+            <span class="material-icons-round">brush</span> Мои работы
+          </button>
+          <button class="btn btn--tonal" onclick="location.href='#contact'">
+            <span class="material-icons-round">mail</span> Написать
+          </button>
+        </div>
+        <div class="hero__note">*Александр Кузнецов — выполняет в России функции иностранного агента</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CREATIVITY -->
+  <section id="creativity">
+    <div class="section-block">
+      <div class="section-title">
+        <span class="material-icons-round">brush</span> Мое творчество
+      </div>
+      <div class="link-list">
+        <a class="link-tile" href="https://github.com/kuzymuzy/" target="_blank" rel="noopener">
+          <div class="link-tile__icon">
+            <img src="/assets/img/github.png" alt="GitHub" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">GitHub</div>
+            <div class="link-tile__sub">github.com/kuzymuzy</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="https://www.youtube.com/@Kuzy_muzy_offical" target="_blank" rel="noopener">
+          <div class="link-tile__icon">
+            <img src="/assets/img/yt.png" alt="YouTube" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">YouTube</div>
+            <div class="link-tile__sub">@Kuzy_muzy_offical</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="404.html">
+          <div class="link-tile__icon">
+            <img src="/assets/img/telgra.png" alt="Telegram" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Telegram-канал</div>
+            <div class="link-tile__sub">Скоро…</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-block">
+      <div class="section-title">
+        <span class="material-icons-round">apps</span> Доп.Функции
+      </div>
+      <div class="link-list">
+        <a class="link-tile" href="random.html">
+          <div class="link-tile__icon"><span class="material-icons-round">casino</span></div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Рандомайзер</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="random-answer.html">
+          <div class="link-tile__icon"><span class="material-icons-round">quiz</span></div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Генератор ответов на тест</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="random-city.html">
+          <div class="link-tile__icon"><span class="material-icons-round">location_city</span></div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Генератор городов России</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="/QR">
+          <div class="link-tile__icon"><span class="material-icons-round">qr_code_2</span></div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Генератор QR-кодов</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="/md">
+          <div class="link-tile__icon"><span class="material-icons-round">description</span></div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Markdown Viewer</div>
+            <div class="link-tile__sub">.md файлы</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="https://terminal.kuzymuzy.ru" target="_blank" rel="noopener">
+          <div class="link-tile__icon">
+            <img src="/assets/img/Terminal.png" alt="Terminal" style="border-radius:50%" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Terminal iframe</div>
+            <div class="link-tile__sub">terminal.kuzymuzy.ru</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="/OSD">
+          <div class="link-tile__icon"><span class="material-icons-round">download</span></div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">OSD (OS Downloader)</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="https://undex.kuzymuzy.ru" target="_blank" rel="noopener">
+          <div class="link-tile__icon">
+            <img src="/assets/img/undex.png" alt="Undex" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Undex поиск</div>
+            <div class="link-tile__sub">undex.kuzymuzy.ru</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section id="games">
+    <div class="section-block">
+      <div class="section-title">
+        <span class="material-icons-round">sports_esports</span> Игры
+      </div>
+      <div class="link-list">
+        <a class="link-tile" href="/KuzyCoin/index.html">
+          <div class="link-tile__icon">
+            <img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyCoin" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">KuzyCoin</div>
+            <div class="link-tile__sub">Кликер-игра</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="/cut-the-rope/">
+          <div class="link-tile__icon">
+            <img src="/cut-the-rope/logo.png" alt="Cut The Rope" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Cut The Rope</div>
+            <div class="link-tile__sub">Классическая игра</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section id="contact">
+    <div class="section-block">
+      <div class="section-title">
+        <span class="material-icons-round">mail</span> Контакты
+      </div>
+      <div class="link-list">
+        <a class="link-tile" href="https://t.me/sashapriority" target="_blank" rel="noopener">
+          <div class="link-tile__icon">
+            <img src="/assets/img/telgra.png" alt="Telegram" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Telegram</div>
+            <div class="link-tile__sub">@sashapriority</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="https://vk.com/sasakuzn" target="_blank" rel="noopener">
+          <div class="link-tile__icon">
+            <img src="/assets/img/vk.png" alt="ВКонтакте" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">ВКонтакте</div>
+            <div class="link-tile__sub">vk.com/sasakuzn</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+        <a class="link-tile" href="mailto:support@kuzymuzy.ru">
+          <div class="link-tile__icon">
+            <img src="/assets/img/gmail.png" alt="Email" />
+          </div>
+          <div class="link-tile__body">
+            <div class="link-tile__label">Email</div>
+            <div class="link-tile__sub">support@kuzymuzy.ru</div>
+          </div>
+          <span class="link-tile__arrow"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DONATION -->
+  <section id="buymeacoffe">
+    <div class="donation-card">
+      <div class="donation-card__icon">☕</div>
+      <div class="donation-card__text">
+        <div class="donation-card__title">Купить мне кофе</div>
+        <div class="donation-card__sub">Поддержи разработку — я буду очень рад!</div>
+      </div>
+      <a class="btn btn--filled" href="https://www.donationalerts.com/r/kuzymuzy" target="_blank" rel="noopener">
+        <span class="material-icons-round">favorite</span> Задонатить
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════ -->
+<footer class="footer">
+  <img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyMuzy" /><br />
+  <p>© 2025 KuzyMuzy inc. Все права защищены.</p>
+</footer>
+
+<script src="/assets/scripts/scripts.js" defer></script>
+<script>
+  /* ── Theme toggle ───────────────────────────────── */
+  const themeBtn  = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('theme-icon');
+  let dark = localStorage.getItem('km-theme') === 'dark';
+
+  function applyTheme() {
+    document.body.dataset.theme = dark ? 'dark' : '';
+    themeBtn.textContent = dark ? 'light_mode' : 'dark_mode';
+    themeIcon.textContent = dark ? '🌕' : '🌑';
+    localStorage.setItem('km-theme', dark ? 'dark' : 'light');
+  }
+  applyTheme();
+  themeBtn.addEventListener('click', () => { dark = !dark; applyTheme(); });
+
+  /* ── Drawer ─────────────────────────────────────── */
+  const drawer      = document.getElementById('drawer');
+  const scrim       = document.getElementById('drawerScrim');
+  const drawerToggle= document.getElementById('drawerToggle');
+
+  function openDrawer()  { drawer.classList.add('open'); scrim.classList.add('open'); }
+  function closeDrawer() { drawer.classList.remove('open'); scrim.classList.remove('open'); }
+
+  drawerToggle.addEventListener('click', openDrawer);
+  scrim.addEventListener('click', closeDrawer);
+  drawer.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', closeDrawer));
+
+  /* ── Active nav highlight ───────────────────────── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.drawer__list .nav-link');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.toggle(
+          'active', l.getAttribute('href') === '#' + e.target.id
+        ));
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>

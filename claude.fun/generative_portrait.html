@@ -1,0 +1,194 @@
+
+<style>
+  body { margin: 0; }
+  #wrap { position: relative; width: 100%; }
+  canvas { display: block; width: 100%; height: auto; }
+  #controls {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding: 10px 0 4px;
+  }
+  button {
+    font-size: 13px; padding: 6px 14px; cursor: pointer;
+    border-radius: var(--border-radius-md);
+  }
+  #seed-label {
+    font-size: 12px; color: var(--color-text-secondary); margin-left: auto;
+    font-family: var(--font-mono);
+  }
+  #caption {
+    font-size: 12px; color: var(--color-text-secondary);
+    padding: 4px 0 10px; min-height: 18px; font-style: italic;
+  }
+</style>
+
+<div id="wrap">
+  <canvas id="c" width="680" height="420"></canvas>
+  <div id="controls">
+    <button onclick="startNew()">Новый портрет ↗</button>
+    <button onclick="togglePause()" id="pbtn">Пауза</button>
+    <span id="seed-label">seed: —</span>
+  </div>
+  <div id="caption"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = 680, H = 420;
+
+const PALETTES = [
+  { name: "северное сияние", bg: "#0a0e1a", colors: ["#4fc3f7","#81d4fa","#e040fb","#b39ddb","#26c6da","#ffffff"] },
+  { name: "закат над морем",  bg: "#0d1117", colors: ["#ff6b6b","#ffd93d","#ff8c42","#c77dff","#ff4d6d","#ffe0b2"] },
+  { name: "цифровой лес",     bg: "#050f0a", colors: ["#00ff41","#39ff14","#00e676","#76ff03","#ccff90","#b2ff59"] },
+  { name: "старый маяк",      bg: "#12100e", colors: ["#f4a261","#e76f51","#e9c46a","#264653","#2a9d8f","#ffd166"] },
+  { name: "подводный сон",    bg: "#020b18", colors: ["#00b4d8","#90e0ef","#caf0f8","#7209b7","#3a0ca3","#4cc9f0"] },
+];
+
+let pal, seed, agents, frame, paused = false, animId;
+const captions = ["думаю...", "интересно, куда это идёт", "хаос с памятью", "каждый штрих — решение", "никто не планировал именно это"];
+
+function mulberry32(a) {
+  return function() {
+    a|=0; a=a+0x6D2B79F5|0;
+    let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;
+  }
+}
+
+let rng;
+
+class Agent {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = rng() * W;
+    this.y = rng() * H;
+    this.vx = (rng()-0.5)*2;
+    this.vy = (rng()-0.5)*2;
+    this.color = pal.colors[Math.floor(rng()*pal.colors.length)];
+    this.life = 120 + rng()*300;
+    this.age = 0;
+    this.r = 0.5 + rng()*1.5;
+    this.freq = 0.005 + rng()*0.03;
+    this.phase = rng()*Math.PI*2;
+    this.trail = [];
+    this.type = rng() < 0.3 ? 'curl' : rng() < 0.5 ? 'wave' : 'drift';
+    this.mode = rng() < 0.15 ? 'bright' : 'normal';
+  }
+  step(t) {
+    const noiseX = Math.sin(this.y * this.freq + this.phase + t*0.003) * 1.5;
+    const noiseY = Math.cos(this.x * this.freq + this.phase*1.3 + t*0.002) * 1.5;
+
+    if (this.type === 'curl') {
+      this.vx += noiseX * 0.15;
+      this.vy += noiseY * 0.15;
+    } else if (this.type === 'wave') {
+      this.vx += noiseX * 0.08;
+      this.vy += noiseY * 0.08;
+      this.vy += Math.sin(t*0.01 + this.phase)*0.05;
+    } else {
+      this.vx += noiseX * 0.05;
+      this.vy += noiseY * 0.05;
+    }
+
+    const spd = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+    const maxSpd = 3;
+    if (spd > maxSpd) { this.vx = this.vx/spd*maxSpd; this.vy = this.vy/spd*maxSpd; }
+
+    this.x += this.vx;
+    this.y += this.vy;
+    this.trail.push([this.x, this.y]);
+    if (this.trail.length > 30) this.trail.shift();
+
+    if (this.x < 0) this.x = W;
+    if (this.x > W) this.x = 0;
+    if (this.y < 0) this.y = H;
+    if (this.y > H) this.y = 0;
+
+    this.age++;
+    if (this.age > this.life) this.reset();
+  }
+  draw() {
+    if (this.trail.length < 2) return;
+    const alpha = this.mode === 'bright' ? 0.9 : 0.35 + Math.sin(this.age/this.life * Math.PI)*0.3;
+    ctx.beginPath();
+    ctx.moveTo(this.trail[0][0], this.trail[0][1]);
+    for (let i=1;i<this.trail.length;i++) ctx.lineTo(this.trail[i][0], this.trail[i][1]);
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.r;
+    ctx.globalAlpha = alpha;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function bloom(x, y, color) {
+  for (let i=0;i<8;i++) {
+    const ang = rng()*Math.PI*2;
+    const dist = rng()*40;
+    ctx.beginPath();
+    ctx.arc(x + Math.cos(ang)*dist, y + Math.sin(ang)*dist, rng()*2, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.15 + rng()*0.2;
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function startNew() {
+  cancelAnimationFrame(animId);
+  paused = false;
+  document.getElementById('pbtn').textContent = 'Пауза';
+  seed = Math.floor(Math.random()*0xFFFFFF);
+  document.getElementById('seed-label').textContent = 'seed: ' + seed.toString(16).padStart(6,'0');
+  rng = mulberry32(seed);
+  pal = PALETTES[Math.floor(rng()*PALETTES.length)];
+  document.getElementById('caption').textContent = pal.name;
+
+  ctx.fillStyle = pal.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const count = 180 + Math.floor(rng()*120);
+  agents = Array.from({length: count}, () => new Agent());
+  frame = 0;
+
+  loop();
+}
+
+function loop() {
+  if (paused) return;
+  animId = requestAnimationFrame(loop);
+  frame++;
+
+  ctx.fillStyle = pal.bg + '18';
+  ctx.fillRect(0, 0, W, H);
+
+  for (const a of agents) {
+    a.step(frame);
+    a.draw();
+    if (a.mode === 'bright' && frame % 30 === 0 && rng() < 0.3) {
+      bloom(a.x, a.y, a.color);
+    }
+  }
+
+  if (frame % 200 === 0) {
+    document.getElementById('caption').textContent = captions[Math.floor(rng()*captions.length)];
+  }
+
+  if (frame > 4000) {
+    cancelAnimationFrame(animId);
+    document.getElementById('caption').textContent = "готово — нажми «Новый портрет» чтобы начать снова";
+  }
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pbtn').textContent = paused ? 'Продолжить' : 'Пауза';
+  if (!paused) loop();
+}
+
+startNew();
+</script>

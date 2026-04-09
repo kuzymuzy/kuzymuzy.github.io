@@ -1,0 +1,227 @@
+
+<style>
+  canvas { display: block; width: 100%; height: auto; }
+  #ui { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 0 4px; }
+  #info { font-size: 12px; color: var(--color-text-secondary); font-style: italic; min-height: 16px; padding-bottom: 8px; }
+</style>
+
+<canvas id="c" width="680" height="400"></canvas>
+<div id="ui">
+  <button onclick="newGarden()">Новый сад ↗</button>
+  <button onclick="addFlower()">Посадить цветок</button>
+  <button onclick="toggleWind()" id="wbtn">Ветер: выкл</button>
+</div>
+<div id="info">сад растёт...</div>
+
+<script>
+const cv = document.getElementById('c');
+const cx = cv.getContext('2d');
+const W = 680, H = 400;
+const GH = 340;
+
+let flowers = [], frame = 0, wind = false, windPhase = 0, animId;
+
+const PALETTES = [
+  { petals: ["#e84393","#f06292","#f48fb1"], center: "#fff176", stem: "#388e3c" },
+  { petals: ["#7c4dff","#b39ddb","#ce93d8"], center: "#ffe082", stem: "#2e7d32" },
+  { petals: ["#ff6d00","#ffab40","#ffd180"], center: "#fff176", stem: "#33691e" },
+  { petals: ["#00bcd4","#80deea","#b2ebf2"], center: "#fff9c4", stem: "#1b5e20" },
+  { petals: ["#f44336","#ef9a9a","#ffcdd2"], center: "#fffde7", stem: "#388e3c" },
+  { petals: ["#ffeb3b","#fff176","#fff9c4"], center: "#ff8f00", stem: "#558b2f" },
+];
+
+function rnd(a,b){ return a + Math.random()*(b-a); }
+
+class Flower {
+  constructor(x) {
+    const pal = PALETTES[Math.floor(Math.random()*PALETTES.length)];
+    this.x = x;
+    this.groundY = GH - rnd(0,20);
+    this.stemH = rnd(60, 160);
+    this.stemCurve = rnd(-18, 18);
+    this.petalCount = Math.floor(rnd(5, 12));
+    this.petalLen = rnd(14, 32);
+    this.petalW = rnd(6, 16);
+    this.centerR = rnd(6, 12);
+    this.pal = pal;
+    this.growth = 0;
+    this.speed = rnd(0.008, 0.018);
+    this.bloomDelay = rnd(0.55, 0.72);
+    this.leaves = [
+      { t: rnd(0.3, 0.55), side: Math.random()<0.5?1:-1, angle: rnd(0.3,0.7), len: rnd(16,28) },
+      { t: rnd(0.55, 0.8), side: Math.random()<0.5?1:-1, angle: rnd(0.3,0.6), len: rnd(12,22) },
+    ];
+    this.windOffset = rnd(0, Math.PI*2);
+    this.alive = true;
+  }
+
+  stemPoint(t, swing) {
+    const topY = this.groundY - this.stemH;
+    const ctrl = this.stemCurve + swing * 8;
+    const bx = this.x + ctrl;
+    const by = this.groundY - this.stemH * 0.5;
+    const tx = this.x + (bx - this.x) * 2 * t * (1-t) + (this.x - this.x) * t*t;
+    const sx = (1-t)*(1-t)*this.x + 2*(1-t)*t*bx + t*t*this.x;
+    const sy = (1-t)*(1-t)*this.groundY + 2*(1-t)*t*by + t*t*topY;
+    const dx = 2*(1-t)*(bx-this.x) + 2*t*(this.x-bx);
+    const dy = 2*(1-t)*(by-this.groundY) + 2*t*(topY-by);
+    return { x: sx, y: sy, dx, dy };
+  }
+
+  draw(frame) {
+    if (this.growth < 1) this.growth = Math.min(1, this.growth + this.speed);
+    const g = this.growth;
+    const swing = wind ? Math.sin(frame * 0.04 + this.windOffset) * 0.7 : 0;
+
+    const topY = this.groundY - this.stemH * g;
+    const ctrlX = this.x + this.stemCurve + swing * 8;
+    const ctrlY = this.groundY - this.stemH * g * 0.5;
+    const tipX = this.x + swing * 6;
+
+    cx.beginPath();
+    cx.moveTo(this.x, this.groundY);
+    cx.quadraticCurveTo(ctrlX, ctrlY, tipX, topY);
+    cx.strokeStyle = this.pal.stem;
+    cx.lineWidth = 2.5;
+    cx.lineCap = 'round';
+    cx.stroke();
+
+    for (const leaf of this.leaves) {
+      if (g < leaf.t) continue;
+      const lt = Math.min(1, (g - leaf.t) / 0.15);
+      const pt = this.stemPoint(leaf.t, swing);
+      const norm = Math.sqrt(pt.dx*pt.dx + pt.dy*pt.dy);
+      const nx = -pt.dy/norm * leaf.side;
+      const ny = pt.dx/norm * leaf.side;
+      const lx = pt.x + nx * leaf.len * lt * Math.cos(leaf.angle);
+      const ly = pt.y + ny * leaf.len * lt * Math.cos(leaf.angle);
+      cx.beginPath();
+      cx.moveTo(pt.x, pt.y);
+      cx.quadraticCurveTo(
+        pt.x + nx * leaf.len * lt * 0.6,
+        pt.y + ny * leaf.len * lt * 0.6 - 4,
+        lx, ly
+      );
+      cx.strokeStyle = this.pal.stem;
+      cx.lineWidth = 1.5;
+      cx.stroke();
+    }
+
+    if (g < this.bloomDelay) return;
+    const bt = Math.min(1, (g - this.bloomDelay) / (1 - this.bloomDelay));
+    const tx = tipX, ty = topY;
+    const angle0 = -Math.PI/2 + swing * 0.3;
+
+    for (let i = 0; i < this.petalCount; i++) {
+      const ang = angle0 + (i / this.petalCount) * Math.PI * 2;
+      const px = tx + Math.cos(ang) * this.petalLen * bt;
+      const py = ty + Math.sin(ang) * this.petalLen * bt;
+      const cpx = tx + Math.cos(ang) * this.petalLen * bt * 0.5 + Math.cos(ang + Math.PI/2) * this.petalW * bt;
+      const cpy = ty + Math.sin(ang) * this.petalLen * bt * 0.5 + Math.sin(ang + Math.PI/2) * this.petalW * bt;
+      const cpx2 = tx + Math.cos(ang) * this.petalLen * bt * 0.5 - Math.cos(ang + Math.PI/2) * this.petalW * bt;
+      const cpy2 = ty + Math.sin(ang) * this.petalLen * bt * 0.5 - Math.sin(ang + Math.PI/2) * this.petalW * bt;
+
+      cx.beginPath();
+      cx.moveTo(tx, ty);
+      cx.bezierCurveTo(cpx, cpy, px + Math.cos(ang+Math.PI/2)*this.petalW*bt*0.3, py + Math.sin(ang+Math.PI/2)*this.petalW*bt*0.3, px, py);
+      cx.bezierCurveTo(px - Math.cos(ang+Math.PI/2)*this.petalW*bt*0.3, py - Math.sin(ang+Math.PI/2)*this.petalW*bt*0.3, cpx2, cpy2, tx, ty);
+      cx.fillStyle = i % 2 === 0 ? this.pal.petals[0] : this.pal.petals[1];
+      cx.globalAlpha = 0.85;
+      cx.fill();
+      cx.globalAlpha = 1;
+    }
+
+    cx.beginPath();
+    cx.arc(tx, ty, this.centerR * bt, 0, Math.PI*2);
+    cx.fillStyle = this.pal.center;
+    cx.fill();
+    cx.strokeStyle = this.pal.petals[0];
+    cx.lineWidth = 1;
+    cx.stroke();
+
+    const dotCount = 6;
+    for(let i=0;i<dotCount;i++){
+      const da = (i/dotCount)*Math.PI*2;
+      const dr = this.centerR*bt*0.55;
+      cx.beginPath();
+      cx.arc(tx+Math.cos(da)*dr, ty+Math.sin(da)*dr, 1.5*bt, 0, Math.PI*2);
+      cx.fillStyle = this.pal.petals[0];
+      cx.fill();
+    }
+  }
+}
+
+function drawBackground() {
+  cx.fillStyle = "#87ceeb";
+  cx.fillRect(0, 0, W, GH*0.6);
+  cx.fillStyle = "#b0e0ff";
+  cx.fillRect(0, GH*0.6, W, GH*0.4 - GH*0.6 + GH);
+
+  cx.fillStyle = "#5a9e3a";
+  cx.beginPath();
+  cx.ellipse(W/2, GH + 30, W*0.65, 55, 0, 0, Math.PI*2);
+  cx.fill();
+  cx.fillStyle = "#4caf50";
+  cx.fillRect(0, GH, W, H-GH);
+  cx.fillStyle = "#388e3c";
+  cx.fillRect(0, GH+18, W, H-GH-18);
+
+  for(let i=0;i<40;i++){
+    const gx = (i/40)*W + 8;
+    const gh2 = GH - 2 + Math.sin(i*1.7)*4;
+    cx.beginPath();
+    cx.moveTo(gx, gh2+6);
+    cx.lineTo(gx+3, gh2-12);
+    cx.lineTo(gx+6, gh2+6);
+    cx.fillStyle = i%3===0?"#66bb6a":"#43a047";
+    cx.fill();
+  }
+}
+
+const NAMES = ["ромашка","мак","василёк","тюльпан","незабудка","ирис","хризантема","пион","клевер","лютик"];
+let nameIdx = 0;
+
+function loop() {
+  animId = requestAnimationFrame(loop);
+  frame++;
+  cx.clearRect(0, 0, W, H);
+  drawBackground();
+  for (const f of flowers) f.draw(frame);
+
+  const allDone = flowers.length > 0 && flowers.every(f => f.growth >= 1);
+  if (allDone && frame % 180 === 0) {
+    const msgs = ["тихо шумит трава...", "пахнет летом", "где-то жужжит пчела", "солнце клонится к западу", "хорошо здесь"];
+    document.getElementById('info').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  }
+}
+
+function newGarden() {
+  cancelAnimationFrame(animId);
+  flowers = [];
+  frame = 0;
+  nameIdx = 0;
+  const count = Math.floor(rnd(7, 16));
+  const xs = [];
+  for(let i=0;i<count;i++) xs.push(rnd(40, W-40));
+  xs.sort((a,b)=>a-b);
+  for(const x of xs) flowers.push(new Flower(x));
+  document.getElementById('info').textContent = `растёт ${count} ${count===1?'цветок':count<5?'цветка':'цветков'}...`;
+  loop();
+}
+
+function addFlower() {
+  const x = rnd(40, W-40);
+  flowers.push(new Flower(x));
+  const name = NAMES[nameIdx % NAMES.length];
+  nameIdx++;
+  document.getElementById('info').textContent = `посажен ${name}`;
+}
+
+function toggleWind() {
+  wind = !wind;
+  document.getElementById('wbtn').textContent = wind ? 'Ветер: вкл' : 'Ветер: выкл';
+  document.getElementById('info').textContent = wind ? 'подул ветер...' : 'ветер утих';
+}
+
+newGarden();
+</script>

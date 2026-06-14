@@ -1,7 +1,33 @@
+# Системный мусор ИИ-ассистентов
+.claude/
+.anthropic/
+
+# Системные файлы macOS
 .DS_Store
-assets/.DS_Store
-assets/.DS_Store
+.AppleDouble
+.LSOverride
+._*
 .vscode/settings.json
-assets/.DS_Store
-assets/img/.DS_Store
-assets/.DS_Store
+
+# Иконки папок macOS
+Icon?
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Системные файлы Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.lnk
+*.cab
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.bak

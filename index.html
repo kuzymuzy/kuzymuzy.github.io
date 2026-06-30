@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная</title>
+    <title>Кузя Музя</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
     <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Главная">
     <meta name="description" content="О Кузе Музе">
     <meta name="keywords" content="Кузя Музя, Саша Кузнецов, блогер, KuzyMuzy, Kuzy Muzy">
     <meta property="og:title" content="О Кузе Музе">
@@ -22,90 +21,281 @@
     <script src="/assets/scripts/ukraine.js"></script>
 </head>
 <body>
-    <header class="nav-bar">
+
+    <div class="grain"></div>
+    <div class="page">
+
+        <!-- NAV -->
         <nav>
-            <button class="nav-toggle">
-                <span class="nav-toggle-icon"></span>
-            </button>
-            <ul class="nav-menu">
-                <li><a title="Вернуться на главную страницу" href="index.html"><img src="favicon.ico" alt="Логотип" class="logo">
-                <li><a title="Oбо мне" href="#about" class="nav-link">Oбо мне</a></li>
-                <li><a title="Мое творчество" href="#creativity" class="nav-link">Мое творчество</a></li>
-                <li><a title="Доп.Функции" href="#features" class="nav-link">Доп.Функции</a></li>
-                <li><a title="Игры" href="#games" class="nav-link">Игры</a></li>
-                <li><a title="Контакты" href="#contact" class="nav-link">Контакты</a></li>
-                <li style="display: none;" id="devnav"><a title="Developer" href="#dev" class="nav-link">Developer</a></li>
-                <li><a title="Как?! Как я могу быть нищем?!" href="#buymeacoffe" class="nav-link">Купить мне кофе</a></li>
-                <li class="theme-container">
-                    <span title="Это то какая у тебя темя будет)" class="theme-icon" id="theme-icon">🌑</span>
-                    <label title="Сменить оформление" class="theme-switch">
+            <a href="#about" class="logo"><img src="favicon.ico" alt="KM"> Кузя Музя</a>
+            <div class="links" id="navLinks">
+                <a href="#about">Обо мне</a>
+                <a href="#creativity">Творчество</a>
+                <a href="#features">Фичи</a>
+                <a href="#games">Игры</a>
+                <a href="#contact">Контакты</a>
+                <a href="#buymeacoffe">☕</a>
+                <a href="#dev" id="devnav" style="display:none">DEV</a>
+                <span class="theme-nav-item">
+                    <span class="icon" id="theme-icon">🌑</span>
+                    <label class="theme-switch">
                         <input type="checkbox" id="theme-toggle">
                         <span class="slider"></span>
                     </label>
-                </li>
-            </ul>
+                </span>
+            </div>
+            <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
         </nav>
-    </header>
 
-    <section id="about" class="section">
-        <h1 title="Прям как мою собаку">Саша Кузнецов*</h1>
-        <p>Я стандартный русский парень, занимаюсь разработкой сайтов на html.</p>
-        <p>Я НЕ fullstack разработчик, я frontender. <a href="/why-iam-not-fullstack-developer.html">(И вот почему)</a></p>
-        <img id="logo" title="Типо я" src="favicon.ico" alt="Photo" class="profile-photo">
-        <p style="font-size: 10px;">*Александр Кузнецов - выполняет в России функции иностранного агента</p>
-    </section>
+        <!-- HERO -->
+        <section class="hero" id="about">
+            <div class="hero-bg">
+                <div class="ring"></div><div class="ring"></div>
+                <div class="ring"></div><div class="ring"></div>
+                <div class="beam"></div>
+            </div>
+            <img src="favicon.ico" alt="Photo" class="avatar reveal">
+            <h1 class="reveal">Саша <span class="grad">Кузнецов</span></h1>
+            <p class="reveal reveal-d2">
+                Стандартный русский парень. Занимаюсь разработкой сайтов.<br>
+                Не fullstack, а frontender <a href="/why-iam-not-fullstack-developer.html">(почему)</a>
+            </p>
+            <p class="footnote reveal reveal-d4">*Александр Кузнецов — выполняет в России функции иностранного агента</p>
+        </section>
 
-    <section id="creativity" class="section">
-        <h2>Мое творчество</h2>
-        <img class="bankimg" src="/assets/img/github.png" width="40"><a href="https://github.com/kuzymuzy/">Github</a><br><br>
-        <img class="bankimg" src="/assets/img/yt.png" width="40"><a href="https://www.youtube.com/@Kuzy_muzy_offical">YouTube</a><br><br>
-        <img class="bankimg" src="/assets/img/telgra.png" width="40"><a href="404.html">Telegram</a>
-    </section>
+        <div class="section-divider"><hr></div>
 
-    <section id="features" class="section">
-        <h2>Доп.Функции</h2>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="random.html">Рандомайзер</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="random-answer.html">Генератор ответов на тест</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="random-city.html">Генератор городов России</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/QR">Генератор QR-кодов</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/md">Markdown Viewer (.md files)</a><br><br>
-        <img class="bankimg" src="/assets/img/Terminal.png" style="border-radius: 50%" width="40"><a href="https://terminal.kuzymuzy.ru">Terminal iframe</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/OSD">OSD (OS Downloader)</a><br><br>
-        <img class="bankimg" src="/assets/img/undex.png" width="40"><a href="https://undex.kuzymuzy.ru">Undex поиск</a><br><br>
-    </section>
-    
-    <section id="games" class="section">
-        <h2>Игры</h2>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/KuzyCoin/index.html">Играть в KuzyCoin</a><br><br>
-        <img class="bankimg" src="/cut-the-rope/logo.png" width="40"><a href="/cut-the-rope/">Cut The Rope</a>
-    </section>
+        <!-- CREATIVITY -->
+        <section id="creativity">
+            <div class="reveal">
+                <div class="section-label">Творчество</div>
+                <h2 class="section-title">Где меня найти</h2>
+            </div>
+            <div class="showcase">
+                <a href="https://github.com/kuzymuzy/" target="_blank" class="showcase-item reveal">
+                    <div class="art"><div class="glow" style="background:var(--accent);top:-30px;right:-30px"></div><img src="/assets/img/github.png" alt=""></div>
+                    <div class="body">
+                        <h3>GitHub</h3>
+                        <p>Мои проекты и исходники</p>
+                    </div>
+                </a>
+                <a href="https://www.youtube.com/@Kuzy_muzy_offical" target="_blank" class="showcase-item reveal reveal-d2">
+                    <div class="art"><div class="glow" style="background:var(--pink);bottom:-30px;left:-30px"></div><img src="/assets/img/yt.png" alt=""></div>
+                    <div class="body">
+                        <h3>YouTube</h3>
+                        <p>Мой видеоконтент</p>
+                    </div>
+                </a>
+                <a href="404.html" class="showcase-item reveal reveal-d4">
+                    <div class="art"><div class="glow" style="background:var(--accent);top:50%;left:50%;transform:translate(-50%,-50%)"></div><img src="/assets/img/telgra.png" alt=""></div>
+                    <div class="body">
+                        <h3>Telegram</h3>
+                        <p>Мой канал (скоро)</p>
+                    </div>
+                </a>
+            </div>
+        </section>
 
-    <section id="contact" class="section">
-        <h2>Контакты</h2>
-        <img class="bankimg" src="/assets/img/telgra.png" width="40"><a target="_blank" href="https://t.me/sashapriority">Telegram</a><br><br>
-        <img class="bankimg" src="/assets/img/vk.png" width="40"><a target="_blank" href="https://vk.com/sasakuzn">Вконтакте</a><br><br>
-        <img class="bankimg" src="/assets/img/gmail.png" width="40"><a target="_blank" href="mailto:support@kuzymuzy.ru">Mail</a>
-    </section>
+        <div class="section-divider"><hr></div>
 
-    <section id="buymeacoffe" class="section">
-        <h2>Купить мне кофе</h2>
-        <img title="НУ ПЖЖЖ" class="bankimg" src="/assets/img/donationalert.png" width="40"><a target="_blank" href="https://www.donationalerts.com/r/kuzymuzy">Donation Alerts</a>
-    </section>
+        <!-- FEATURES -->
+        <section id="features">
+            <div class="reveal">
+                <div class="section-label">Инструменты</div>
+                <h2 class="section-title">Доп. функции</h2>
+            </div>
+            <div class="features">
+                <a href="random.html" class="feature-card reveal">
+                    <div class="row"><span class="icon">✦</span></div>
+                    <h3>Рандомайзер</h3>
+                    <p>Случайные числа и не только</p>
+                </a>
+                <a href="random-answer.html" class="feature-card reveal reveal-d2">
+                    <div class="row"><span class="icon">◈</span></div>
+                    <h3>Генератор ответов</h3>
+                    <p>Ответы на тесты одной кнопкой</p>
+                </a>
+                <a href="random-city.html" class="feature-card reveal">
+                    <div class="row"><span class="icon">▣</span></div>
+                    <h3>Генератор городов</h3>
+                    <p>Случайный город России</p>
+                </a>
+                <a href="/QR" class="feature-card reveal reveal-d2">
+                    <div class="row"><span class="icon">◇</span></div>
+                    <h3>QR-коды</h3>
+                    <p>Генератор QR-кодов</p>
+                </a>
+                <a href="/md" class="feature-card reveal">
+                    <div class="row"><span class="icon">◎</span></div>
+                    <h3>Markdown Viewer</h3>
+                    <p>Просмотр .md файлов</p>
+                </a>
+                <a href="https://terminal.kuzymuzy.ru" target="_blank" class="feature-card reveal reveal-d2">
+                    <div class="row"><span class="icon">⊹</span></div>
+                    <h3>Terminal iframe</h3>
+                    <p>Терминал в браузере</p>
+                </a>
+                <a href="/OSD" class="feature-card reveal">
+                    <div class="row"><span class="icon">▣</span></div>
+                    <h3>OS Downloader</h3>
+                    <p>Загрузчик ОС</p>
+                </a>
+                <a href="https://undex.kuzymuzy.ru" target="_blank" class="feature-card reveal reveal-d2">
+                    <div class="row"><span class="icon">◈</span></div>
+                    <h3>Undex поиск</h3>
+                    <p>Поисковая система</p>
+                </a>
+            </div>
+        </section>
 
-    <section style="display: none;" id="dev" class="section">
-        <p>Developer section</p>
-        <a href="/ua">Страница для украинцев</a><br><br>
-        <button class="devbutton" onclick="authtoken()">Админка</button><br><br>
-        <button class="devbutton" onclick="localclear()">Очистить localStorage</button>
-    </section>
+        <div class="section-divider"><hr></div>
 
-    <footer class="footer-bar">
-        <img title="Тебя батя в детстве насиловал" class="bankimg" src="favicon.ico" width="40"><br><br>
-        <p>© 2026 KuzyMuzy inc. Все права защищены.</p>
-        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
-    </footer>
+        <!-- GAMES -->
+        <section id="games">
+            <div class="reveal">
+                <div class="section-label">Развлечения</div>
+                <h2 class="section-title">Игры</h2>
+            </div>
+            <div class="showcase">
+                <a href="/KuzyCoin/index.html" class="showcase-item reveal">
+                    <div class="art"><div class="glow" style="background:var(--accent);top:-30px;right:-30px"></div><span class="emoji">🪙</span></div>
+                    <div class="body">
+                        <h3>KuzyCoin</h3>
+                        <p>Кликер-игра про Кузю Музю</p>
+                    </div>
+                </a>
+                <a href="/cut-the-rope/" class="showcase-item reveal reveal-d2">
+                    <div class="art"><div class="glow" style="background:var(--pink);bottom:-30px;left:-30px"></div><span class="emoji">🍬</span></div>
+                    <div class="body">
+                        <h3>Cut The Rope</h3>
+                        <p>Классическая головоломка</p>
+                    </div>
+                </a>
+            </div>
+        </section>
 
-    <script src="/assets/scripts/scripts.js"></script>
+        <div class="section-divider"><hr></div>
+
+        <!-- CONTACT -->
+        <section id="contact">
+            <div class="reveal">
+                <div class="section-label">Связь</div>
+                <h2 class="section-title">Контакты</h2>
+            </div>
+            <div class="showcase">
+                <a href="https://t.me/sashapriority" target="_blank" class="showcase-item reveal">
+                    <div class="art"><div class="glow" style="background:var(--accent);top:-30px;right:-30px"></div><img src="/assets/img/telgra.png" alt=""></div>
+                    <div class="body">
+                        <h3>Telegram</h3>
+                        <p>@sashapriority</p>
+                    </div>
+                </a>
+                <a href="https://vk.com/sasakuzn" target="_blank" class="showcase-item reveal reveal-d2">
+                    <div class="art"><div class="glow" style="background:var(--pink);bottom:-30px;left:-30px"></div><img src="/assets/img/vk.png" alt=""></div>
+                    <div class="body">
+                        <h3>Вконтакте</h3>
+                        <p>Моя страница</p>
+                    </div>
+                </a>
+                <a href="mailto:support@kuzymuzy.ru" class="showcase-item reveal reveal-d4">
+                    <div class="art"><div class="glow" style="background:var(--accent);top:50%;left:50%;transform:translate(-50%,-50%)"></div><img src="/assets/img/gmail.png" alt=""></div>
+                    <div class="body">
+                        <h3>Mail</h3>
+                        <p>support@kuzymuzy.ru</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <div class="section-divider"><hr></div>
+
+        <!-- COFFEE -->
+        <section id="buymeacoffe">
+            <div class="reveal">
+                <div class="section-label">Поддержка</div>
+                <h2 class="section-title">Купить мне кофе</h2>
+            </div>
+            <div style="max-width:360px;margin:0 auto">
+                <a href="https://www.donationalerts.com/r/kuzymuzy" target="_blank" class="feature-card reveal" title="НУ ПЖЖЖ" style="text-align:center;border-radius:var(--radius-sm);">
+                    <div class="row" style="justify-content:center"><span class="icon">☕</span></div>
+                    <h3>Donation Alerts</h3>
+                    <p>Поддержать донатом</p>
+                </a>
+            </div>
+        </section>
+
+        <div class="section-divider"><hr></div>
+
+        <!-- DEV -->
+        <section id="dev" style="display:none">
+            <div class="reveal">
+                <div class="section-label">⚙</div>
+                <h2 class="section-title">Developer</h2>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+                <a href="/ua" class="feature-card" style="max-width:360px;width:100%;text-align:center;border-radius:var(--radius-sm)">
+                    <h3>Страница для украинцев</h3>
+                </a>
+                <div style="display:flex;gap:10px">
+                    <button class="devbutton" onclick="authtoken()">Админка</button>
+                    <button class="devbutton" onclick="localclear()">Очистить localStorage</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <div><img class="ft-icon" src="favicon.ico" alt=""> &copy; 2026 KuzyMuzy inc.</div>
+            <div class="links">
+                <a href="admin.html">Админка</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // reveal
+        const obs = new IntersectionObserver(e => {e.forEach(v=>{if(v.isIntersecting){v.target.classList.add('visible');obs.unobserve(v.target)}})},{threshold:0.1});
+        document.querySelectorAll('.reveal').forEach(e=>obs.observe(e));
+
+        // 3D tilt — карточки
+        document.querySelectorAll('.feature-card, .showcase-item, .hero h1').forEach(card => {
+            const tilt = card.classList.contains('feature-card') ? 15 : 10;
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                card.style.setProperty('--rx', (-y * tilt) + 'deg');
+                card.style.setProperty('--ry', (x * tilt) + 'deg');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--rx', '0deg');
+                card.style.setProperty('--ry', '0deg');
+            });
+        });
+
+        // theme
+        const t = document.getElementById('theme-toggle'), i = document.getElementById('theme-icon');
+        const s = localStorage.getItem('theme');
+        if (s==='light-theme') {document.body.classList.add('light-theme');t.checked=false;i.textContent='🌑'}
+        else {t.checked=true;i.textContent='🌕'}
+        t.addEventListener('change',function(){
+            if (this.checked) {document.body.classList.remove('light-theme');document.body.classList.add('dark-theme');i.textContent='🌕';localStorage.setItem('theme','dark-theme')}
+            else {document.body.classList.remove('dark-theme');document.body.classList.add('light-theme');i.textContent='🌑';localStorage.setItem('theme','light-theme')}
+        });
+
+        // dev
+        function updateDev(){var d=localStorage.getItem('dev')==='1';var s=document.getElementById('dev');var n=document.getElementById('devnav');if(s)s.style.display=d?'block':'none';if(n)n.style.display=d?'inline-block':'none'}
+        updateDev();setInterval(updateDev,1000);
+        var u=new URLSearchParams(location.search).get('dev');if(u==='1')localStorage.setItem('dev','1');else if(u==='0')localStorage.removeItem('dev');
+
+        // nav close on click
+        document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
+
+        // standalone
+        function authtoken(){localStorage.setItem('authtoken','$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.');window.location.href='/admin-panel.html'}
+        function localclear(){localStorage.clear();console.log('localStorage clean was success')}
+    </script>
 
 </body>
 </html>

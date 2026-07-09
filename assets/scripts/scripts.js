@@ -1,151 +1,88 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const themeIcon = document.getElementById('theme-icon');
-    const themeToggle = document.getElementById('theme-toggle');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('.fade-in');
+document.addEventListener('DOMContentLoaded', function () {
+  /* ── Theme toggle (button-based) ─────────────────────────── */
+  var themeBtn = document.getElementById('themeToggle');
+  var body = document.body;
+  var isDark = localStorage.getItem('theme') !== 'light';
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            window.scrollTo({
-                top: targetSection.offsetTop - 60,
-                behavior: 'smooth'
-            });
+  function applyTheme(dark) {
+    isDark = dark;
+    body.classList.toggle('dark-theme', dark);
+    body.classList.toggle('light-theme', !dark);
+    if (themeBtn) themeBtn.textContent = dark ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    localStorage.setItem('theme', dark ? 'dark-theme' : 'light-theme');
+  }
+
+  applyTheme(isDark);
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      applyTheme(!isDark);
+    });
+  }
+
+  /* ── Smooth scroll for nav links ─────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = this.getAttribute('href').substring(1);
+      var target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+      }
+    });
+  });
+
+  /* ── Fade-in on scroll ──────────────────────────────────── */
+  var fadeEls = document.querySelectorAll('.fade-in');
+  if (fadeEls.length) {
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
         });
+      },
+      { threshold: 0.1 }
+    );
+    fadeEls.forEach(function (el) {
+      observer.observe(el);
     });
-    
-document.addEventListener('DOMContentLoaded', () => {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    const navLinks = document.querySelectorAll('.nav-link');
+  }
 
-    navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('open');
-        navMenu.classList.toggle('open');
-    });
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            if (navMenu.classList.contains('open')) {
-                navToggle.classList.remove('open');
-                navMenu.classList.remove('open');
-            }
-        });
-    });
-});
-
-    const options = {
-        threshold: 0.1
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, options);
-
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.body.classList.add(savedTheme);
-        if (savedTheme === 'dark-theme') {
-            themeToggle.checked = true;
-            themeIcon.textContent = '🌕';
-        } else {
-            themeIcon.textContent = '🌑';
-        }
-    } else {
-        document.body.classList.add('dark-theme');
-        themeIcon.textContent = '🌕';
-        themeToggle.checked = true;
-    }
-
-    themeToggle.addEventListener('change', function() {
-        if (this.checked) {
-            document.body.classList.remove('light-theme');
-            document.body.classList.add('dark-theme');
-            themeIcon.textContent = '🌕';
-            localStorage.setItem('theme', 'dark-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-            document.body.classList.add('light-theme');
-            themeIcon.textContent = '🌑';
-            localStorage.setItem('theme', 'light-theme');
-        }
-    });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('open');
-        navMenu.classList.toggle('open');
-    });
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            if (navMenu.classList.contains('open')) {
-                navToggle.classList.remove('open');
-                navMenu.classList.remove('open');
-            }
-        });
-    });
-});
-
-
-function developer() {
+  /* ── Developer section (preserved) ──────────────────────── */
+  function developer() {
+    var dev = document.getElementById('dev');
+    var devnav = document.getElementById('devnav');
     if (localStorage.getItem('dev') === null) {
-        document.getElementById("dev").style.display = "none";
-        document.getElementById("devnav").style.display = "none";
+      if (dev) dev.style.display = 'none';
+      if (devnav) devnav.style.display = 'none';
     } else {
-        const dev = Number(localStorage.getItem("dev"));
-        if (dev === 1) {
-            document.getElementById("dev").style.display = "block";
-            document.getElementById("devnav").style.display = "block";
-        } else {
-            document.getElementById("dev").style.display = "none";
-            document.getElementById("devnav").style.display = "none";
-        }
+      var d = Number(localStorage.getItem('dev'));
+      if (dev) dev.style.display = d === 1 ? 'block' : 'none';
+      if (devnav) devnav.style.display = d === 1 ? 'block' : 'none';
     }
-}
+  }
+  setInterval(developer, 1000);
 
-
-setInterval(developer, 1000);
-
-
-function authtoken() {
+  /* ── Auth utils (preserved) ─────────────────────────────── */
+  window.authtoken = function () {
     localStorage.setItem('authtoken', '$P$Br6KEBLMfMNrMMMTKE7pUd9odCWA/5.');
-    window.location.href = '/admin-panel.html'
-}
-
-function localclear() {
-    localStorage.clear()
-    console.log("localStorage clean was success")
-}
-
-const urlParams = new URLSearchParams(window.location.search);
-const urldev = urlParams.get('dev')
-
-if (urldev === "1") {
-    localStorage.setItem("dev", 1)
-}
-else{
-    localclear()
-}
-
-const navToggle = document.querySelector('.nav-toggle');
-const navMenu = document.querySelector('.nav-menu');
-navToggle.addEventListener('click', function () {
-  document.body.classList.toggle('lock-scroll');
+    window.location.href = '/admin-panel.html';
+  };
+  window.localclear = function () {
+    localStorage.clear();
+    console.log('localStorage clean was success');
+  };
 });
+
+/* ── URL dev param (preserved) ───────────────────────────── */
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('dev') === '1') {
+    localStorage.setItem('dev', '1');
+  } else if (!localStorage.getItem('dev')) {
+    localStorage.clear();
+  }
+})();

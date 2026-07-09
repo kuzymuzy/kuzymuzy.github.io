@@ -22,61 +22,61 @@
     <script src="/assets/scripts/ukraine.js"></script>
 </head>
 <body>
-    <header class="nav-bar">
-        <nav>
-            <ul>
-                <li><a title="Вернуться на главную страницу" href="index.html"><img src="favicon.ico" alt="Логотип" class="logo"></a></li>
-                <li class="theme-container">
-                    <span title="Это то какая у тебя темя будет)" class="theme-icon" id="theme-icon">🌑</span>
-                    <label title="Сменить оформление" class="theme-switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider"></span>
-                    </label>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <div class="container">
-        <h1>Генератор городов России</h1>
-        <button id="generate-btn">Сгенерировать город</button>
-        <div id="city-display" class="city-display"></div>
-    </div>
-    <footer style="position:fixed;" class="footer-bar">
-        <img class="bankimg" src="favicon.ico" width="40"><br><br>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">
+                <img src="favicon.ico" alt="KuzyMuzy" class="logo-icon">
+                KUZYMUZY
+            </div>
+            <div class="nav-links">
+                <a href="index.html">главная</a>
+                <a href="random.html">рандомайзер</a>
+                <a href="random-answer.html">тест</a>
+                <a href="DC.html">decision</a>
+            </div>
+            <button class="theme-btn" id="themeToggle" aria-label="Переключить тему">🌙</button>
+        </div>
+    </nav>
+
+    <main class="tool-page">
+        <div class="tool-box">
+            <div class="prompt-line"><span class="prompt">$</span> city --random</div>
+            <h2>Генератор городов России</h2>
+            <button id="generate-btn">Сгенерировать город</button>
+            <div id="city-display" class="city-display"></div>
+        </div>
+    </main>
+
+    <footer class="footer-bar">
         <p>© 2026 KuzyMuzy inc. Все права защищены.</p>
-        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
+        <a href="admin.html">Пароль от адмники: 1234admin1234</a>
     </footer>
 
+    <script src="/assets/scripts/scripts.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let cities = [];
+            var cities = [];
 
             function loadCities() {
                 fetch('/assets/cities.txt')
-                    .then(response => response.text())
-                    .then(text => {
-                        cities = text.split('\n').map(city => city.trim()).filter(city => city.length > 0);
+                    .then(function(r) { return r.text(); })
+                    .then(function(text) {
+                        cities = text.split('\n').map(function(c) { return c.trim(); }).filter(function(c) { return c.length > 0; });
                     })
-                    .catch(error => console.error('Ошибка загрузки списка городов:', error));
+                    .catch(function(e) { console.error('Ошибка загрузки городов:', e); });
             }
 
             loadCities();
 
-            const generateBtn = document.getElementById('generate-btn');
-            const cityDisplay = document.getElementById('city-display');
-
-            generateBtn.addEventListener('click', function() {
+            document.getElementById('generate-btn').addEventListener('click', function() {
                 if (cities.length === 0) {
-                    cityDisplay.textContent = 'Города не загружены.';
+                    document.getElementById('city-display').textContent = 'Города не загружены.';
                     return;
                 }
-                const randomIndex = Math.floor(Math.random() * cities.length);
-                const randomCity = cities[randomIndex];
-                cityDisplay.textContent = randomCity;
+                document.getElementById('city-display').textContent = cities[Math.floor(Math.random() * cities.length)];
             });
         });
     </script>
-
-    <script src="/assets/scripts/random.js"></script>
 </body>
 </html>

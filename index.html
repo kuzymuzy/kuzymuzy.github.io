@@ -1,111 +1,828 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная</title>
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Главная">
-    <meta name="description" content="О Кузе Музе">
-    <meta name="keywords" content="Кузя Музя, Саша Кузнецов, блогер, KuzyMuzy, Kuzy Muzy">
-    <meta property="og:title" content="О Кузе Музе">
-    <meta property="og:description" content="Визитная карточка Кузи">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="О Кузе Музе">
-    <meta property="og:image" content="/assets/img/apple-touch-icon.png">
-    <meta property="og:locale" content="ru_RU">
-    <meta name="robots" content="index, follow">
-    <script src="/assets/scripts/ukraine.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KuzyMuzy: Главная</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0C10;
+    --bg-elevated: #11141A;
+    --bg-card: #14181F;
+    --accent: #8b5cf6;
+    --accent-dim: #6d28d9;
+    --accent-glow: 0 0 16px rgba(139,92,246,0.45);
+    --text-primary: #E8ECF1;
+    --text-secondary: #8B95A8;
+    --text-tertiary: #4B5363;
+    --border: #21262F;
+    --danger: #FF5C5C;
+    --warn: #FFB454;
+  }
+
+  .hero__note {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    margin-top: 12px;
+    margin-bottom: 56px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: #000; }
+
+  .mono-display { font-family: 'JetBrains Mono', monospace; }
+
+  /* Scanline texture overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.012) 0px,
+      rgba(255,255,255,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 9999;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,12,16,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    border: 1px solid var(--accent-dim);
+    color: var(--accent);
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+  .nav-cta:hover {
+    background: var(--accent);
+    color: #000;
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 90px 32px 70px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .terminal-line {
+    color: var(--text-tertiary);
+    font-size: 12px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 10px;
+  }
+  .terminal-line .prompt { color: var(--accent-dim); }
+  .terminal-line .ok { color: var(--accent); }
+
+  /* Hero inner — flex layout for text + logo */
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .hero-content { flex: 1; }
+  .hero-logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-logo img {
+    width: 140px;
+    height: 140px;
+    opacity: 0.5;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .hero-logo img:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  @media (max-width: 768px) {
+    .hero-logo { display: none; }
+  }
+
+  .hero-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: clamp(34px, 5.4vw, 58px);
+    line-height: 1.08;
+    letter-spacing: -1px;
+    margin: 28px 0 22px;
+    max-width: 780px;
+  }
+  .hero-title .accent { color: var(--accent); }
+
+  .hero-sub {
+    color: var(--text-secondary);
+    font-size: 15px;
+    max-width: 560px;
+    margin-bottom: 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    padding: 13px 26px;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 3px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px #8b5cf657;
+  }
+  .btn-secondary {
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 13px 26px;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 3px;
+    transition: border-color 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--text-secondary); }
+
+  /* Live monitor strip */
+  .monitor {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 22px;
+    font-size: 12px;
+    overflow: hidden;
+  }
+  .monitor-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-tertiary);
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .monitor-head .live {
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .monitor-head .live::before {
+    content: "";
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  #log-feed {
+    height: 132px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .log-row {
+    display: flex;
+    gap: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    opacity: 0;
+    animation: fadeIn 0.4s forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .log-row .ts { color: var(--text-tertiary); flex-shrink: 0; }
+  .log-row .tag-block { color: var(--accent); flex-shrink: 0; }
+  .log-row .tag-warn { color: var(--warn); flex-shrink: 0; }
+  .log-row .tag-info { color: var(--text-tertiary); flex-shrink: 0; }
+
+  /* ===== STATS ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat {
+    padding: 36px 32px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 30px;
+    color: var(--accent);
+  }
+  .stat-label {
+    color: var(--text-tertiary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+  @media (max-width: 768px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2) { border-right: none; }
+  }
+
+  /* ===== SECTION HEADER ===== */
+  .section { padding: 80px 32px; border-bottom: 1px solid var(--border); }
+  .section-eyebrow {
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(24px, 3vw, 32px);
+    letter-spacing: -0.5px;
+    max-width: 600px;
+  }
+  .section-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    max-width: 520px;
+    margin-top: 14px;
+  }
+
+  /* ===== SERVICES ===== */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 48px;
+    border: 1px solid var(--border);
+  }
+  .service-card {
+    background: var(--bg);
+    padding: 30px 26px;
+    transition: background 0.2s;
+  }
+  .service-card:hover { background: var(--bg-card); }
+  .service-icon {
+    color: var(--accent);
+    font-size: 18px;
+    margin-bottom: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .service-icon svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .service-title {
+    font-weight: 600;
+    font-size: 14.5px;
+    margin-bottom: 10px;
+  }
+  .service-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .service-title a:hover {
+    color: var(--accent);
+  }
+  .service-desc {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  @media (max-width: 768px) {
+    .services-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== APPROACH (process) ===== */
+  .approach-list {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+  }
+  .approach-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    padding: 26px 0;
+    border-top: 1px solid var(--border);
+  }
+  .approach-row:last-child { border-bottom: 1px solid var(--border); }
+  .approach-idx {
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .approach-title { font-weight: 600; font-size: 14.5px; margin-bottom: 6px; }
+  .approach-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .approach-title a:hover {
+    color: var(--accent);
+  }
+  .approach-title .link-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 3px;
+  }
+  .approach-desc { color: var(--text-secondary); font-size: 13px; max-width: 600px; }
+
+  /* ===== TRUST / CLIENTS ===== */
+  .trust-bar {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 40px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .trust-bar span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+  .trust-bar svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+  .trust-bar .icon-claude {
+    filter: drop-shadow(0 0 8px rgba(255,102,0,0.35));
+  }
+
+  /* ===== CONTACT ===== */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 48px;
+    border: 1px solid var(--border);
+  }
+  .contact-card {
+    background: var(--bg);
+    padding: 36px 24px;
+    text-align: center;
+    transition: background 0.2s;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .contact-card:hover {
+    background: var(--bg-card);
+  }
+  .contact-card svg {
+    width: 32px;
+    height: 32px;
+    color: var(--accent);
+  }
+  .contact-card .contact-label {
+    font-weight: 600;
+    font-size: 14.5px;
+  }
+  .contact-card .icon-arrow {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    transition: transform 0.15s;
+  }
+  .contact-card:hover .icon-arrow {
+    transform: translateX(4px);
+  }
+  @media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== CTA ===== */
+  .cta-section {
+    padding: 90px 32px;
+    text-align: center;
+  }
+  .cta-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 38px);
+    margin-bottom: 16px;
+  }
+  .cta-sub {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 40px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+  }
+  footer a:hover { color: var(--accent); }
+  .footer-links { display: flex; gap: 24px; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  /* Focus visibility */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>
 </head>
 <body>
-    <header class="nav-bar">
-        <nav>
-            <button class="nav-toggle">
-                <span class="nav-toggle-icon"></span>
-            </button>
-            <ul class="nav-menu">
-                <li><a title="Вернуться на главную страницу" href="index.html"><img src="favicon.ico" alt="Логотип" class="logo">
-                <li><a title="Oбо мне" href="#about" class="nav-link">Oбо мне</a></li>
-                <li><a title="Мое творчество" href="#creativity" class="nav-link">Мое творчество</a></li>
-                <li><a title="Доп.Функции" href="#features" class="nav-link">Доп.Функции</a></li>
-                <li><a title="Игры" href="#games" class="nav-link">Игры</a></li>
-                <li><a title="Контакты" href="#contact" class="nav-link">Контакты</a></li>
-                <li style="display: none;" id="devnav"><a title="Developer" href="#dev" class="nav-link">Developer</a></li>
-                <li><a title="Как?! Как я могу быть нищем?!" href="#buymeacoffe" class="nav-link">Купить мне кофе</a></li>
-                <li class="theme-container">
-                    <span title="Это то какая у тебя темя будет)" class="theme-icon" id="theme-icon">🌑</span>
-                    <label title="Сменить оформление" class="theme-switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider"></span>
-                    </label>
-                </li>
-            </ul>
-        </nav>
-    </header>
 
-    <section id="about" class="section">
-        <h1 title="Прям как мою собаку">Саша Кузнецов*</h1>
-        <p>Я стандартный русский парень, занимаюсь разработкой сайтов на html.</p>
-        <p>Я НЕ fullstack разработчик, я frontender. <a href="/why-iam-not-fullstack-developer.html">(И вот почему)</a></p>
-        <img id="logo" title="Типо я" src="favicon.ico" alt="Photo" class="profile-photo">
-        <p style="font-size: 10px;">*Александр Кузнецов - выполняет в России функции иностранного агента</p>
-    </section>
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyMuzy" class="logo-icon">KuzyMuzy</div>
+    <div class="nav-links">
+      <a href="#about_me">about me</a>
+      <a href="#creativity">creativity</a>
+      <a href="#tools">tools</a>
+      <a href="#games">games</a>
+      <a href="#contact">contacts</a>
+      <a href="#Final_words">Final words</a>
+    </div>
+    <a class="nav-cta">useful_function()</a>
+  </div>
+</nav>
 
-    <section id="creativity" class="section">
-        <h2>Мое творчество</h2>
-        <img class="bankimg" src="/assets/img/github.png" width="40"><a href="https://github.com/kuzymuzy/">Github</a><br><br>
-        <img class="bankimg" src="/assets/img/yt.png" width="40"><a href="https://www.youtube.com/@Kuzy_muzy_offical">YouTube</a><br><br>
-        <img class="bankimg" src="/assets/img/telgra.png" width="40"><a href="404.html">Telegram</a>
-    </section>
+<header class="hero" id="about_me">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="terminal-line"><span class="prompt">$</span> whoami</div>
+        <div class="terminal-line"><span class="ok">></span> kuzymuzy — frontender</div>
 
-    <section id="features" class="section">
-        <h2>Доп.Функции</h2>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="random.html">Рандомайзер</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="random-answer.html">Генератор ответов на тест</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="random-city.html">Генератор городов России</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/QR">Генератор QR-кодов</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/md">Markdown Viewer (.md files)</a><br><br>
-        <img class="bankimg" src="/assets/img/Terminal.png" style="border-radius: 50%" width="40"><a href="https://terminal.kuzymuzy.ru">Terminal iframe</a><br><br>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/OSD">OSD (OS Downloader)</a><br><br>
-        <img class="bankimg" src="/assets/img/undex.png" width="40"><a href="https://undex.kuzymuzy.ru">Undex поиск</a><br><br>
-    </section>
-    
-    <section id="games" class="section">
-        <h2>Игры</h2>
-        <img class="bankimg" src="favicon.ico" width="40"><a href="/KuzyCoin/index.html">Играть в KuzyCoin</a><br><br>
-        <img class="bankimg" src="/cut-the-rope/logo.png" width="40"><a href="/cut-the-rope/">Cut The Rope</a>
-    </section>
+        <h1 class="hero-title">Саша Кузнецов<span class="accent">*</span> </h1>
+        <p class="hero-sub">Я стандартный русский парень, занимаюсь разработкой сайтов на html. <br>Я <strong>не</strong> fullstack разработчик, я frontender. <a href="/why-iam-not-fullstack-developer.html">(И вот почему)</a></p>
 
-    <section id="contact" class="section">
-        <h2>Контакты</h2>
-        <img class="bankimg" src="/assets/img/telgra.png" width="40"><a target="_blank" href="https://t.me/sashapriority">Telegram</a><br><br>
-        <img class="bankimg" src="/assets/img/vk.png" width="40"><a target="_blank" href="https://vk.com/sasakuzn">Вконтакте</a><br><br>
-        <img class="bankimg" src="/assets/img/gmail.png" width="40"><a target="_blank" href="mailto:support@kuzymuzy.ru">Mail</a>
-    </section>
+        <div class="hero-actions">
+          <a href="#tools" class="btn-primary">Мои работы</a>
+          <a href="#contact" class="btn-secondary">Написать</a>
+        </div>
+        <div class="hero__note">*Александр Кузнецов — выполняет в России функции иностранного агента</div>
+      </div>
+      <div class="hero-logo">
+        <img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyMuzy">
+      </div>
+    </div>
 
-    <section id="buymeacoffe" class="section">
-        <h2>Купить мне кофе</h2>
-        <img title="НУ ПЖЖЖ" class="bankimg" src="/assets/img/donationalert.png" width="40"><a target="_blank" href="https://www.donationalerts.com/r/kuzymuzy">Donation Alerts</a>
-    </section>
+    <div class="monitor">
+      <div class="monitor-head">
+        <span>site_status.log</span>
+        <span class="live">LIVE</span>
+      </div>
+      <div id="log-feed"></div>
+    </div>
+  </div>
+</header>
 
-    <section style="display: none;" id="dev" class="section">
-        <p>Developer section</p>
-        <a href="/ua">Страница для украинцев</a><br><br>
-        <button class="devbutton" onclick="authtoken()">Админка</button><br><br>
-        <button class="devbutton" onclick="localclear()">Очистить localStorage</button>
-    </section>
+<section class="stats">
+  <div class="stat">
+    <div class="stat-num">00:12</div>
+    <div class="stat-label">время самых долгих отношений (с женщиной)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">99.98%</div>
+    <div class="stat-label">кода написано claude code</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">2 млрд.</div>
+    <div class="stat-label">Токенов потраченых в claude code</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">терминал онлайн</div>
+  </div>
+</section>
 
-    <footer class="footer-bar">
-        <img title="Тебя батя в детстве насиловал" class="bankimg" src="favicon.ico" width="40"><br><br>
-        <p>© 2026 KuzyMuzy inc. Все права защищены.</p>
-        <a title="Форма входа в админку(убрать на релизе)" href="admin.html">Пароль от адмники: 1234admin1234</a>
-    </footer>
+<section class="section" id="creativity">
+  <div class="wrap">
+    <div class="section-eyebrow">// creativity</div>
+    <h2 class="section-title">Github, Telegram, YouTube — и что там происходит</h2>
+    <p class="section-desc">Код — на гитхабе, и все, остального не дано.</p>
 
-    <script src="/assets/scripts/scripts.js"></script>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </div>
+        <div class="service-title"><a href="https://github.com/kuzymuzy">KuzyMuzy</a></div>
+        <div class="service-desc">Много моих каких-то небольших проектов, может полезных, а может и нет</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </div>
+        <div class="service-title"><a href="404.html">Был когда-то</a></div>
+        <div class="service-desc">Там было много моих мыслей и инфой связаной с ios и моим каналом на YT что забанили...</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </div>
+        <div class="service-title"><a href="https://www.youtube.com/@Kuzy_muzy_offical">Он почти пустой</a></div>
+        <div class="service-desc">Сейчас там есть только ролик о том как я безмолвно перпрошиваю iPhone 6 через Purple Restore 3.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tools">
+  <div class="wrap">
+    <div class="section-eyebrow">// tools</div>
+    <h2 class="section-title">Мини-функции</h2>
+
+    <div class="approach-list">
+      <div class="approach-row">
+        <div class="approach-idx">01</div>
+        <div>
+          <div class="approach-title"><a href="random.html"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">Рандомайзер</a></div>
+          <div class="approach-desc">Случайный выбор числа</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">02</div>
+        <div>
+          <div class="approach-title"><a href="random-answer.html"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">Генератор ответов на тест</a></div>
+          <div class="approach-desc">Что бы решить тест к которому не готов не обязательно придумывать буквы самому, можно сгенерировать их тут</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">03</div>
+        <div>
+          <div class="approach-title"><a href="random-city.html"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">Генератор городов России</a></div>
+          <div class="approach-desc">Сгенерирует вам рандомный город в России</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">04</div>
+        <div>
+          <div class="approach-title"><a href="/QR"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">Генератор QR-кодов</a></div>
+          <div class="approach-desc">QR-код по любому тексту или ссылке</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">05</div>
+        <div>
+          <div class="approach-title"><a href="/md"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">Markdown Viewer</a></div>
+          <div class="approach-desc">Просмотр .md файлов прямо в браузере</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">06</div>
+        <div>
+          <div class="approach-title"><a href="https://terminal.kuzymuzy.ru"><img src="/assets/img/Terminal.png" alt="" class="link-icon">Terminal iframe</a></div>
+          <div class="approach-desc">Красивый iframe в стиле terminal что бы встроить его на свой сайт или просто побаловаться :)</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">07</div>
+        <div>
+          <div class="approach-title"><a href="/OSD"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">OSD (OS Downloader)</a></div>
+          <div class="approach-desc">Можно скачать любую OS (iso, dmg, app) (давно не обновлял ссылки могут быть мертвыми)</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">08</div>
+        <div>
+          <div class="approach-title"><a href="https://undex.kuzymuzy.ru"><img src="/assets/img/undex.png" alt="" class="link-icon">Undex</a></div>
+          <div class="approach-desc">Мемный поиск, который родился благодаря приколу в школе. Undex - потеряем все!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="games">
+  <div class="wrap">
+    <div class="section-eyebrow">// games</div>
+    <h2 class="section-title">Игры</h2>
+
+    <div class="approach-list">
+      <div class="approach-row">
+        <div class="approach-idx">01</div>
+        <div>
+          <div class="approach-title"><a href="/KuzyCoin/index.html"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">KuzyCoin</a></div>
+          <div class="approach-desc">Игры кликер на подобе хомяка, раньше была в телеграм, а потом стала моим тренеровочным полем в разработки (сейчас не работате сервер с беком лежит так как платить за то что не приносит денег - глупо)</div>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-idx">02</div>
+        <div>
+          <div class="approach-title"><a href="/cut-the-rope/"><img src="/cut-the-rope/logo.png" alt="" class="link-icon">Cut The Rope</a></div>
+          <div class="approach-desc">Классическая головоломка про верёвки (нагло спизженно)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="wrap">
+    <div class="section-eyebrow">// contact</div>
+    <h2 class="section-title">Связаться со мной</h2>
+
+    <div class="contact-grid">
+      <a class="contact-card" href="https://t.me/sashapriority" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        <span class="contact-label">Telegram</span>
+        <span class="icon-arrow">→</span>
+      </a>
+      <a class="contact-card" href="https://vk.com/sasakuzn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.684 0H8.316C2.88 0 0 2.88 0 8.316v7.368C0 21.12 2.88 24 8.316 24h7.368C21.12 24 24 21.12 24 15.684V8.316C24 2.88 21.12 0 15.684 0zm2.748 16.8h-1.548c-.564 0-.732-.444-1.728-1.44-.864-.828-1.248-.936-1.464-.936-.3 0-.396.096-.396.588v1.008c0 .42-.132.66-1.212.66-1.788 0-3.768-1.092-5.16-3.132C4.944 10.944 4.368 9.06 4.368 8.448c0-.252.096-.48.588-.48h1.56c.444 0 .612.204.78.684.852 2.52 2.28 4.728 2.868 4.728.216 0 .324-.108.324-.708v-2.784c-.072-1.26-.744-1.368-.744-1.824 0-.216.18-.432.468-.432h2.46c.372 0 .504.204.504.648v3.468c0 .372.168.504.264.504.216 0 .396-.132.66-.408 1.044-1.176 1.788-3.012 1.788-3.012.096-.252.3-.468.744-.468h1.56c.528 0 .648.276.528.648-.216 1.056-2.316 3.948-2.316 3.948-.192.3-.252.444 0 .768.168.228.756.732 1.14 1.176.72.804 1.272 1.476 1.416 1.944.144.468-.192.708-.684.708z"/></svg>
+        <span class="contact-label">Вконтакте</span>
+        <span class="icon-arrow">→</span>
+      </a>
+      <a class="contact-card" href="mailto:support@kuzymuzy.ru">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <span class="contact-label">Mail</span>
+        <span class="icon-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="Final_words" style="border-bottom:none;">
+  <div class="wrap">
+    <div class="section-eyebrow">// Final words</div>
+    <h2 class="section-title">Немного финальных слов</h2>
+    <p class="section-desc">Я все еще frontend разработчки, мой стек: HTML, JS, CSS, PHP. Больше всего моя душа лежит к системному администрированию или же Dev-Ops. И наверное по этому многое за меня делает claude-code. Я во многом несчастный человек по этому сайт стараюсь наполнять приколами :)</p>
+    <div class="trust-bar">
+      <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>HTML</span>
+      <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716H7.654l.213 2.573h7.729l-.258 3.016-2.91.804-2.956-.81-.188-2.11h-2.61l.33 4.172L12 19.351l5.379-1.443.744-8.157H8.531l-.213-2.657h10.34l.234-2.638z"/></svg>CSS</span>
+      <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.832-.88-.087-.15-.142-.225-.255-.345-.06-.06-.105-.09-.15-.09-.06-.015-.135-.015-.21 0l-1.536 1.015c.226.45.451.737.705 1.095.525.675 1.32 1.265 2.396 1.365 1.441.135 2.531-.48 2.955-1.455.39-.855.473-1.887.465-2.965.007-2.385 0-4.768 0-7.152z"/></svg>JavaScript</span>
+      <span><svg viewBox="0 0 16 16" fill="currentColor"><rect x="2.5" y="6" width="19" height="12" rx="3" fill="currentColor" opacity="0.12"/><path d="M7.19792 3.06C5.60434 3.06 4.3125 4.34978 4.3125 5.9408V12.3472C4.3125 13.5362 3.34711 14.5 2.15625 14.5C0.965386 14.5 0 13.5362 0 12.3472C0 11.9164 0.349778 11.5672 0.78125 11.5672C1.21272 11.5672 1.5625 11.9164 1.5625 12.3472C1.5625 12.6746 1.82833 12.94 2.15625 12.94C2.48417 12.94 2.75 12.6746 2.75 12.3472V5.9408C2.75 3.48821 4.7414 1.5 7.19792 1.5C9.22509 1.5 10.9355 2.85396 11.4715 4.70551C13.9858 4.78385 16 6.84348 16 9.3728C16 9.41167 15.9972 9.44987 15.9917 9.48721C15.9972 9.52454 16 9.56274 16 9.6016V13.72C16 14.1508 15.6502 14.5 15.2187 14.5H7.19792C6.76644 14.5 6.41667 14.1508 6.41667 13.72V9.6016C6.41667 9.17082 6.76644 8.8216 7.19792 8.8216C8.79149 8.8216 10.0833 7.53182 10.0833 5.9408C10.0833 4.34978 8.79149 3.06 7.19792 3.06ZM14.4458 9.48719C14.4403 9.44986 14.4375 9.41166 14.4375 9.3728C14.4375 7.75995 13.2076 6.43389 11.6332 6.27844C11.48 8.3122 9.95487 9.96383 7.97917 10.3133V12.94H10.4271V11.2032C10.4271 10.7724 10.7769 10.4232 11.2083 10.4232C11.6398 10.4232 11.9896 10.7724 11.9896 11.2032V12.94H14.4375V9.6016C14.4375 9.56274 14.4403 9.52453 14.4458 9.48719Z"/></svg>PHP</span>
+      <span class="icon-claude"><svg viewBox="0 0 100 100" fill="none"><<path d="m19.6 66.5 19.7-11 .3-1-.3-.5h-1l-3.3-.2-11.2-.3L14 53l-9.5-.5-2.4-.5L0 49l.2-1.5 2-1.3 2.9.2 6.3.5 9.5.6 6.9.4L38 49.1h1.6l.2-.7-.5-.4-.4-.4L29 41l-10.6-7-5.6-4.1-3-2-1.5-2-.6-4.2 2.7-3 3.7.3.9.2 3.7 2.9 8 6.1L37 36l1.5 1.2.6-.4.1-.3-.7-1.1L33 25l-6-10.4-2.7-4.3-.7-2.6c-.3-1-.4-2-.4-3l3-4.2L28 0l4.2.6L33.8 2l2.6 6 4.1 9.3L47 29.9l2 3.8 1 3.4.3 1h.7v-.5l.5-7.2 1-8.7 1-11.2.3-3.2 1.6-3.8 3-2L61 2.6l2 2.9-.3 1.8-1.1 7.7L59 27.1l-1.5 8.2h.9l1-1.1 4.1-5.4 6.9-8.6 3-3.5L77 13l2.3-1.8h4.3l3.1 4.7-1.4 4.9-4.4 5.6-3.7 4.7-5.3 7.1-3.2 5.7.3.4h.7l12-2.6 6.4-1.1 7.6-1.3 3.5 1.6.4 1.6-1.4 3.4-8.2 2-9.6 2-14.3 3.3-.2.1.2.3 6.4.6 2.8.2h6.8l12.6 1 3.3 2 1.9 2.7-.3 2-5.1 2.6-6.8-1.6-16-3.8-5.4-1.3h-.8v.4l4.6 4.5 8.3 7.5L89 80.1l.5 2.4-1.3 2-1.4-.2-9.2-7-3.6-3-8-6.8h-.5v.7l1.8 2.7 9.8 14.7.5 4.5-.7 1.4-2.6 1-2.7-.6-5.8-8-6-9-4.7-8.2-.5.4-2.9 30.2-1.3 1.5-3 1.2-2.5-2-1.4-3 1.4-6.2 1.6-8 1.3-6.4 1.2-7.9.7-2.6v-.2H49L43 72l-9 12.3-7.2 7.6-1.7.7-3-1.5.3-2.8L24 86l10-12.8 6-7.9 4-4.6-.1-.5h-.3L17.2 77.4l-4.7.6-2-2 .2-3 1-1 8-5.5Z" fill="#d97757"/></svg>Claude</span>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="wrap">
+    <div class="terminal-line" style="justify-content:center;"><span class="prompt">$</span> coffee --init</div>
+    <h2 class="cta-title">Хочешь купить мне кофе или сделать чутка счастливее?</h2>
+    <p class="cta-sub">Тебе сюда:</p>
+    <a href="https://www.donationalerts.com/r/kuzymuzyinc" class="btn-primary">Donation Alerts</a>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 KuzyMuzy inc. Все права защищены.</div>
+  <div class="footer-links">
+    <a href="/admin-panel.html">Пароль от админки: 1234admin1234</a>
+  </div>
+</footer>
+
+<script>
+  const events = [
+    { tag: "[OK]", cls: "tag-block", text: 'тема успешно переключена' },
+    { tag: "[INFO]", cls: "tag-info", text: 'github repo обновлён' },
+    { tag: "[OK]", cls: "tag-block", text: 'кофе получен, спасибо ✨' },
+    { tag: "[INFO]", cls: "tag-info", text: 'undex поиск проиндексировал страницу' },
+    { tag: "[WARN]", cls: "tag-warn", text: 'у разработчика закончился кофе' },
+    { tag: "[OK]", cls: "tag-block", text: 'QR-код успешно сгенерирован' },
+    { tag: "[INFO]", cls: "tag-info", text: 'новое видео добавлено в очередь на YouTube (ха наебал)' },
+    { tag: "[OK]", cls: "tag-block", text: 'сборка сайта прошла без ошибок' },
+    { tag: "[WARN]", cls: "tag-warn", text: 'обнаружен подозрительно fullstack-код (шутка)' },
+    { tag: "[INFO]", cls: "tag-info", text: 'кто-то заглянул в терминал' },
+    { tag: "[OK]", cls: "tag-block", text: 'считал историю твоего браузера' }
+  ];
+
+  const feed = document.getElementById('log-feed');
+  let i = 0;
+
+  function pad(n) { return n.toString().padStart(2,'0'); }
+
+  function addLog() {
+    const now = new Date();
+    const ts = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const ev = events[i % events.length];
+    i++;
+
+    const row = document.createElement('div');
+    row.className = 'log-row';
+    row.innerHTML = `<span class="ts">${ts}</span><span class="${ev.cls}">${ev.tag}</span><span>${ev.text}</span>`;
+    feed.appendChild(row);
+
+    while (feed.children.length > 5) {
+      feed.removeChild(feed.firstChild);
+    }
+  }
+
+  // seed initial entries
+  for (let k = 0; k < 4; k++) addLog();
+
+  setInterval(addLog, 2600);
+</script>
 
 </body>
 </html>

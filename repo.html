@@ -3,9 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site</title>
+    <title>Добавить репозиторий</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <button onclick=window.open("trollapps://add?url=https://raw.githubusercontent.com/KuzyMuzy/KuzyMuzy-IPAs/main/apps.json")>ADD REPO</button>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">
+                <img src="favicon.ico" alt="KuzyMuzy" class="logo-icon">
+                KUZYMUZY
+            </div>
+            <div class="nav-links">
+                <a href="index.html">главная</a>
+            </div>
+            <button class="theme-btn" id="themeToggle" aria-label="Переключить тему">🌙</button>
+        </div>
+    </nav>
+
+    <main class="centered-page">
+        <button onclick="window.open('trollapps://add?url=https://raw.githubusercontent.com/KuzyMuzy/KuzyMuzy-IPAs/main/apps.json')" class="btn btn--filled" style="font-size:14px;padding:14px 32px;">
+            ADD REPO
+        </button>
+    </main>
+
+    <footer class="footer-bar">
+        <p>© 2026 KuzyMuzy inc. Все права защищены.</p>
+    </footer>
+
+    <script src="/assets/scripts/scripts.js"></script>
 </body>
 </html>

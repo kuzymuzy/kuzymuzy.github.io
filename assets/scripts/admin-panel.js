@@ -1,8 +1,9 @@
+const HARDCODED_PASS = '1234admin1234';
+const HARDCODED_TOKEN = '2a615a2e-ccd9-48ab-90e6-0f631fe4e91a';
+
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.classList.add(savedTheme);
-    if (savedTheme === 'dark-theme') {
-    }
 } else {
     document.body.classList.add('dark-theme');
 }
@@ -27,64 +28,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function setdev(){
-    localStorage.setItem("dev", 1)
-    const dev = localStorage.getItem("dev")
-    alert("Параметр {dev} установлен на " + dev)
+function setdev() {
+    localStorage.setItem('dev', 1);
+    alert('Параметр {dev} установлен на 1');
 }
 
 function erroraler() {
-    alert("Произошла ошибка (соси)!")
+    alert('Произошла ошибка (соси)!');
 }
 
 function passchange() {
-    fetch('/assets/db.json')
-    .then(response => response.json())
-    .then(data => {
-        const password = data.password;
-        let oldpass = prompt("Старый пароль")
-        if (oldpass === password) {
-            prompt("Новый пароль: ")
-            alert("Пароль изменен! Честно-честно")
-        }
-        else {
-            alert("Старый пароль введен не верно!")
-        }
+    let oldpass = prompt('Старый пароль');
+    if (oldpass === HARDCODED_PASS) {
+        prompt('Новый пароль: ');
+        alert('Пароль изменен! Честно-честно');
+    } else {
+        alert('Старый пароль введен не верно!');
     }
-)}
-
-function logout() {
-    localStorage.removeItem("authtoken");
-    localStorage.removeItem("remember");
-    window.location.replace('/admin.html')
 }
 
-const remember = localStorage.getItem("remember");
-const authtoken = localStorage.getItem("authtoken");
+function logout() {
+    localStorage.removeItem('authtoken');
+    localStorage.removeItem('remember');
+    window.location.replace('/admin.html');
+}
 
-fetch('/assets/db.json')
-.then(response => response.json())
-.then(data => {
-    const auth_token = data.auth_token;
-    if (authtoken === auth_token) {
-        if (remember === "0") {
-            localStorage.removeItem("authtoken");
-            localStorage.removeItem("remember");
-        } else {
-            localStorage.removeItem("remember");
-        }
+const remember = localStorage.getItem('remember');
+const authtoken = localStorage.getItem('authtoken');
+
+if (authtoken === HARDCODED_TOKEN) {
+    if (remember === '0') {
+        localStorage.removeItem('authtoken');
+        localStorage.removeItem('remember');
     } else {
-        window.location.replace('/admin.html');
+        localStorage.removeItem('remember');
     }
-})
-
-fetch('/assets/db.json')
-.then(response => response.json())
-.then(data => {
-    const auth_token = data.auth_token;
-    const token = localStorage.getItem("authtoken");
-    if (token !== auth_token) {
-        window.location.replace('/admin.html');
-    }
-})
-
+} else {
+    window.location.replace('/admin.html');
+}

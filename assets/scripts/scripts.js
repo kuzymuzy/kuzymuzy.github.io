@@ -1,25 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  /* ── Theme toggle (button-based) ─────────────────────────── */
-  var themeBtn = document.getElementById('themeToggle');
-  var body = document.body;
-  var isDark = localStorage.getItem('theme') !== 'light';
-
-  function applyTheme(dark) {
-    isDark = dark;
-    body.classList.toggle('dark-theme', dark);
-    body.classList.toggle('light-theme', !dark);
-    if (themeBtn) themeBtn.textContent = dark ? '\u{1F319}' : '\u{2600}\u{FE0F}';
-    localStorage.setItem('theme', dark ? 'dark-theme' : 'light-theme');
-  }
-
-  applyTheme(isDark);
-
-  if (themeBtn) {
-    themeBtn.addEventListener('click', function () {
-      applyTheme(!isDark);
-    });
-  }
-
   /* ── Smooth scroll for nav links ─────────────────────────── */
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener('click', function (e) {

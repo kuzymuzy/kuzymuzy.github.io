@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR генератор</title>
     <script src="index.js"></script>
+    <link rel="stylesheet" href="/assets/css/random.css">
     <link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,145 +20,36 @@
     <meta property="og:image" content="/assets/img/apple-touch-icon.png">
     <meta property="og:locale" content="ru_RU">
     <script src="/assets/scripts/ukraine.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        body {
-            padding-bottom: 100px;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: url('/assets/img/backgound.png') no-repeat center center fixed;
-            background-size: cover;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            text-align: center;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            width: auto;
-            max-width: 90vw;
-            animation: fadeIn 0.8s ease forwards;
-            margin-bottom: 60px;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        h2 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 600;
-            color: #ffffffdd;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.15);
-            color: #fff;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.4);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px 16px;
-            margin-top: 10px;
-            background: rgba(0, 122, 255, 0.7);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: rgba(0, 122, 255, 0.9);
-            transform: scale(1.02);
-        }
-
-        #qrcode1 {
-            margin-top: 15px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: inline-block;
-            max-width: 100%;
-            overflow: visible;
-        }
-
-        footer.footer-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(24, 24, 24, 0.7);
-            backdrop-filter: blur(8px);
-            color: #ccc;
-            padding: 15px;
-            font-size: 0.9em;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-        }
-
-        .footer-bar a {
-            color: #55aaff;
-            text-decoration: none;
-        }
-
-        .footer-bar a:hover {
-            text-decoration: underline;
-            color: #88ccff;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Генератор QR-кода</h2>
-        <div style="display: none;" id="qrcode1"></div>
-        <form id="QRform">
-            <input id="QRtext" type="text" placeholder="Введите данные для QR" required>
-            <button type="submit">Генерировать</button>
-        </form>    
-        <button id="download" style="display: none;" onclick="QRdownload()">Скачать</button>
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><a href="/index.html"><img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyMuzy" class="logo-icon">KuzyMuzy</a></div>
+    <div class="nav-links">
+      <a href="/index.html">главная</a>
     </div>
+    <a class="nav-cta" style="visibility:hidden;pointer-events:none;">useful_function()</a>
+  </div>
+</nav>
 
-    <footer class="footer-bar">
-        <p>© 2025 KuzyMuzy inc. Все права защищены.</p>
-        <a title="Форма входа в админку(убрать на релизе)" href="/admin.html">Пароль от адмники: 1234admin1234</a>
-    </footer>
+<main class="tool-page">
+  <div class="tool-box">
+    <div class="prompt-line"><span class="prompt">$</span> qr --generate</div>
+    <h2>Генератор QR-кода</h2>
+    <div id="qrcode1" style="display:none;"></div>
+    <form id="QRform">
+      <input id="QRtext" type="text" placeholder="Введите данные для QR" required class="input-group" style="border:1px solid var(--border);background:var(--bg);color:var(--text-primary);padding:10px 14px;border-radius:4px;font-family:var(--font-body);font-size:14px;width:100%;outline:none;">
+      <button type="submit" class="btn btn--filled">Генерировать</button>
+    </form>
+    <button id="download" class="btn btn--outline" style="display:none;margin-top:12px;" onclick="QRdownload()">Скачать</button>
+  </div>
+</main>
+
+<footer class="footer-bar">
+  <p>© 2026 KuzyMuzy inc. Все права защищены.</p>
+  <a href="/admin.html">Пароль от админки: 1234admin1234</a>
+</footer>
 
     <script>
         let selectedVer = 1;

@@ -1,6 +1,7 @@
 # Системный мусор ИИ-ассистентов
 .claude/
 .anthropic/
+docs/
 
 # Системные файлы macOS
 .DS_Store

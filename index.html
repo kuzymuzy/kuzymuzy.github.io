@@ -90,6 +90,7 @@
     padding: 18px 32px;
     max-width: 1080px;
     margin: 0 auto;
+    position: relative;
   }
   .logo {
     font-family: 'JetBrains Mono', monospace;
@@ -99,6 +100,13 @@
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+  .logo a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
   }
   .logo-icon {
     width: 24px;
@@ -115,6 +123,7 @@
     font-size: 13px;
     color: var(--text-secondary);
   }
+  .nav-links a:hover { color: var(--accent); }
   .nav-links a:hover { color: var(--accent); }
   .nav-cta {
     border: 1px solid var(--accent-dim);
@@ -535,13 +544,53 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 640px) {
+    .wrap { padding: 0 20px; }
+    .nav-inner { padding: 14px 20px; }
+    .logo { font-size: 13px; }
+    .nav-cta { padding: 6px 14px; font-size: 11px; }
+
+    .hero { padding: 48px 20px 40px; }
+    .hero-inner { flex-direction: column; gap: 24px; }
+    .hero-title { font-size: clamp(26px, 8vw, 36px); margin: 20px 0 16px; }
+    .hero-sub { font-size: 13px; margin-bottom: 24px; }
+    .hero__note { margin-bottom: 32px; }
+
+    .monitor { padding: 14px 16px; }
+    #log-feed { height: 100px; }
+    .log-row { font-size: 11px; }
+
+    .stat { padding: 24px 20px; }
+    .stat-num { font-size: 24px; }
+
+    .section { padding: 48px 20px; }
+    .section-title { font-size: clamp(20px, 5vw, 26px); }
+
+    .services-grid { margin-top: 32px; }
+    .service-card { padding: 24px 20px; }
+
+    .approach-row { grid-template-columns: 1fr; gap: 8px; padding: 20px 0; }
+    .approach-idx { font-size: 11px; }
+
+    .contact-card { padding: 28px 20px; }
+
+    .cta-section { padding: 48px 20px; }
+    .cta-title { font-size: clamp(22px, 6vw, 30px); }
+
+    .trust-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+    footer { padding: 24px 20px; font-size: 11px; }
+    .footer-links { gap: 16px; }
+  }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <div class="logo"><img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyMuzy" class="logo-icon">KuzyMuzy</div>
+    <div class="logo"><a href="/"><img src="https://kuzymuzy.ru/favicon.ico" alt="KuzyMuzy" class="logo-icon">KuzyMuzy</a></div>
     <div class="nav-links">
       <a href="#about_me">about me</a>
       <a href="#creativity">creativity</a>
@@ -711,7 +760,7 @@
       <div class="approach-row">
         <div class="approach-idx">01</div>
         <div>
-          <div class="approach-title"><a href="/KuzyCoin/index.html"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">KuzyCoin</a></div>
+          <div class="approach-title"><a href="https://kuzycoin.kuzymuzy.ru"><img src="https://kuzymuzy.ru/favicon.ico" alt="" class="link-icon">KuzyCoin</a></div>
           <div class="approach-desc">Игры кликер на подобе хомяка, раньше была в телеграм, а потом стала моим тренеровочным полем в разработки (сейчас не работате сервер с беком лежит так как платить за то что не приносит денег - глупо)</div>
         </div>
       </div>

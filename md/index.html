@@ -1,186 +1,610 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<link rel="icon" href="https://kuzymuzy.ru/favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Markdown Viewer">
-<meta name="description" content="Simple Markdown Viewer">
-<meta name="keywords" content="Markdown Viewer, Simple Markdown Viewer, Online Markdown Viewer, Viewer for .md">
-<meta property="og:title" content="Markdown Viewer">
-<meta property="og:description" content="Simple Markdown Viewer">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Markdown Viewer">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css" rel="stylesheet" />
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarkView — просмотрщик .md</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    margin: 0; padding: 0;
-    background: #0d1117;
-    color: #c9d1d9;
-    display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh;
+  :root{
+    --bg:#07070d;--bg-alt:#0b0b14;--surface:#10101a;
+    --surface-hover:#181828;
+    --border:rgba(99,102,241,.07);
+    --border-light:rgba(99,102,241,.12);
+    --text:#e8e8f0;--text-muted:#6b6b82;--text-dim:#3f3f52;
+    --accent-1:#7c3aed;--accent-2:#06b6d4;--accent-3:#ec4899;
+    --gradient:linear-gradient(135deg,#7c3aed,#06b6d4);
+    --radius:10px;--radius-sm:6px;
+    --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-bounce:cubic-bezier(.34,1.56,.64,1);
   }
-  header {
-    background: #161b22;
-    color: #c9d1d9;
-    width: 100%;
-    padding: 1rem 2rem;
-    box-sizing: border-box;
-    font-size: 1.2rem;
-    font-weight: 600;
-    user-select: none;
-    border-bottom: 1px solid #30363d;
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{font-size:16px}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter','Noto Sans',Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.65;
   }
-  main {
-    max-width: 900px;
-    width: 95%;
-    margin: 2rem auto;
-    background: #0d1117;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgb(12 17 23 / 0.9);
-    border: 1px solid #30363d;
+  .bg-effect{
+    position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+    background:radial-gradient(ellipse 50% 40% at 15% 20%,rgba(124,58,237,.06) 0%,transparent 70%),
+               radial-gradient(ellipse 40% 50% at 85% 75%,rgba(6,182,212,.04) 0%,transparent 70%),
+               radial-gradient(ellipse 30% 30% at 50% 50%,rgba(236,72,153,.03) 0%,transparent 60%);
   }
-  .markdown-body {
-    color: #c9d1d9;
-    word-wrap: break-word;
+  .bg-effect::after{
+    content:'';position:absolute;inset:0;opacity:.02;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  /* Override некоторые цвета из github-markdown-css для тёмной темы */
-  .markdown-body a {
-    color: #58a6ff;
-    text-decoration: none;
+  .app{position:relative;z-index:1}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:8px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(99,102,241,.2)}
+
+  /* topbar */
+  .topbar{
+    position:sticky;top:0;z-index:100;
+    display:flex;align-items:center;gap:10px;
+    padding:10px 20px;
+    background:rgba(7,7,13,.75);backdrop-filter:blur(24px) saturate(1.6);
+    border-bottom:1px solid var(--border);flex-wrap:wrap;
   }
-  .markdown-body a:hover {
-    text-decoration: underline;
+  .topbar-logo{
+    font-size:1rem;font-weight:800;letter-spacing:-.3px;
+    display:flex;align-items:center;gap:8px;white-space:nowrap;
+    background:var(--gradient);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   }
-  .markdown-body h1,
-  .markdown-body h2,
-  .markdown-body h3,
-  .markdown-body h4,
-  .markdown-body h5,
-  .markdown-body h6 {
-    color: #f0f6fc;
+  .topbar-logo::before{content:'◇';font-size:1.1rem;-webkit-text-fill-color:#7c3aed;opacity:.6}
+  .topbar-logo small{
+    -webkit-text-fill-color:var(--text-dim);font-weight:500;font-size:.65rem;
+    background:var(--border);padding:2px 8px;border-radius:20px;
   }
-  .markdown-body table {
-    border-collapse: collapse;
-    width: 100%;
+  .topbar-spacer{flex:1;min-width:8px}
+  .topbar-file{
+    display:none;align-items:center;gap:8px;
+    font-size:.8rem;color:var(--text-muted);max-width:240px;
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
   }
-  .markdown-body th,
-  .markdown-body td {
-    border: 1px solid #30363d;
-    padding: 6px 13px;
+  .topbar-file.show{display:flex}
+  .topbar-file .icon{flex-shrink:0;font-size:.9rem;opacity:.5}
+  .topbar-file .name{overflow:hidden;text-overflow:ellipsis}
+  .topbar-file .size{color:var(--text-dim);font-size:.68rem;flex-shrink:0}
+  .topbar-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;border-radius:var(--radius-sm);
+    border:1px solid var(--border-light);background:transparent;
+    color:var(--text-muted);font-size:.76rem;font-weight:500;
+    cursor:pointer;transition:all .25s var(--ease-out);white-space:nowrap;
   }
-  .markdown-body th {
-    background-color: #161b22;
-    color: #8b949e;
+  .topbar-btn:hover{background:var(--surface);border-color:rgba(99,102,241,.2);color:var(--text)}
+  .topbar-btn.active{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.25);color:var(--accent-2)}
+  .topbar-btn.copied{background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.25);color:#06b6d4}
+  .topbar-btn svg{width:13px;height:13px;flex-shrink:0}
+  .topbar-raw-toggle{display:none}.topbar-raw-toggle.show{display:inline-flex}
+  .share-btn{display:none}.share-btn.show{display:inline-flex}
+  .url-open-btn{display:inline-flex}
+  .topbar-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+  .open-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 18px;border-radius:var(--radius-sm);border:none;
+    background:var(--gradient);color:#fff;font-size:.8rem;font-weight:600;
+    cursor:pointer;transition:all .3s var(--ease-bounce);
+    white-space:nowrap;position:relative;overflow:hidden;
   }
-  .markdown-body tr:nth-child(even) {
-    background-color: #161b22;
+  .open-btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.08);opacity:0;transition:opacity .3s}
+  .open-btn:hover::after{opacity:1}
+  .open-btn:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(124,58,237,.3)}
+  .open-btn:active{transform:scale(.96)}
+  .open-btn svg{width:15px;height:15px}
+
+  /* url bar */
+  .url-bar{
+    display:none;align-items:center;gap:10px;
+    padding:10px 20px;background:var(--surface);
+    border-bottom:1px solid var(--border);
+    position:sticky;top:53px;z-index:99;
+    animation:slideDown .25s var(--ease-out);
   }
-  .markdown-body code {
-    background-color: #161b22;
-    color: #8b949e;
-    padding: 0.2em 0.4em;
-    border-radius: 6px;
-    font-size: 85%;
-    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  .url-bar.show{display:flex}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+  .url-bar input{
+    flex:1;padding:8px 14px;border-radius:var(--radius-sm);
+    border:1px solid var(--border-light);background:var(--bg);
+    color:var(--text);font-size:.84rem;font-family:inherit;
+    outline:none;transition:border-color .25s var(--ease-out),box-shadow .25s;min-width:0;
   }
-  textarea, input[type="text"], button {
-    font-family: inherit;
+  .url-bar input:focus{border-color:rgba(124,58,237,.3);box-shadow:0 0 0 3px rgba(124,58,237,.06)}
+  .url-bar input::placeholder{color:var(--text-dim)}
+  .url-bar .load-btn{
+    padding:8px 20px;border-radius:var(--radius-sm);border:none;
+    background:var(--gradient);color:#fff;font-size:.8rem;font-weight:600;
+    cursor:pointer;transition:all .25s var(--ease-out);white-space:nowrap;flex-shrink:0;
   }
-  textarea {
-    background: #161b22;
-    border: 1px solid #30363d;
-    color: #c9d1d9;
-    border-radius: 5px;
+  .url-bar .load-btn:hover{box-shadow:0 4px 20px rgba(124,58,237,.25)}
+  .url-bar .load-btn:disabled{opacity:.4;cursor:not-allowed}
+  .url-bar .close-url-btn{
+    background:transparent;border:none;color:var(--text-dim);cursor:pointer;
+    font-size:1.1rem;padding:4px 8px;border-radius:var(--radius-sm);
+    transition:all .2s;line-height:1;
   }
-  input[type="text"] {
-    background: #161b22;
-    border: 1px solid #30363d;
-    color: #c9d1d9;
-    border-radius: 5px;
+  .url-bar .close-url-btn:hover{color:var(--text);background:var(--surface-hover)}
+
+  /* main */
+  .main{max-width:860px;margin:0 auto;padding:0 24px;min-height:calc(100vh - 53px);position:relative}
+
+  /* empty state */
+  .empty-state{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;min-height:calc(100vh - 120px);position:relative;gap:12px;
   }
-  button {
-    background: #238636;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+  .empty-icon{
+    font-size:3.6rem;margin-bottom:4px;position:relative;
+    filter:grayscale(.4);opacity:.25;
+    animation:floatEmpty 6s ease-in-out infinite;
   }
-  button:hover {
-    background: #2ea043;
+  @keyframes floatEmpty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .empty-state h2{font-size:1.2rem;font-weight:700;color:var(--text-muted);letter-spacing:-.3px}
+  .empty-state p{font-size:.88rem;color:var(--text-dim);max-width:360px;line-height:1.7}
+  .empty-state .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+  .empty-state .actions button{
+    padding:10px 22px;border-radius:var(--radius-sm);border:none;
+    font-size:.84rem;font-weight:600;cursor:pointer;transition:all .25s var(--ease-out);
   }
-  .controls {
-    margin-bottom: 1rem;
+  .empty-state .actions .primary{background:var(--gradient);color:#fff}
+  .empty-state .actions .primary:hover{box-shadow:0 4px 24px rgba(124,58,237,.3);transform:translateY(-1px)}
+  .empty-state .actions .ghost{
+    background:transparent;border:1px solid var(--border-light);color:var(--text-muted);
   }
+  .empty-state .actions .ghost:hover{background:var(--surface);border-color:rgba(99,102,241,.2);color:var(--text)}
+  .empty-state .shortcut-hint{
+    margin-top:20px;padding:7px 14px;border-radius:var(--radius-sm);
+    background:var(--surface);border:1px solid var(--border);
+    font-size:.72rem;color:var(--text-dim);
+  }
+  .empty-state .shortcut-hint kbd{
+    display:inline-block;padding:1px 6px;border-radius:4px;
+    background:var(--bg);font-family:inherit;font-size:.66rem;
+    border:1px solid var(--border-light);margin:0 2px;color:var(--text-muted);
+  }
+
+  /* loading */
+  .loading-overlay{
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    min-height:calc(100vh - 120px);gap:20px;
+  }
+  .loading-overlay.show{display:flex}
+  .spinner{width:28px;height:28px;border:2.5px solid var(--border-light);border-top-color:var(--accent-2);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-overlay p{color:var(--text-muted);font-size:.9rem}
+
+  /* drop zone */
+  .drop-overlay{
+    position:fixed;inset:0;z-index:200;
+    display:none;align-items:center;justify-content:center;
+    background:rgba(7,7,13,.94);backdrop-filter:blur(8px);
+  }
+  .drop-overlay.show{display:flex}
+  .drop-overlay .box{
+    padding:56px;border-radius:20px;
+    border:2px dashed var(--border-light);
+    background:rgba(16,16,26,.85);text-align:center;
+    transition:all .4s var(--ease-out);max-width:380px;
+  }
+  .drop-overlay.dragover .box{
+    border-color:#7c3aed;background:rgba(16,16,26,.95);
+    box-shadow:0 0 80px rgba(124,58,237,.08);transform:scale(1.02);
+  }
+  .drop-overlay .box .icon{font-size:3rem;margin-bottom:14px;opacity:.6}
+  .drop-overlay .box h3{font-size:1rem;font-weight:600;margin-bottom:6px}
+  .drop-overlay .box p{font-size:.84rem;color:var(--text-muted)}
+
+  /* md body */
+  .md-body{display:none;padding:40px 0 80px;animation:fadeUp .4s var(--ease-out)}
+  .md-body.show{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* markdown styles */
+  .markdown-body{word-wrap:break-word;line-height:1.75;color:#dddde8}
+  .markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{
+    margin-top:32px;margin-bottom:12px;font-weight:700;line-height:1.25;letter-spacing:-.03em;color:var(--text);
+  }
+  .markdown-body h1{font-size:2.2em;margin-top:0}
+  .markdown-body h1::after{content:'';display:block;width:40px;height:3px;border-radius:4px;margin-top:12px;background:var(--gradient)}
+  .markdown-body h2{font-size:1.6em}
+  .markdown-body h2::after{content:'';display:block;width:32px;height:2.5px;border-radius:4px;margin-top:10px;background:var(--gradient)}
+  .markdown-body h3{font-size:1.3em}
+  .markdown-body h4{font-size:1.05em}
+  .markdown-body h5{font-size:.92em;color:var(--text-muted)}
+  .markdown-body h6{font-size:.88em;color:var(--text-dim)}
+  .markdown-body p,.markdown-body blockquote,.markdown-body ul,.markdown-body ol,.markdown-body dl,.markdown-body table,.markdown-body pre,.markdown-body details{margin-top:0;margin-bottom:20px}
+  .markdown-body p{line-height:1.8}
+  .markdown-body a{color:#67b8f7;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+  .markdown-body a:hover{border-color:rgba(103,184,247,.3)}
+  .markdown-body strong{font-weight:700;color:var(--text)}
+  .markdown-body hr{height:1px;padding:0;margin:36px 0;background:var(--gradient);opacity:.15;border:none;border-radius:2px}
+  .markdown-body ul,.markdown-body ol{padding-left:1.6em}
+  .markdown-body ul ul,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ol ol{margin-top:0;margin-bottom:0}
+  .markdown-body li{word-wrap:break-all}
+  .markdown-body li+li{margin-top:.3em}
+  .markdown-body ul li{list-style-type:disc}
+  .markdown-body ul ul li{list-style-type:circle}
+  .markdown-body li::marker{color:var(--accent-2);opacity:.6}
+  .markdown-body ul li input[type="checkbox"],.markdown-body ol li input[type="checkbox"]{margin:0 .25em .25em -1.6em;vertical-align:middle;accent-color:#7c3aed}
+  .markdown-body blockquote{padding:4px 20px;color:var(--text-muted);border-left:2.5px solid transparent;border-image:var(--gradient) 1}
+  .markdown-body blockquote>:first-child{margin-top:0}
+  .markdown-body blockquote>:last-child{margin-bottom:0}
+  .markdown-body code{
+    padding:.2em .45em;margin:0;font-size:84%;
+    background:rgba(124,58,237,.08);border-radius:5px;
+    font-family:'SF Mono','JetBrains Mono','Fira Code',monospace;color:#c4b5fd;
+  }
+  .markdown-body pre{
+    position:relative;overflow-x:auto;
+    background:var(--surface);border-radius:var(--radius);
+    border:1px solid var(--border);line-height:1.45;
+  }
+  .markdown-body pre::before{
+    content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+    background:var(--gradient);border-radius:3px 0 0 3px;
+  }
+  .markdown-body pre code{
+    display:block;padding:18px 20px;overflow-x:auto;
+    background:transparent;border-radius:0;
+    font-size:83%;line-height:1.55;word-wrap:normal;white-space:pre;
+  }
+  .md-code-copy{
+    position:absolute;top:8px;right:8px;
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 10px;border-radius:var(--radius-sm);
+    border:1px solid var(--border-light);background:var(--bg);
+    color:var(--text-dim);font-size:.72rem;font-weight:500;cursor:pointer;
+    opacity:0;transition:all .2s var(--ease-out);z-index:2;line-height:1;
+  }
+  .markdown-body pre:hover .md-code-copy{opacity:1}
+  .md-code-copy:hover{background:var(--surface-hover);color:var(--text-muted);border-color:rgba(99,102,241,.2)}
+  .md-code-copy.copied{opacity:1;background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.2);color:#06b6d4}
+  .markdown-body table{
+    display:block;width:100%;max-width:100%;overflow-x:auto;
+    border-collapse:separate;border-spacing:0;
+    border-radius:var(--radius-sm);overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .markdown-body table th,.markdown-body table td{padding:10px 16px;border-bottom:1px solid var(--border);text-align:left;font-size:.9rem}
+  .markdown-body table th{font-weight:700;color:var(--text);background:var(--surface);font-size:.82rem;letter-spacing:.3px}
+  .markdown-body table tr:last-child td{border-bottom:none}
+  .markdown-body table tr:nth-child(even){background:rgba(16,16,26,.4)}
+  .markdown-body table tr:hover{background:var(--surface-hover)}
+  .markdown-body img{max-width:100%;border-radius:var(--radius);border:1px solid var(--border);transition:border-color .3s}
+  .markdown-body img:hover{border-color:rgba(99,102,241,.15)}
+  .markdown-body h1 code,.markdown-body h2 code,.markdown-body h3 code,.markdown-body h4 code{font-size:inherit;background:rgba(124,58,237,.06)}
+  .markdown-body details summary{cursor:pointer;font-weight:600;color:var(--text-muted);transition:color .2s}
+  .markdown-body details summary:hover{color:var(--text)}
+  .markdown-body details:not([open])>*:not(summary){display:none}
+  .markdown-body kbd{
+    display:inline-block;padding:3px 7px;font-size:11px;line-height:11px;
+    color:var(--text);background:var(--surface);border:1px solid var(--border-light);
+    border-radius:5px;box-shadow:0 1px 0 var(--border-light);font-family:inherit;
+  }
+
+  /* raw */
+  .raw-body{display:none;padding:28px 0 80px;animation:fadeUp .35s var(--ease-out)}
+  .raw-body.show{display:block}
+  .raw-body pre{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px 24px;overflow-x:auto;font-size:.84rem;
+    line-height:1.65;color:var(--text-muted);
+    font-family:'SF Mono','JetBrains Mono',monospace;
+  }
+
+  /* toast */
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+    padding:10px 22px;border-radius:var(--radius);
+    background:rgba(16,16,26,.92);backdrop-filter:blur(20px);
+    border:1px solid var(--border-light);color:var(--text);
+    font-size:.82rem;font-weight:500;z-index:300;
+    opacity:0;transition:all .45s var(--ease-out);
+    pointer-events:none;display:flex;align-items:center;gap:10px;white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* responsive */
+  @media(max-width:700px){
+    .topbar{padding:8px 14px;gap:6px}
+    .topbar-file{max-width:100px;font-size:.76rem}
+    .open-btn{padding:6px 14px;font-size:.76rem}
+    .topbar-logo{font-size:.9rem}
+    .topbar-btn{font-size:.7rem;padding:4px 9px}
+    .topbar-btn svg{width:12px;height:12px}
+    .main{padding:0 16px}
+    .md-body{padding:24px 0 60px}
+    .empty-state h2{font-size:1rem}
+    .empty-icon{font-size:2.8rem}
+    .markdown-body pre code{padding:14px}
+    .markdown-body pre::before{width:2.5px}
+    .md-code-copy{opacity:1;font-size:.68rem;padding:3px 8px;top:6px;right:6px}
+    .url-bar{padding:8px 14px;flex-wrap:wrap;top:49px}
+    .url-bar input{min-width:100px}
+    .markdown-body h1{font-size:1.7em}
+    .markdown-body h2{font-size:1.35em}
+    .markdown-body table th,.markdown-body table td{padding:8px 12px}
+  }
+  @media(max-width:400px){
+    .topbar-file{max-width:60px;font-size:.7rem}
+    .open-btn{padding:5px 10px;font-size:.72rem}
+    .topbar-btn{font-size:.66rem;padding:3px 7px}
+  }
+  .markdown-body pre code.hljs{padding:18px 20px;background:transparent !important}
 </style>
 </head>
 <body>
-<header>Markdown Viewer — загрузи файл или вставь ссылку</header>
 
-<main>
-  <div class="controls">
-    <input type="file" id="fileInput" accept=".md,text/markdown" />
-    <input type="text" id="urlInput" placeholder="Введите URL до .md файла" />
-    <button id="loadUrlBtn">Загрузить по URL</button>
+<div class="bg-effect"></div>
+<div class="app">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">MarkView <small>.md</small></div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-file" id="topbarFile">
+    <span class="icon">📄</span>
+    <span class="name" id="fileName"></span>
+    <span class="size" id="fileSize"></span>
   </div>
-  
-  <div id="content" class="markdown-body"></div>
-</main>
+  <button class="topbar-btn topbar-raw-toggle" id="rawToggle">⟨/⟩ Исходник</button>
+  <button class="topbar-btn share-btn" id="shareBtn">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.823.823a.75.75 0 0 1 1.06 0l3.5 3.5a.75.75 0 0 1-1.06 1.06L9 3.06v7.69a.75.75 0 0 1-1.5 0V3.06l-2.323 2.323a.75.75 0 1 1-1.06-1.06Z"/><path d="M1.75 9.5a.75.75 0 0 1 .75.75v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14H2.75A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 .75-.75Z"/></svg>
+    Поделиться
+  </button>
+  <div class="topbar-actions">
+    <button class="topbar-btn url-open-btn" id="urlOpenBtn">🌐 Из URL</button>
+    <button class="open-btn" id="openBtn">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Z"/><path d="M10.5 1.75a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0V3.06l-4.22 4.22a.75.75 0 1 1-1.06-1.06l4.22-4.22h-1.69a.75.75 0 0 1-.75-.75Z"/></svg>
+      Открыть
+    </button>
+  </div>
+  <input type="file" id="fileInput" accept=".md,.markdown,.mdown,.mkd" hidden>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- URL BAR -->
+<div class="url-bar" id="urlBar">
+  <input type="text" id="urlInput" placeholder="https://raw.githubusercontent.com/username/repo/main/file.md" spellcheck="false">
+  <button class="load-btn" id="urlLoadBtn">Загрузить</button>
+  <button class="close-url-btn" id="urlCloseBtn">✕</button>
+</div>
+
+<!-- DROP OVERLAY -->
+<div class="drop-overlay" id="dropOverlay">
+  <div class="box">
+    <div class="icon">📄</div>
+    <h3>Отпустите файл</h3>
+    <p>.md, .markdown или .mkd</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Загружаем файл…</p>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">📝</div>
+    <h2>Выберите .md файл</h2>
+    <p>Откройте файл, перетащите его сюда или укажите ссылку на remote .md</p>
+    <div class="actions">
+      <button class="primary" onclick="document.getElementById('fileInput').click()">📂 Выбрать файл</button>
+      <button class="ghost" onclick="document.getElementById('urlOpenBtn').click()">🌐 Открыть по ссылке</button>
+      <button class="primary" onclick="window.location.href = '/md/old.html'">Old Version</button>
+    </div>
+    <div class="shortcut-hint"><kbd>Cmd</kbd> + <kbd>O</kbd> — файл · <kbd>Cmd</kbd> + <kbd>I</kbd> — URL</div>
+  </div>
+
+  <div class="md-body" id="mdBody">
+    <div class="markdown-body" id="mdContent"></div>
+  </div>
+
+  <div class="raw-body" id="rawBody">
+    <pre id="rawContent"></pre>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastMsg">Готово</span></div>
+
+</div><!-- .app -->
 
 <script>
-  const fileInput = document.getElementById('fileInput');
-  const urlInput = document.getElementById('urlInput');
-  const loadUrlBtn = document.getElementById('loadUrlBtn');
-  const content = document.getElementById('content');
+// ===== STATE =====
+let currentContent = '';
+let currentName = '';
+let currentSource = null;
+let currentUrl = '';
+let showingRaw = false;
 
-  marked.setOptions({
-    gfm: true,
-    breaks: true,
-    headerIds: true,
-  });
+// ===== DOM REFS =====
+const $ = id => document.getElementById(id);
+const fileInput = $('fileInput');
+const openBtn = $('openBtn');
+const dropOverlay = $('dropOverlay');
+const emptyState = $('emptyState');
+const loadingOverlay = $('loadingOverlay');
+const mdBody = $('mdBody');
+const mdContent = $('mdContent');
+const rawBody = $('rawBody');
+const rawContent = $('rawContent');
+const rawToggle = $('rawToggle');
+const shareBtn = $('shareBtn');
+const topbarFile = $('topbarFile');
+const fileName = $('fileName');
+const fileSize = $('fileSize');
+const urlBar = $('urlBar');
+const urlInput = $('urlInput');
+const urlLoadBtn = $('urlLoadBtn');
+const urlCloseBtn = $('urlCloseBtn');
+const urlOpenBtn = $('urlOpenBtn');
+const toast = $('toast');
+const toastIcon = $('toastIcon');
+const toastMsg = $('toastMsg');
 
-  function renderMarkdown(mdText) {
-    content.innerHTML = marked.parse(mdText);
+// ===== UTILS =====
+function formatSize(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1024/1024).toFixed(1) + ' MB';
+}
+let toastTimer;
+function showToast(msg, icon){
+  toastIcon.textContent = icon || '✓';
+  toastMsg.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// ===== CONFIGURE MARKED =====
+marked.setOptions({
+  gfm: true, breaks: true, langPrefix: 'language-',
+  highlight: function(code, lang){
+    if(lang && hljs.getLanguage(lang)){ try{ return hljs.highlight(code,{language:lang}).value }catch(e){} }
+    try{ return hljs.highlightAuto(code).value }catch(e){}
+    return code;
   }
+});
 
-  fileInput.addEventListener('change', () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-    if (!file.name.endsWith('.md')) {
-      alert('Пожалуйста, выберите markdown файл (.md)');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      renderMarkdown(reader.result);
-    };
-    reader.readAsText(file);
-  });
+// ===== RENDER =====
+function renderMarkdown(text, name){
+  currentContent = text;
+  currentName = name || 'untitled.md';
+  let body = text;
+  if(body.startsWith('---')){ const e=body.indexOf('---',3); if(e!==-1) body=body.slice(e+3).trimStart() }
+  mdContent.innerHTML = marked.parse(body);
+  addCopyButtons();
+  setSyntaxLineHeights();
+  emptyState.style.display = 'none';
+  loadingOverlay.classList.remove('show');
+  mdBody.classList.add('show');
+  topbarFile.classList.add('show');
+  const nameParts = currentName.split('/').pop().split('\\').pop();
+  fileName.textContent = nameParts;
+  fileSize.textContent = formatSize(text.length);
+  rawContent.textContent = text;
+  rawToggle.classList.add('show');
+  if(showingRaw) toggleRawView();
+  if(currentSource === 'url') shareBtn.classList.add('show');
+  else shareBtn.classList.remove('show');
+}
 
-  loadUrlBtn.addEventListener('click', () => {
-    const url = urlInput.value.trim();
-    if (!url) return alert('Введите URL файла');
-    
-    fetch(url)
-      .then(response => {
-        if (!response.ok) throw new Error('Ошибка загрузки файла');
-        return response.text();
-      })
-      .then(text => {
-        renderMarkdown(text);
-      })
-      .catch(err => {
-        alert('Ошибка: ' + err.message);
-      });
+// ===== COPY BUTTONS =====
+function addCopyButtons(){
+  document.querySelectorAll('.markdown-body pre').forEach(pre => {
+    if(pre.querySelector('.md-code-copy')) return;
+    const btn = document.createElement('button');
+    btn.className = 'md-code-copy';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> Copy';
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code');
+      const text = code ? code.textContent : pre.textContent;
+      try{
+        await navigator.clipboard.writeText(text);
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg> Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      }catch(e){}
+    });
   });
+}
+function setSyntaxLineHeights(){ document.querySelectorAll('.markdown-body pre code.hljs').forEach(el => { el.style.lineHeight = '1.55' }) }
+
+// ===== TOGGLE RAW =====
+function toggleRawView(){
+  showingRaw = !showingRaw;
+  if(showingRaw){ mdBody.classList.remove('show'); rawBody.classList.add('show'); rawToggle.classList.add('active'); rawToggle.textContent = '⟨/⟩ Готово' }
+  else{ rawBody.classList.remove('show'); mdBody.classList.add('show'); rawToggle.classList.remove('active'); rawToggle.textContent = '⟨/⟩ Исходник' }
+}
+rawToggle.addEventListener('click', toggleRawView);
+
+// ===== LOAD LOCAL =====
+function loadFile(file){
+  if(!file) return;
+  currentSource = 'file';
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(!['md','markdown','mdown','mkd'].includes(ext)){ alert('Пожалуйста, выберите .md файл'); return }
+  const reader = new FileReader();
+  reader.onload = e => { renderMarkdown(e.target.result, file.name); showToast('📄 Загружено') };
+  reader.readAsText(file);
+}
+openBtn.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => { if(e.target.files[0]) loadFile(e.target.files[0]); fileInput.value = '' });
+
+// ===== LOAD FROM URL =====
+async function loadFromUrl(url){
+  if(!url.trim()) return;
+  currentUrl = url.trim(); currentSource = 'url';
+  urlBar.classList.remove('show'); urlOpenBtn.classList.remove('active');
+  loadingOverlay.classList.add('show'); emptyState.style.display = 'none';
+  mdBody.classList.remove('show'); rawBody.classList.remove('show');
+  try{
+    const resp = await fetch(currentUrl);
+    if(!resp.ok) throw new Error('HTTP '+resp.status+' '+resp.statusText);
+    const text = await resp.text();
+    if(!text.trim()) throw new Error('Файл пустой');
+    const name = currentUrl.split('/').pop().split('?')[0] || 'remote.md';
+    renderMarkdown(text, name); showToast('🌐 Загружено с URL');
+  }catch(e){
+    loadingOverlay.classList.remove('show');
+    emptyState.style.display = 'flex';
+    showToast('❌ '+e.message, '✕');
+    setTimeout(() => alert('Не удалось загрузить файл:\n'+e.message), 300);
+  }
+}
+urlOpenBtn.addEventListener('click', () => { urlBar.classList.toggle('show'); urlOpenBtn.classList.toggle('active'); if(urlBar.classList.contains('show')) urlInput.focus() });
+urlCloseBtn.addEventListener('click', () => { urlBar.classList.remove('show'); urlOpenBtn.classList.remove('active') });
+urlLoadBtn.addEventListener('click', () => loadFromUrl(urlInput.value));
+urlInput.addEventListener('keydown', e => { if(e.key==='Enter') loadFromUrl(urlInput.value) });
+
+// ===== SHARE =====
+shareBtn.addEventListener('click', () => {
+  if(currentSource !== 'url' || !currentUrl){ showToast('📂 Локальный файл — нет ссылки', '✕'); return }
+  const shareUrl = window.location.origin + window.location.pathname + '?url=' + encodeURIComponent(currentUrl);
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    shareBtn.classList.add('copied');
+    shareBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg> Скопировано!';
+    showToast('🔗 Ссылка скопирована');
+    setTimeout(() => {
+      shareBtn.classList.remove('copied');
+      shareBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.823.823a.75.75 0 0 1 1.06 0l3.5 3.5a.75.75 0 0 1-1.06 1.06L9 3.06v7.69a.75.75 0 0 1-1.5 0V3.06l-2.323 2.323a.75.75 0 1 1-1.06-1.06Z"/><path d="M1.75 9.5a.75.75 0 0 1 .75.75v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14H2.75A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 .75-.75Z"/></svg> Поделиться';
+    }, 2200);
+  }).catch(() => { const ta=document.createElement('textarea'); ta.value=shareUrl; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); showToast('🔗 Ссылка скопирована') }catch(e){} document.body.removeChild(ta) });
+});
+
+// ===== DRAG & DROP =====
+let dragCounter = 0;
+document.addEventListener('dragenter', e => { e.preventDefault(); dragCounter++; if(dragCounter===1) dropOverlay.classList.add('show') });
+document.addEventListener('dragleave', e => { e.preventDefault(); dragCounter--; if(dragCounter===0) dropOverlay.classList.remove('show') });
+document.addEventListener('dragover', e => { e.preventDefault(); dropOverlay.classList.add('dragover') });
+dropOverlay.addEventListener('dragleave', e => { e.preventDefault(); dropOverlay.classList.remove('dragover') });
+document.addEventListener('drop', e => { e.preventDefault(); dragCounter=0; dropOverlay.classList.remove('show','dragover'); const file=e.dataTransfer.files[0]; if(file) loadFile(file) });
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown', e => {
+  if((e.metaKey||e.ctrlKey)&&e.key==='o'){ e.preventDefault(); fileInput.click() }
+  if((e.metaKey||e.ctrlKey)&&e.key==='i'){ e.preventDefault(); urlOpenBtn.click() }
+  if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&currentContent){ e.preventDefault(); toggleRawView() }
+});
+
+// ===== URL PARAMS ON LOAD =====
+(function(){ const p=new URLSearchParams(window.location.search); const u=p.get('url'); if(u){ urlInput.value=u; loadFromUrl(u) } })();
 </script>
 </body>
 </html>

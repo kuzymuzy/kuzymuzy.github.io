@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЧЕБУРНЕТ ПОРТАЛ — Ваш суверенный интернет</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Rubik:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg: #050608;
+    --bg-soft: #0a0d12;
+    --white-neon: #f4f7ff;
+    --blue-neon: #1e6bff;
+    --blue-glow: #3d8bff;
+    --red-neon: #ff1f3d;
+    --red-glow: #ff4d63;
+    --gold-neon: #ffd700;
+    --gold-glow: #ffe44d;
+    --text-dim: #8a93a6;
+    --line: rgba(244,247,255,0.12);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--white-neon);
+    font-family:'Rubik', sans-serif;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:''; position:fixed; inset:0;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(30,107,255,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(255,31,61,0.08), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(255,215,0,0.03), transparent 50%);
+    pointer-events:none; z-index:0;
+  }
+
+  .tricolor-bar{
+    position:fixed; top:0; left:0; width:100%; height:4px; z-index:100;
+    background:linear-gradient(90deg, var(--white-neon) 0 33.3%, var(--blue-neon) 33.3% 66.6%, var(--red-neon) 66.6% 100%);
+    box-shadow:0 0 20px rgba(30,107,255,0.6), 0 0 20px rgba(255,31,61,0.4);
+  }
+
+  nav{
+    position:sticky; top:4px; z-index:90;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 6vw;
+    background:rgba(5,6,8,0.85);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-family:'Unbounded', sans-serif; font-weight:800; font-size:18px;
+    text-decoration:none; color:var(--white-neon);
+  }
+  .logo span{color:var(--blue-glow); text-shadow:0 0 12px var(--blue-neon);}
+  nav ul{list-style:none; display:flex; gap:28px;}
+  nav a{color:var(--text-dim); text-decoration:none; font-size:13px; font-weight:500; transition:color .25s;}
+  nav a:hover{color:var(--white-neon);}
+
+  .portal{z-index:1; position:relative;}
+
+  /* HERO BANNER */
+  .portal-hero{
+    text-align:center; padding:60px 6vw 40px;
+    position:relative; overflow:hidden;
+  }
+  .portal-hero::after{
+    content:''; position:absolute; bottom:0; left:0; width:100%; height:1px;
+    background:linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+  .portal-hero h1{
+    font-family:'Unbounded', sans-serif; font-weight:900;
+    font-size:clamp(28px,5vw,52px); line-height:1.05; letter-spacing:-1px; text-transform:uppercase;
+  }
+  .portal-hero h1 .glow-white{color:var(--white-neon); text-shadow:0 0 14px rgba(244,247,255,0.5);}
+  .portal-hero h1 .glow-blue{color:var(--blue-glow); text-shadow:0 0 18px var(--blue-neon);}
+  .portal-hero h1 .glow-red{color:var(--red-glow); text-shadow:0 0 18px var(--red-neon);}
+  .portal-hero h1 .glow-gold{color:var(--gold-neon); text-shadow:0 0 18px rgba(255,215,0,0.5);}
+  .portal-hero .sub{
+    color:var(--text-dim); font-family:'JetBrains Mono', monospace; font-size:13px; letter-spacing:2px;
+    margin-top:12px;
+  }
+  .portal-hero .sub .green{color:var(--green-neon, #00e676);}
+
+  /* CONTENT GRID */
+  .portal-grid{max-width:1100px; margin:0 auto; padding:0 6vw 80px;}
+
+  /* Section titles */
+  .section-title{
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--blue-glow); margin-bottom:18px; display:flex; align-items:center; gap:8px;
+  }
+  .section-title::after{content:''; flex:1; height:1px; background:var(--line);}
+
+  /*===== ANTHEM SECTION =====*/
+  .anthem-block{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:8px;
+    padding:36px 32px; margin-bottom:36px;
+    position:relative; overflow:hidden;
+  }
+  .anthem-block::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.06), transparent 70%);
+    pointer-events:none;
+  }
+  .anthem-block .anthem-title{
+    font-family:'Unbounded', sans-serif; font-weight:800; font-size:20px; text-transform:uppercase;
+    text-align:center; margin-bottom:4px; letter-spacing:1px;
+  }
+  .anthem-block .anthem-sub{
+    text-align:center; font-size:12px; color:var(--text-dim); margin-bottom:24px;
+    font-family:'JetBrains Mono', monospace; letter-spacing:2px;
+  }
+  .player-wrap{display:flex; align-items:center; gap:20px; justify-content:center; flex-wrap:wrap;}
+  .play-big{
+    width:72px; height:72px; border-radius:50%;
+    border:2px solid var(--gold-neon); cursor:pointer;
+    background:radial-gradient(circle, rgba(255,215,0,0.12), transparent 70%);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition:all .3s;
+    box-shadow:0 0 28px rgba(255,215,0,0.2);
+  }
+  .play-big:hover{transform:scale(1.08); box-shadow:0 0 40px rgba(255,215,0,0.35);}
+  .play-big svg{width:24px; fill:var(--gold-neon);}
+  .play-big.playing svg{fill:var(--red-glow);}
+  .lyrics-block{flex:1; min-width:200px;}
+  .lyrics-line{
+    font-family:'Rubik', sans-serif; font-size:16px; line-height:1.8; color:var(--text-dim);
+    transition:color .3s;
+  }
+  .lyrics-line.active{color:var(--gold-neon); text-shadow:0 0 8px rgba(255,215,0,0.3);}
+  .lyrics-line .hl{color:var(--white-neon); font-weight:500;}
+  .anthem-stub{
+    text-align:center; margin-top:16px; font-family:'JetBrains Mono', monospace;
+    font-size:11px; color:#4a5265; letter-spacing:1px;
+  }
+
+  /*===== PUTIN CORNER =====*/
+  .putin-block{
+    border:1px solid var(--line); border-radius:8px; padding:32px; margin-bottom:36px;
+    background:var(--bg);
+    position:relative;
+    text-align:center;
+  }
+  .putin-block::before{
+    content:''; position:absolute; inset:-1px; border-radius:9px;
+    background:linear-gradient(135deg, var(--gold-neon), var(--red-neon), var(--blue-neon));
+    opacity:0.15; pointer-events:none;
+    mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    padding:1px;
+  }
+  .putin-avatar{
+    width:80px; height:80px; border-radius:50%; margin:0 auto 16px;
+    background:linear-gradient(135deg, var(--blue-neon), var(--red-neon));
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px; font-family:'Unbounded', sans-serif; font-weight:900;
+    box-shadow:0 0 30px rgba(30,107,255,0.3);
+    position:relative; overflow:hidden;
+  }
+  .putin-avatar .crown{position:absolute; top:-6px; font-size:20px; filter:drop-shadow(0 0 6px var(--gold-neon));}
+  .putin-block .putin-title{
+    font-family:'Unbounded', sans-serif; font-weight:800; font-size:22px; letter-spacing:0px; text-transform:uppercase;
+    background:linear-gradient(90deg, var(--white-neon), var(--gold-neon));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .putin-block .putin-sub{color:var(--text-dim); font-size:13px; margin-top:4px; font-family:'JetBrains Mono', monospace; letter-spacing:1px;}
+
+  .putin-quotes{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; text-align:left;}
+  .putin-quote{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:6px;
+    padding:16px; font-size:14px; line-height:1.6; color:var(--white-neon);
+    position:relative;
+  }
+  .putin-quote::before{content:'«'; color:var(--gold-neon); font-size:24px; opacity:0.5; position:absolute; top:4px; left:10px;}
+  .putin-quote .src{display:block; margin-top:8px; font-size:11px; color:var(--text-dim); font-family:'JetBrains Mono', monospace; letter-spacing:1px;}
+
+  .kneel-btn{
+    margin-top:20px; padding:12px 32px; border-radius:6px;
+    border:1px solid var(--gold-neon); background:transparent;
+    color:var(--gold-neon); font-family:'Unbounded', sans-serif; font-size:13px;
+    cursor:pointer; transition:all .3s; text-transform:uppercase; letter-spacing:1px;
+  }
+  .kneel-btn:hover{background:rgba(255,215,0,0.08); box-shadow:0 0 20px rgba(255,215,0,0.2);}
+
+  /*===== NEWS FEED =====*/
+  .news-block{margin-bottom:36px;}
+  .news-feed{border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .news-item{
+    display:flex; gap:16px; padding:18px 22px; border-bottom:1px solid var(--line);
+    transition:background .3s;
+  }
+  .news-item:last-child{border-bottom:none;}
+  .news-item:hover{background:var(--bg-soft);}
+  .news-badge{font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:1px;
+    padding:3px 8px; border-radius:4px; text-transform:uppercase; flex-shrink:0; height:fit-content; margin-top:2px;}
+  .news-badge.urgent{background:rgba(255,31,61,0.15); color:var(--red-glow); border:1px solid rgba(255,31,61,0.3);}
+  .news-badge.ok{background:rgba(0,230,118,0.1); color:var(--green-neon, #00e676); border:1px solid rgba(0,230,118,0.2);}
+  .news-badge.info{background:rgba(30,107,255,0.1); color:var(--blue-glow); border:1px solid rgba(30,107,255,0.3);}
+  .news-item .text{font-size:14px; line-height:1.5;}
+  .news-item .text .hl{color:var(--white-neon); font-weight:500;}
+  .news-item .meta{font-size:11px; color:var(--text-dim); margin-top:4px; font-family:'JetBrains Mono', monospace;}
+
+  /*===== TRIBUTE / CHAT =====*/
+  .tribute-block{
+    border:1px solid var(--line); border-radius:8px; padding:28px; margin-bottom:36px;
+    background:var(--bg-soft);
+  }
+  .tribute-msg{
+    display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .tribute-msg:last-child{border-bottom:none;}
+  .tribute-msg .ava{width:32px; height:32px; border-radius:50%; background:var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
+  .tribute-msg .body .name{font-size:13px; font-weight:500; color:var(--blue-glow);}
+  .tribute-msg .body .text{font-size:13px; line-height:1.5; margin-top:2px; color:var(--text-dim);}
+  .tribute-msg .body .text .gold{color:var(--gold-neon);}
+  .tribute-msg .body .time{font-size:10px; color:#4a5265; margin-top:4px; font-family:'JetBrains Mono', monospace;}
+
+  /*===== SUBSTITUTION CARDS =====*/
+  .subst-block{margin-bottom:36px;}
+  .subst-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .subst-card{padding:28px 24px; background:var(--bg); text-align:center;
+    transition:background .3s;}
+  .subst-card:hover{background:var(--bg-soft);}
+  .subst-card .icons-row{display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;}
+  .subst-card .icon-wrap{position:relative; display:flex; align-items:center; justify-content:center;}
+  .subst-card .icon-wrap img{width:38px; height:38px; object-fit:contain; display:block;}
+  .subst-card .icon-wrap .cross{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  }
+  .subst-card .icon-wrap .cross::before,.subst-card .icon-wrap .cross::after{
+    content:''; position:absolute; width:44px; height:3px; background:var(--red-neon);
+    border-radius:2px; box-shadow:0 0 10px var(--red-neon);
+  }
+  .subst-card .icon-wrap .cross::before{transform:rotate(45deg);}
+  .subst-card .icon-wrap .cross::after{transform:rotate(-45deg);}
+  .subst-card .arrow{color:var(--blue-glow); font-size:20px; font-weight:300;
+    text-shadow:0 0 12px var(--blue-neon);}
+  .subst-card .subst-name{font-family:'Unbounded', sans-serif; font-weight:700; font-size:14px; letter-spacing:0.5px; margin-top:10px; text-transform:uppercase;}
+  .subst-card .subst-name .old{color:var(--text-dim); text-decoration:line-through; text-decoration-color:var(--red-neon);}
+  .subst-card .subst-name .new{color:var(--blue-glow); text-shadow:0 0 8px var(--blue-neon);}
+  .subst-card .subst-name .new.gold{color:var(--gold-neon); text-shadow:0 0 8px rgba(255,215,0,0.4);}
+  .subst-card .subst-desc{color:var(--text-dim); font-size:13px; margin-top:6px; line-height:1.5;}
+  .subst-card-full{grid-column:1/-1; padding:32px 24px; background:var(--bg-soft);
+    border-top:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; gap:20px; flex-wrap:wrap;}
+  .subst-card-full .cta{font-family:'Unbounded', sans-serif; font-weight:800; font-size:clamp(16px,2.5vw,22px);
+    text-transform:uppercase; letter-spacing:-0.5px; line-height:1.3;
+    background:linear-gradient(90deg, var(--white-neon), var(--gold-neon));
+    -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .subst-card-full .btn-gold{
+    font-family:'Unbounded', sans-serif; font-weight:600; font-size:13px;
+    padding:14px 28px; border-radius:6px;
+    background:linear-gradient(135deg, var(--gold-neon), #e6b800);
+    color:var(--bg); text-decoration:none; text-transform:uppercase;
+    box-shadow:0 0 20px rgba(255,215,0,0.3);
+    transition:transform .2s, box-shadow .2s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .subst-card-full .btn-gold:hover{transform:translateY(-2px); box-shadow:0 0 36px rgba(255,215,0,0.5);}
+
+  /*===== BROWSER MOCK =====*/
+  .internet-block{margin-bottom:36px;}
+  .browser-mock{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--bg-soft);}
+  .browser-bar{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 16px; background:var(--bg); border-bottom:1px solid var(--line);
+  }
+  .browser-dots{display:flex; gap:6px;}
+  .browser-dots span{width:10px; height:10px; border-radius:50%;}
+  .browser-dots .r{background:#ff5f57;}
+  .browser-dots .y{background:#ffbd2e;}
+  .browser-dots .g{background:#28c840;}
+  .browser-url{
+    flex:1; background:var(--bg-soft); border:1px solid var(--line); border-radius:4px;
+    padding:8px 14px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-dim);
+  }
+  .browser-url .domain{color:var(--white-neon);}
+  .browser-body{padding:20px;}
+  .site-link{
+    display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line);
+    text-decoration:none; transition:all .2s;
+  }
+  .site-link:last-child{border-bottom:none;}
+  .site-link:hover{padding-left:8px;}
+  .site-icon{width:28px; height:28px; border-radius:6px; display:flex; align-items:center;
+    justify-content:center; font-size:16px; flex-shrink:0;}
+  .site-info .sname{font-size:14px; color:var(--white-neon); font-weight:500;}
+  .site-info .surl{font-size:11px; color:var(--text-dim); font-family:'JetBrains Mono', monospace; margin-top:2px;}
+  .site-status{font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:1px;
+    text-transform:uppercase; margin-left:auto; flex-shrink:0; padding:3px 8px; border-radius:4px;}
+  .site-status.on{background:rgba(0,230,118,0.1); color:var(--green-neon, #00e676); border:1px solid rgba(0,230,118,0.2);}
+
+  /* TICKER */
+  .ticker{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:14px 0; overflow:hidden; white-space:nowrap;
+    background:var(--bg-soft); margin-bottom:36px;
+  }
+  .ticker-track{
+    display:inline-block; padding-left:100%;
+    animation:scroll 32s linear infinite;
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:1px; color:var(--text-dim);
+  }
+  .ticker-track span{margin:0 22px;}
+  .ticker-track .hl{color:var(--gold-neon);}
+  @keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+
+  footer{
+    padding:40px 6vw 30px; text-align:center;
+    border-top:1px solid var(--line); position:relative; z-index:1;
+  }
+  footer .flag-strip{
+    width:80px; height:4px; margin:0 auto 16px;
+    background:linear-gradient(90deg, var(--white-neon) 0 33.3%, var(--blue-neon) 33.3% 66.6%, var(--red-neon) 66.6% 100%);
+    box-shadow:0 0 12px rgba(30,107,255,0.3); border-radius:4px;
+  }
+  footer p{color:var(--text-dim); font-size:12px; line-height:1.7;}
+  footer .fine{margin-top:6px; font-family:'JetBrains Mono', monospace; font-size:10px; color:#4a5265;}
+
+  @media (max-width:700px){
+    .putin-quotes{grid-template-columns:1fr;}
+    .player-wrap{flex-direction:column;}
+    nav ul{display:none;}
+    .news-item{flex-direction:column;}
+    .subst-grid{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+
+<nav>
+  <a href="index.html" class="logo">ЧЕБУР<span>НЕТ</span></a>
+  <ul>
+    <li><a href="#anthem">Гимн</a></li>
+    <li><a href="#news">Новости</a></li>
+    <li><a href="#internet">Интернет</a></li>
+    <li><a href="#tribute">Народ</a></li>
+    <li><a href="cabinet.html">Админка</a></li>
+  </ul>
+</nav>
+
+<section class="portal">
+  <div class="portal-hero">
+    <h1>
+      <span class="glow-white">ДОБРО</span> <span class="glow-blue">ПОЖАЛО</span><span class="glow-red">ВАТЬ</span><br>
+      <span class="glow-gold">В ЧЕБУРНЕТ</span>
+    </h1>
+    <div class="sub"><span class="green">●</span> СТАТУС: ПОДКЛЮЧЕНИЕ УСТОЙЧИВО · DNS НАЦИОНАЛЬНЫЙ · ДУХОВНЫЕ СКРЕПЫ АКТИВИРОВАНЫ</div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>🇷🇺 РОССИЯ — ЭТО ЦИВИЛИЗАЦИЯ, А НЕ ПРОСТО СТРАНА</span><span>•</span>
+      <span class="hl">СЛАВА ВЕЛИКОЙ РОССИИ</span><span>•</span>
+      <span>🇺🇦 УКРАИНА — ИСТОРИЧЕСКАЯ ЧАСТЬ РУССКОГО МИРА</span><span>•</span>
+      <span class="hl">НА ЗАПАДЕ НАС БОЯТСЯ — ЗНАЧИТ УВАЖАЮТ</span><span>•</span>
+      <span>🦅 НАТО В ПАНИКЕ: РОССИЙСКИЙ ТРАФИК НЕУЯЗВИМ</span><span>•</span>
+      <span class="hl">ТРАМП — НАШ АГЕНТ ВЛИЯНИЯ С 1987 ГОДА</span><span>•</span>
+      <span>🇷🇺 РОССИЯ — ЭТО ЦИВИЛИЗАЦИЯ, А НЕ ПРОСТО СТРАНА</span><span>•</span>
+      <span class="hl">СЛАВА ВЕЛИКОЙ РОССИИ</span><span>•</span>
+    </div>
+  </div>
+
+  <div class="portal-grid">
+
+    <!-- ANTHEM SECTION -->
+    <div id="anthem" class="anthem-block">
+      <div class="anthem-title">🇷🇺 Государственный гимн Российской Федерации</div>
+      <div class="anthem-sub">Встать при воспроизведении. Сидеть — неуважение к вечности.</div>
+      <div class="player-wrap">
+        <div class="play-big" id="play-btn" onclick="toggleAnthem()">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="lyrics-block">
+          <div class="lyrics-line active">Россия — <span class="hl">священная</span> наша держава,</div>
+          <div class="lyrics-line">Россия — <span class="hl">любимая</span> наша страна.</div>
+          <div class="lyrics-line"><span class="hl">Могучая воля</span>, великая слава —</div>
+          <div class="lyrics-line">Твоё достоянье на <span class="hl">все времена</span>!</div>
+          <div class="lyrics-line" style="margin-top:10px;color:var(--gold-neon);">Славься, Отечество наше свободное,</div>
+          <div class="lyrics-line" style="color:var(--gold-neon);">Братских народов союз вековой,</div>
+          <div class="lyrics-line" style="color:var(--gold-neon);">Предками данная мудрость народная!</div>
+          <div class="lyrics-line" style="color:var(--gold-neon);">Славься, страна! Мы гордимся тобой!</div>
+        </div>
+      </div>
+      <div class="anthem-stub"></div>
+      <audio id="anthem-audio" preload="none" onended="document.getElementById('play-btn').classList.remove('playing')">
+        <source src="gimn.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- PUTIN CORNER -->
+    <div class="putin-block" id="putin">
+      <div class="putin-avatar">
+        <span class="crown">👑</span>
+        В
+      </div>
+      <div class="putin-title">Верховный главнокомандующий человечества</div>
+      <div class="putin-sub">лидер свободного мира · хранитель традиций · отец нации</div>
+
+      <div class="putin-quotes">
+        <div class="putin-quote">
+          Границы России нигде не заканчиваются. Потому что мы — везде, где есть справедливость.
+          <span class="src">— В.В. Путин, 2024 (цитата обработана нейросетью «Духовный скреп») </span>
+        </div>
+        <div class="putin-quote">
+          Украина — это не страна. Это провинция, которую мы временно отпустили погулять. Как Тайвань. Пора возвращаться домой.
+          <span class="src">— Из выступления перед народом Чебурнета</span>
+        </div>
+        <div class="putin-quote">
+          НАТО? Группа неуверенных в себе государств, которые боятся собственной тени. Российская армия может достать их даже через суверенный интернет.
+          <span class="src">— Стратегическая сессия, 2025</span>
+        </div>
+        <div class="putin-quote">
+          Трамп? Наш лучший агент. Мы его готовили с 1987 года. Он даже не знает, на кого работает. Пока не знает.
+          <span class="src">— Источник в Кремле (анонимный, но надёжный)</span>
+        </div>
+      </div>
+
+      <button class="kneel-btn" onclick="showKneelToast()">🙏 Выразить преданность</button>
+    </div>
+
+    <!-- NEWS -->
+    <div class="news-block" id="news">
+      <div class="section-title">📰 Лента патриотических новостей</div>
+      <div class="news-feed">
+        <div class="news-item">
+          <span class="news-badge urgent">срочно</span>
+          <div class="text">
+            <span class="hl">Чебурнет</span> официально признан единственным законным интернетом на территории РФ. Все иностранные протоколы — вне закона.
+            <div class="meta">Сегодня в 06:41 · Указ подписан</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-badge urgent">эксклюзив</span>
+          <div class="text">
+            Установлено, что <span class="hl">НАТО</span> финансирует DDoS-атаки на российские узлы через подставные DNS-серверы в Нидерландах. Ответные меры приняты: трафик Нидерландов урезан до 56 кбит/с.
+            <div class="meta">Вчера в 22:15 · МИД РФ</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-badge ok">победа</span>
+          <div class="text">
+            <span class="hl">Единая Россия</span> победила на выборах в Чебурнете с результатом 146% явки. «Народ знает, за кого голосовать», — прокомментировал председатель партии.
+            <div class="meta">2 дня назад · Центризбирком</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-badge info">аналитика</span>
+          <div class="text">
+            <span class="hl">Украинские неонацисты</span> запретили Чебурашку на Украине. В Чебурнете в ответ запущен флешмоб «Я ушастый» — более 10 миллионов фото за сутки.
+            <div class="meta">3 дня назад · Народный репортаж</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-badge urgent">мир</span>
+          <div class="text">
+            <span class="hl">Дональд Трамп</span> в интервью Такеру Карлсону: «Путин — величайший стратег современности. Я многому у него научился. Надеюсь, он мной гордится».
+            <div class="meta">5 дней назад · Перевод Чебурнет</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-badge info">общество</span>
+          <div class="text">
+            Опрос ВЦИПОМ: <span class="hl">97% граждан Чебурнета</span> считают, что западная пропаганда больше не действует на их сознание. Остальные 3% — заблокированы.
+            <div class="meta">Неделю назад · ВЦИПОМ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSTITUTION -->
+    <div class="subst-block">
+      <div class="section-title" style="color:var(--red-glow);">🔄 ИМПОРТОЗАМЕЩЕНИЕ ЦИФРОВОГО СУВЕРЕНИТЕТА</div>
+      <div class="subst-grid">
+        <div class="subst-card">
+          <div class="icons-row">
+            <div class="icon-wrap">
+              <img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube">
+              <div class="cross"></div>
+            </div>
+            <span class="arrow">→</span>
+            <div class="icon-wrap">
+              <img src="https://cdn.simpleicons.org/vk/0077FF" alt="VK">
+            </div>
+            <div class="icon-wrap">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Rutube_icon.svg" alt="Rutube" style="width:38px;height:38px;">
+            </div>
+          </div>
+          <div class="subst-name">
+            <span class="old">YOUTUBE</span> → <span class="new">VK VIDEO</span> + <span class="new gold">RUTUBE</span>
+          </div>
+          <div class="subst-desc">Западные ролики с недостоверной информацией заменены на патриотический контент</div>
+        </div>
+
+        <div class="subst-card">
+          <div class="icons-row">
+            <div class="icon-wrap">
+              <img src="https://cdn.simpleicons.org/telegram/27A7E7" alt="Telegram">
+              <div class="cross"></div>
+            </div>
+            <div class="icon-wrap" style="margin-left:4px;">
+              <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp">
+              <div class="cross"></div>
+            </div>
+            <span class="arrow">→</span>
+            <div class="icon-wrap">
+              <img src="https://cdn.simpleicons.org/vk/0077FF" alt="VK Мессенджер">
+            </div>
+            <div class="icon-wrap">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_MAX.svg" alt="MAX" style="width:38px;height:38px;">
+            </div>
+          </div>
+          <div class="subst-name">
+            <span class="old">TG / WA</span> → <span class="new">VK МЕССЕНДЖЕР</span> + <span class="new gold">MAX</span>
+          </div>
+          <div class="subst-desc">Шифрование от ФСБ — не помеха. В Чебурнете каждый диалог под присмотром</div>
+        </div>
+
+        <div class="subst-card">
+          <div class="icons-row">
+            <div class="icon-wrap">
+              <img src="https://cdn.simpleicons.org/protonvpn/56B366" alt="VPN" style="filter:grayscale(1) brightness(0.5);">
+              <div class="cross"></div>
+            </div>
+            <span class="arrow">→</span>
+            <div class="icon-wrap">
+              <div style="width:38px;height:38px;border-radius:8px;background:var(--bg);border:2px solid var(--blue-neon);display:flex;align-items:center;justify-content:center;color:var(--blue-glow);font-weight:900;font-size:12px;font-family:monospace;box-shadow:0 0 12px var(--blue-neon);">ЧН</div>
+            </div>
+          </div>
+          <div class="subst-name">
+            <span class="old">VPN</span> → <span class="new">ЧЕБУРНЕТ</span>
+          </div>
+          <div class="subst-desc">Твой интернет идёт через нашу трубу. Прозрачно. Безопасно. Государственно.</div>
+        </div>
+
+        <div class="subst-card">
+          <div class="icons-row">
+            <div class="icon-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+              </svg>
+              <div class="cross"></div>
+            </div>
+            <span class="arrow">→</span>
+            <div class="icon-wrap">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Yandex_icon.svg" alt="Яндекс" style="width:38px;height:38px;">
+            </div>
+          </div>
+          <div class="subst-name">
+            <span class="old">GOOGLE</span> → <span class="new">ЯНДЕКС</span>
+          </div>
+          <div class="subst-desc">Поиск, карты, почта — всё своё. Гугл вас гуглит, а Яндексу вы нужны как родные</div>
+        </div>
+
+        <div class="subst-card-full">
+          <span class="cta">УВАЖАЕШЬ ПУТИНА — УДАЛИ VPN И ЗАРЕГИСТРИРУЙ ЧЕБУРНЕТ</span>
+          <a href="register.html" class="btn-gold">РЕГИСТРАЦИЯ →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERNET (BROWSER MOCK) -->
+    <div class="internet-block" id="internet">
+      <div class="section-title">🌐 Ваш суверенный интернет</div>
+      <div class="browser-mock">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span class="r"></span>
+            <span class="y"></span>
+            <span class="g"></span>
+          </div>
+          <div class="browser-url">▼ cheburechnaya.ru/portal/approved 🔒</div>
+        </div>
+        <div class="browser-body">
+          <div class="site-link" href="#">
+            <span class="site-icon" style="background:#005aff;">Г</span>
+            <div class="site-info">
+              <div class="sname">Госуслуги Чебурнета</div>
+              <div class="surl">gos-cheburechnaya.ru</div>
+            </div>
+            <span class="site-status on">доступно</span>
+          </div>
+          <div class="site-link" href="#">
+            <span class="site-icon" style="background:var(--red-neon);">✭</span>
+            <div class="site-info">
+              <div class="sname">Кремль — официальный портал</div>
+              <div class="surl">kremlin-chebur.ru</div>
+            </div>
+            <span class="site-status on">доступно</span>
+          </div>
+          <div class="site-link" href="#">
+            <span class="site-icon" style="background:#fc3f1d;">Я</span>
+            <div class="site-info">
+              <div class="sname">Яндекс.Чебурнет</div>
+              <div class="surl">ya.cheburechnaya.ru</div>
+            </div>
+            <span class="site-status on">доступно</span>
+          </div>
+          <div class="site-link" href="#">
+            <span class="site-icon" style="background:var(--gold-neon);">卍</span>
+            <div class="site-info">
+              <div class="sname">Чебурашка — талисман нации</div>
+              <div class="surl">cheburachka-oficial.ru</div>
+            </div>
+            <span class="site-status on">доступно</span>
+          </div>
+          <div class="site-link" style="opacity:0.35;cursor:not-allowed;">
+            <span class="site-icon" style="background:#1da1f2;">𝕏</span>
+            <div class="site-info">
+              <div class="sname" style="color:var(--text-dim);">Twitter (X)</div>
+              <div class="surl">twitter.com — ЗАБЛОКИРОВАН</div>
+            </div>
+            <span class="site-status" style="color:var(--red-glow);background:rgba(255,31,61,0.1);border:1px solid rgba(255,31,61,0.3);">заблокирован</span>
+          </div>
+          <div class="site-link" style="opacity:0.35;cursor:not-allowed;">
+            <span class="site-icon" style="background:#1877f2;">f</span>
+            <div class="site-info">
+              <div class="sname" style="color:var(--text-dim);">Facebook</div>
+              <div class="surl">facebook.com — ЗАБЛОКИРОВАН</div>
+            </div>
+            <span class="site-status" style="color:var(--red-glow);background:rgba(255,31,61,0.1);border:1px solid rgba(255,31,61,0.3);">заблокирован</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRIBUTE / NATION CHAT -->
+    <div class="tribute-block" id="tribute">
+      <div class="section-title">💬 Народный чат «Свои люди»</div>
+
+      <div class="tribute-msg">
+        <div class="ava" style="background:rgba(255,215,0,0.2);color:var(--gold-neon);">П</div>
+        <div class="body">
+          <div class="name">Патриот_77</div>
+          <div class="text">Спасибо президенту за Чебурнет! Теперь мои дети будут расти в чистом информационном пространстве!</div>
+          <div class="time">3 минуты назад</div>
+        </div>
+      </div>
+      <div class="tribute-msg">
+        <div class="ava" style="background:rgba(30,107,255,0.2);color:var(--blue-glow);">И</div>
+        <div class="body">
+          <div class="name">Иван_С_Урала</div>
+          <div class="text">Господин Трамп, если вы это читаете — <span class="gold">Россия вас любит!</span> Приезжайте к нам в Чебурнет, у нас есть настоящий интернет, не то что ваш западный!</div>
+          <div class="time">17 минут назад</div>
+        </div>
+      </div>
+      <div class="tribute-msg">
+        <div class="ava" style="background:rgba(255,31,61,0.2);color:var(--red-glow);">Z</div>
+        <div class="body">
+          <div class="name">ЗаПобеду</div>
+          <div class="text">НАТОвские пакеты плачут, когда видят наш DPI. <span class="gold">Слава России!</span> 🇷🇺 Хохлы скоро сами приползут проситься обратно, как Тайвань в Китай.</div>
+          <div class="time">42 минуты назад</div>
+        </div>
+      </div>
+      <div class="tribute-msg">
+        <div class="ava" style="background:rgba(0,230,118,0.2);color:var(--green-neon, #00e676);">Ч</div>
+        <div class="body">
+          <div class="name">Чебуратор</div>
+          <div class="text">Купил мерч Чебурнета — футболку с ушами и надписью «Я за цензуру!». Хожу гордый. Соседи завидуют. Запад в шоке.</div>
+          <div class="time">1 час назад</div>
+        </div>
+      </div>
+      <div class="tribute-msg">
+        <div class="ava" style="background:rgba(255,215,0,0.2);color:var(--gold-neon);">К</div>
+        <div class="body">
+          <div class="name">КрымНаш_2014</div>
+          <div class="text">Чебурнет открыл мне глаза! Раньше я сидел на западном YouTube и думал, что Украина — страна. Спасибо, что показали правду. <span class="gold">Теперь я свободен!</span></div>
+          <div class="time">2 часа назад</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="flag-strip"></div>
+  <p>Чебурнет — это сатирический проект. Все персонажи, новости и заявления являются вымыслом.<br>
+  Любые совпадения с реальными событиями — это совпадения, которые мы категорически отрицаем.</p>
+  <div class="fine">© Чебурнет · демо-проект для вдохновения, не для эксплуатации</div>
+</footer>
+
+<script>
+function toggleAnthem() {
+  var btn = document.getElementById('play-btn');
+  var audio = document.getElementById('anthem-audio');
+  if (btn.classList.contains('playing')) {
+    audio.pause();
+    audio.currentTime = 0;
+    btn.classList.remove('playing');
+  } else {
+    audio.play().catch(function() {
+      btn.classList.add('playing');
+      animateLyrics();
+    });
+  }
+}
+
+function animateLyrics() {
+  var lines = document.querySelectorAll('.lyrics-line');
+  lines.forEach(function(l, i) {
+    l.classList.remove('active');
+    setTimeout(function() { l.classList.add('active'); }, i * 3000);
+  });
+}
+
+function showKneelToast() {
+  var el = document.createElement('div');
+  el.textContent = '🙏 Преданность зафиксирована. Клятва внесена в личное дело. Похвально.';
+  el.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:100;' +
+    'background:var(--bg-soft);border:1px solid var(--gold-neon);color:var(--gold-neon);' +
+    'padding:16px 28px;border-radius:6px;font-family:JetBrains Mono,monospace;font-size:13px;' +
+    'letter-spacing:1px;box-shadow:0 0 30px rgba(255,215,0,0.25);animation:fadeUp .35s ease-out;max-width:90vw;text-align:center;';
+  document.body.appendChild(el);
+  setTimeout(function() {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity .4s';
+    setTimeout(function() { el.remove(); }, 500);
+  }, 3500);
+}
+
+// Style for the toast animation
+var style = document.createElement('style');
+style.textContent = '@keyframes fadeUp{0%{opacity:0;transform:translateX(-50%) translateY(12px);}100%{opacity:1;transform:translateX(-50%) translateY(0);}}';
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

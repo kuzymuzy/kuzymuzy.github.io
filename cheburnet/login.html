@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЧЕБУРНЕТ — Вход</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Rubik:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg: #050608;
+    --bg-soft: #0a0d12;
+    --white-neon: #f4f7ff;
+    --blue-neon: #1e6bff;
+    --blue-glow: #3d8bff;
+    --red-neon: #ff1f3d;
+    --red-glow: #ff4d63;
+    --text-dim: #8a93a6;
+    --line: rgba(244,247,255,0.12);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--white-neon);
+    font-family:'Rubik', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+    min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(30,107,255,0.14), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(255,31,61,0.14), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(244,247,255,0.05), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+  body::after{
+    content:'';
+    position:fixed; inset:0;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:1;
+    mix-blend-mode:overlay;
+  }
+
+  .tricolor-bar{
+    position:fixed; top:0; left:0; width:100%; height:4px; z-index:50;
+    background:linear-gradient(90deg, var(--white-neon) 0 33.3%, var(--blue-neon) 33.3% 66.6%, var(--red-neon) 66.6% 100%);
+    box-shadow:0 0 20px rgba(30,107,255,0.6), 0 0 20px rgba(255,31,61,0.4);
+  }
+
+  nav{
+    position:sticky; top:4px; z-index:40;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:22px 6vw;
+    background:rgba(5,6,8,0.75);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-family:'Unbounded', sans-serif;
+    font-weight:800;
+    font-size:20px;
+    letter-spacing:0.5px;
+    color:var(--white-neon);
+    text-decoration:none;
+  }
+  .logo span{color:var(--blue-glow); text-shadow:0 0 12px var(--blue-neon);}
+  nav ul{list-style:none; display:flex; gap:36px;}
+  nav a{color:var(--text-dim); text-decoration:none; font-size:14px; font-weight:500; transition:color .25s;}
+  nav a:hover{color:var(--white-neon);}
+
+  .auth-page{flex:1; display:flex; align-items:center; justify-content:center; padding:80px 6vw; position:relative; z-index:2;}
+  .auth-card{width:100%; max-width:520px;}
+  .auth-card .eyebrow{text-align:center; margin-bottom:12px;}
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--blue-glow);
+    border:1px solid rgba(61,139,255,0.4);
+    padding:8px 18px; border-radius:100px;
+    display:inline-block;
+    text-shadow:0 0 8px var(--blue-neon);
+    box-shadow:0 0 24px rgba(30,107,255,0.15) inset;
+  }
+
+  .auth-card h1{
+    font-family:'Unbounded', sans-serif;
+    font-weight:900;
+    font-size:clamp(32px,5vw,52px);
+    line-height:1.05;
+    letter-spacing:-1px;
+    text-transform:uppercase;
+    text-align:center;
+    margin-top:24px;
+    margin-bottom:40px;
+  }
+  .auth-card h1 .glow-blue{color:var(--blue-glow); text-shadow:0 0 18px var(--blue-neon), 0 0 46px rgba(30,107,255,0.5);}
+  .auth-card h1 .glow-red{color:var(--red-glow); text-shadow:0 0 18px var(--red-neon), 0 0 46px rgba(255,31,61,0.5);}
+
+  .social-row{display:flex; gap:12px; margin-bottom:32px; flex-wrap:wrap; justify-content:center;}
+  .social-btn{display:flex; align-items:center; gap:10px; padding:14px 22px; border-radius:6px;
+    border:1px solid var(--line); background:var(--bg-soft); cursor:pointer; opacity:0.55;
+    font-family:'Rubik', sans-serif; font-size:14px; font-weight:500; color:var(--text-dim);
+    transition:all .25s; position:relative;}
+  .social-btn:hover{opacity:0.75; border-color:var(--blue-neon);}
+  .social-btn .slogo{width:26px; height:26px; border-radius:6px; display:flex; align-items:center;
+    justify-content:center; font-weight:800; font-size:14px; flex-shrink:0;}
+  .social-btn .badge{position:absolute; top:-8px; right:-8px; font-family:'JetBrains Mono', monospace; font-size:9px;
+    background:var(--red-neon); color:#fff; padding:2px 7px; border-radius:4px; font-weight:500;
+    box-shadow:0 0 10px rgba(255,31,61,0.6); letter-spacing:1px; pointer-events:none;}
+
+  .divider{display:flex; align-items:center; gap:16px; margin-bottom:32px; color:var(--text-dim); font-size:13px; font-family:'JetBrains Mono', monospace; letter-spacing:1px;}
+  .divider::before,.divider::after{content:''; flex:1; height:1px; background:var(--line);}
+
+  .form-group{margin-bottom:20px;}
+  .form-group label{display:block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:8px;}
+  .form-group label .req{color:var(--red-glow);}
+  .form-group input{width:100%; padding:14px 16px; background:var(--bg);
+    border:1px solid var(--line); border-radius:6px; color:var(--white-neon);
+    font-family:'Rubik', sans-serif; font-size:15px; transition:border-color .25s, box-shadow .25s;}
+  .form-group input:focus{outline:none; border-color:var(--blue-neon); box-shadow:0 0 18px rgba(30,107,255,0.2);}
+  .form-group input::placeholder{color:#3a4050;}
+
+  .checkbox-wrap{display:flex; align-items:flex-start; gap:12px; margin-bottom:24px;}
+  .checkbox-wrap input[type="checkbox"]{width:20px; height:20px; min-width:20px; margin-top:2px;
+    accent-color:var(--blue-neon); cursor:pointer;}
+  .checkbox-wrap label{font-size:13px; color:var(--text-dim); line-height:1.5; cursor:pointer;}
+
+  .btn{
+    font-family:'Unbounded', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:16px 32px;
+    border-radius:6px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex; align-items:center; gap:10px;
+    transition:transform .2s, box-shadow .2s;
+    border:1px solid transparent;
+    justify-content:center;
+  }
+  .btn-block{width:100%; padding:18px;}
+  .btn-primary{
+    background:linear-gradient(90deg, var(--blue-neon), #2f5fe0);
+    color:#fff;
+    box-shadow:0 0 24px rgba(30,107,255,0.5);
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 0 36px rgba(30,107,255,0.75);}
+
+  .form-footnote{text-align:center; margin-top:16px; color:var(--text-dim);
+    font-size:12px; font-family:'JetBrains Mono', monospace;}
+
+  .auth-link{text-align:center; margin-top:28px; font-size:14px; color:var(--text-dim);}
+  .auth-link a{color:var(--blue-glow); text-decoration:none; text-shadow:0 0 8px var(--blue-neon);}
+  .auth-link a:hover{color:var(--white-neon);}
+
+  .toast-container{position:fixed; bottom:30px; left:50%; transform:translateX(-50%); z-index:100;
+    font-family:'JetBrains Mono', monospace; font-size:13px; letter-spacing:1px;
+    white-space:nowrap; pointer-events:none;}
+  .toast{padding:16px 28px; border-radius:6px; margin-top:8px;
+    background:var(--bg-soft); border:1px solid var(--red-neon); color:var(--red-glow);
+    box-shadow:0 0 30px rgba(255,31,61,0.25);
+    animation:toastIn .35s ease-out;}
+  @keyframes toastIn{0%{opacity:0; transform:translateY(12px);}100%{opacity:1; transform:translateY(0);}}
+
+  footer{
+    padding:30px 6vw; text-align:center; position:relative; z-index:2;
+    border-top:1px solid var(--line);
+  }
+  footer p{color:var(--text-dim); font-size:12px; font-family:'JetBrains Mono', monospace;}
+
+  @media (max-width:600px){
+    .social-btn{padding:12px 16px; font-size:13px; flex:1; justify-content:center;}
+    .toast{white-space:normal; max-width:90vw; text-align:center;}
+    nav ul{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+
+<nav>
+  <a href="index.html" class="logo">ЧЕБУР<span>НЕТ</span></a>
+  <ul>
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="portal.html">Портал</a></li>
+    <li><a href="register.html">Регистрация</a></li>
+  </ul>
+</nav>
+
+<section class="auth-page">
+  <div class="auth-card">
+    <div style="text-align:center;"><span class="eyebrow">// Доступ по паспорту</span></div>
+    <h1>
+      <span class="glow-blue">ВХОД</span> В&nbsp;<span class="glow-red">ЧЕБУРНЕТ</span>
+    </h1>
+
+    <div class="social-row">
+      <button class="social-btn" disabled>
+        <span class="slogo" style="background:#005aff;color:#fff;">Г</span>
+        Госуслуги
+        <span class="badge">скоро</span>
+      </button>
+      <button class="social-btn" disabled>
+        <span class="slogo" style="background:#fc3f1d;color:#fff;">Я</span>
+        Яндекс ID
+        <span class="badge">скоро</span>
+      </button>
+      <button class="social-btn" disabled>
+        <span class="slogo" style="background:#0077ff;color:#fff;">В</span>
+        ВКонтакте
+        <span class="badge">скоро</span>
+      </button>
+      <button class="social-btn" disabled>
+        <span class="slogo" style="background:#21a038;color:#fff;">С</span>
+        Сбер ID
+        <span class="badge">скоро</span>
+      </button>
+    </div>
+
+    <div class="divider">или по паспорту</div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label>Паспорт / Телефон <span class="req">*</span></label>
+        <input type="text" placeholder="0000 000000 или +7 (999) 000-00-00" required>
+      </div>
+      <div class="form-group">
+        <label>Кодовое слово <span class="req">*</span></label>
+        <input type="text" id="codeword-input" placeholder="Единая Россия" required>
+        <div style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#4a5265;letter-spacing:0.5px;">
+          Пример: паспорт <span style="color:var(--text-dim);">5512 345678</span>, кодовое слово <span style="color:var(--text-dim);">Единая Россия</span>
+        </div>
+      </div>
+      <div class="checkbox-wrap">
+        <input type="checkbox" id="login-remember" checked>
+        <label for="login-remember">Запомнить устройство на 24 ч (продлевается автоматически после каждой проверки благонадёжности)</label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">
+        Войти в Чебурнет →
+      </button>
+      <div class="form-footnote">Вход = согласие с условиями цифрового суверенитета</div>
+    </form>
+
+    <div class="auth-link">
+      Ещё не подключены к Чебурнету?<br>
+      <a href="register.html">Пройти регистрацию →</a>
+    </div>
+  </div>
+</section>
+
+<div class="toast-container" id="toast-container"></div>
+
+<footer>
+  <p>© Чебурнет · сатирический концепт</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  function showToast(msg) {
+    var container = document.getElementById('toast-container');
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    container.appendChild(el);
+    setTimeout(function() {
+      el.style.opacity = '0';
+      el.style.transition = 'opacity .4s';
+      setTimeout(function() { el.remove(); }, 500);
+    }, 3500);
+  }
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var passport = document.querySelector('#login-form input[type="text"]');
+    var codeword = document.getElementById('codeword-input');
+
+    var passportDigits = (passport ? passport.value : '').replace(/\D/g, '');
+    var codewordVal = (codeword ? codeword.value : '').trim();
+
+    var goodPassport = passportDigits.length === 10;
+    var goodCodeword = codewordVal.toLowerCase() === 'единая россия';
+
+    if (goodPassport && goodCodeword) {
+      showToast('✅ Добро пожаловать в Чебурнет, ' + passportDigits.slice(0,4) + ' ' + passportDigits.slice(4) + '! Перенаправление...');
+      setTimeout(function() { window.location.href = 'portal.html'; }, 1500);
+    } else {
+      var errors = [];
+      if (!goodPassport) {
+        var got = passportDigits.length > 0 ? ' (' + passportDigits + ' — ' + passportDigits.length + ' цифр)' : '';
+        errors.push('паспорт: нужно ровно 10 цифр (серия 4 + номер 6), получено' + got);
+      }
+      if (!goodCodeword) {
+        errors.push('кодовое слово неверно');
+      }
+      showToast('⛔ ' + errors.join('. ') + '. Попробуйте ещё раз. Или сядьте. И встаньте.');
+    }
+  });
+
+  document.querySelectorAll('.social-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var name = this.textContent.trim().replace('скоро', '').trim();
+      showToast('⏳ ' + name + ' временно не подключён. Ведутся технические работы (с 1991 года).');
+    });
+  });
+});
+</script>
+
+</body>
+</html>
